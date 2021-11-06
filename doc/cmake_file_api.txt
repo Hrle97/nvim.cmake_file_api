@@ -44,19 +44,12 @@
 <div id="content">
 
 <h1>Module <code>nvim.cmake_file_api</code></h1>
-<p>cmake-file-api client implementation for Neovim.</p>
+<p>CMake File API client implementation for Neovim.</p>
 <p> CMake provides a file-based API that clients may use to get semantic
  information about the buildsystems CMake generates. Clients may use the API
  by writing query files to a specific location in a build tree to request zero
  or more Object Kinds. When CMake generates the buildsystem in that build tree
  it will read the query files and write reply files for the client to read.</p>
-
-<p> The file-based API uses a <build>/.cmake/api/ directory at the top of a build
- tree. The API is versioned to support changes to the layout of files within
- the API directory. API file layout versioning is orthogonal to the versioning
- of Object Kinds used in replies. This version of CMake supports only one API
- version, API v1.- it will lead the query files and write reply files for the
- client to read.</p>
     <h3>Info:</h3>
     <ul>
         <li><strong>Copyright</strong>: 2021, Hrle97</li>
@@ -89,7 +82,7 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#object">object</a></td>
-	<td class="summary">Reply object class</td>
+	<td class="summary">Reply object class.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#cmake_file_api.object.is_object">cmake_file_api.object.is_object (value)</a></td>
@@ -97,11 +90,11 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#object:new">object:new (path, data)</a></td>
-	<td class="summary">Create a new <a href="cmake_file_api.html#object">object</a></td>
+	<td class="summary">Create a new <a href="cmake_file_api.html#object">object</a>.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#lazy">lazy</a></td>
-	<td class="summary">Lazy object field class</td>
+	<td class="summary">Lazy object field class.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#cmake_file_api.lazy.is_lazy">cmake_file_api.lazy.is_lazy (value)</a></td>
@@ -140,9 +133,9 @@
 
     <h3>Links:</h3>
     <ul>
-         <li>Shared stateless query
+         <li>Shared stateless query documentation
  https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-shared-stateless-query-files</li>
-         <li> Object kind
+         <li> Object kind documentation
  https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds</li>
     </ul>
 
@@ -190,9 +183,9 @@
 
     <h3>Links:</h3>
     <ul>
-         <li>Client stateless query
+         <li>Client stateless query documentation
  https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateless-query-files</li>
-         <li> Object kind
+         <li> Object kind documentation
  https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds</li>
     </ul>
 
@@ -240,9 +233,9 @@
 
     <h3>Links:</h3>
     <ul>
-         <li>Client stateful query
+         <li>Client stateful query documentation
  https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files</li>
-         <li> Object kind
+         <li> Object kind documentation
  https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds</li>
     </ul>
 
@@ -291,7 +284,7 @@
 
     <h3>Links:</h3>
     <ul>
-          Reply index file
+          Reply index file documentation
  https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-reply-index-file
     </ul>
 
@@ -336,20 +329,19 @@
     <strong>object</strong>
     </dt>
     <dd>
-    Reply object class
+    Reply object class. </p>
+
+<p> Returned by the <a href="cmake_file_api.html#read_reply">read_reply</a> function. All the fields of this type are the
+ same as in the reply index file documentation except for special fields that
+ have the key "jsonFile". These fields are not immediately loaded and are
+ instead initialized as a <a href="cmake_file_api.html#lazy">lazy</a>. Lazy objects have a path field and a load
+ method which can run synchronously and asynchronously to retrieve the desired
+ field as an <a href="cmake_file_api.html#object">object</a>.
 
     <h3>Links:</h3>
     <ul>
-          Reply index file
- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-reply-index-file</p>
-
-<p> Returned by the <a href="cmake_file_api.html#read_reply">read_reply</a> function.
- All the fields of this type are the same as in the reply
- index file documentation except for special fields that have the key
- "jsonFile". These fields are not immediately loaded and are instead
- initialized as a <a href="cmake_file_api.html#lazy">lazy</a>. Lazy objects have a path field and a load method
- which can run synchronously and asynchronously to retrieve the desired field
- as an <a href="cmake_file_api.html#object">object</a>.
+          Reply index file documentation
+ https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-reply-index-file
     </ul>
 
 
@@ -395,7 +387,9 @@
     <strong>object:new (path, data)</strong>
     </dt>
     <dd>
-    Create a new <a href="cmake_file_api.html#object">object</a>  Values of fields with the key "jsonFile" are going to be converted to
+    Create a new <a href="cmake_file_api.html#object">object</a>. </p>
+
+<p> Values of fields with the key "jsonFile" are going to be converted to
  <a href="cmake_file_api.html#lazy">lazy</a> values.
 
     </ul>
@@ -427,16 +421,16 @@
     <strong>lazy</strong>
     </dt>
     <dd>
-    Lazy object field class
-
-    <h3>Links:</h3>
-    <ul>
-          cmake-file-api
- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files</p>
+    Lazy object field class. </p>
 
 <p> Values of fields with the key "jsonFiles" of API replies are converted to
  <a href="cmake_file_api.html#lazy">lazy</a> values that can be loaded synchronously or asynchronously with the
  <a href="cmake_file_api.html#lazy:load">lazy:load</a> method into an <a href="cmake_file_api.html#object">object</a>.
+
+    <h3>Links:</h3>
+    <ul>
+          cmake-file-api documentation
+ https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files
     </ul>
 
 
@@ -544,7 +538,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2021-11-06 16:09:31 </i>
+<i style="float:right;">Last updated 2021-11-06 17:47:05 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

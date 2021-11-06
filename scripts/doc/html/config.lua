@@ -1,4 +1,4 @@
-project = "nvim.cmake_file_api"
+project = "Neovim CMake File API"
 description = "Library for dealing with the CMake file API used to extract "
   .. "information about generated build systems."
 full_description = "CMake provides a file-based API that clients may use to "
@@ -12,4 +12,16 @@ not_luadoc = true
 
 format = "markdown"
 
-custom_tags = { { "link", title = "Links" } }
+custom_tags = {
+  {
+    "link",
+    title = "Links",
+    format = function(text)
+      local name = text:gsub("%s*(.*) http.*", "%1", 1)
+      local link = text:gsub(".* (http.*)%s*", "%1", 1)
+      local fmt = '<a href="%s">%s</a>'
+
+      return fmt:format(link, name)
+    end,
+  },
+}

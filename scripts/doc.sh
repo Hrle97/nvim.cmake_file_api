@@ -34,6 +34,7 @@ function main()
   ldoc \
     --config "$doc_html_config_file" \
     --dir "$doc_html_gen_path" \
+    --style "$doc_html_scripts_root_path" \
     "$doc_file"
 
   ldoc \
