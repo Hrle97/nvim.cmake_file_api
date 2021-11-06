@@ -13,20 +13,20 @@
 -- version, API v1.- it will lead the query files and write reply files for the
 -- client to read.
 --
--- cmake-file-api: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files
+-- @link cmake-file-api
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files
 --
 -- @module nvim.cmake_file_api
 --
 -- @author Hrle97
 -- @copyright 2021, Hrle97
 -- @license MIT License
--- @release 0.0.1
+-- @release 1.0.0
 local cmake_file_api = {}
 
 local query = require "nvim.cmake_file_api.query"
 local reply = require "nvim.cmake_file_api.reply"
 local object = require "nvim.cmake_file_api.object"
-local lazy = require "nvim.cmake_file_api.lazy"
 
 -------------------------------------------------------------------------------
 
@@ -42,8 +42,10 @@ local lazy = require "nvim.cmake_file_api.lazy"
 -- The query will be shared with other clients such as IDE's and editors. See
 -- the shared stateless query documentation for more info.
 --
--- Shared stateless query: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-shared-stateless-query-files
--- Object kind: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
+-- @link Shared stateless query
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-shared-stateless-query-files
+-- @link Object kind
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
 --
 -- @function write_shared_stateless_query
 --
@@ -78,8 +80,10 @@ end
 -- The query won't be shared with other clients such as IDE's and editors. See
 -- the client stateless query documentation for more info.
 --
--- Client stateless query: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateless-query-files
--- Object kind: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
+-- @link Client stateless query
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateless-query-files
+-- @link Object kind
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
 --
 -- @function write_client_stateless_query
 --
@@ -114,8 +118,10 @@ end
 -- The query will be shared with other clients such as IDE's and editors. See
 -- the shared stateless query documentation for more info.
 --
--- Client stateful query: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files
--- Object kind: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
+-- @link Client stateful query
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files
+-- @link Object kind
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
 --
 -- @function write_client_stateful_query
 --
@@ -148,7 +154,8 @@ end
 --
 -- See the reply index file documentation for more info.
 --
--- Reply index File: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-reply-index-file
+-- @link Reply index file
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-reply-index-file
 --
 -- @function read_reply
 --
@@ -177,7 +184,8 @@ end
 
 --- Reply object class
 --
--- Reply index File: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-reply-index-file
+-- @link Reply index file
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-reply-index-file
 --
 -- Returned by the @{read_reply} function.
 -- All the fields of this type are the same as in the reply
@@ -195,7 +203,7 @@ cmake_file_api.object = {}
 -- @param   value   Value to check against.
 -- @treturn boolean Whether the value is an @{object}.
 function cmake_file_api.object.is_object(value)
-  return object.is_object(value)
+  return object.object.is_object(value)
 end
 
 --- Create a new @{object}
@@ -209,12 +217,13 @@ end
 -- @tparam  table  data Data representing some values of the reply.
 -- @treturn @{object}   Constructed @{object}.
 function cmake_file_api.object:new(path, data)
-  return object.new(self, path, data)
+  return object.object.new(self, path, data)
 end
 
 --- Lazy object field class
 --
--- cmake-file-api: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files
+-- @link cmake-file-api
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files
 --
 -- Values of fields with the key "jsonFiles" of API replies are converted to
 -- @{lazy} values that can be loaded synchronously or asynchronously with the
@@ -229,7 +238,7 @@ cmake_file_api.lazy = {}
 -- @param   value   Value to check against.
 -- @treturn boolean Whether the value is a @{lazy}.
 function cmake_file_api.lazy.is_lazy(value)
-  return lazy.is_lazy(value)
+  return object.lazy.is_lazy(value)
 end
 
 --- Create a new @{lazy}
@@ -242,7 +251,7 @@ end
 -- @tparam  string path Path to the JSON file from which this will be read.
 -- @treturn @{lazy}     Constructed @{lazy}.
 function cmake_file_api.lazy:new(path)
-  return lazy.new(self, path)
+  return object.lazy.new(self, path)
 end
 
 --- Load a @{lazy}.
@@ -259,7 +268,7 @@ end
 -- @treturn @{object}
 -- Loaded @{lazy} as an @{object}.
 function cmake_file_api.lazy:load(callback)
-  return lazy.load(self, callback)
+  return object.lazy.load(self, callback)
 end
 
 return cmake_file_api
