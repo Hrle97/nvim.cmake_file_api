@@ -13,9 +13,3 @@ not_luadoc = true
 format = "markdown"
 
 custom_tags = { { "link", title = "Links" } }
-
--- _G.style = "./doc/style"
--- _G.template = "./doc/template"
--- _G.examples = "./example"
-
-dir = "./.doc"

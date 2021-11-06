@@ -1,0 +1,551 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>nvim.cmake_file_api</h1>
+
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Queries">Queries </a></li>
+<li><a href="#Reply">Reply </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><strong>nvim.cmake_file_api</strong></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>nvim.cmake_file_api</code></h1>
+<p>cmake-file-api client implementation for Neovim.</p>
+<p> CMake provides a file-based API that clients may use to get semantic
+ information about the buildsystems CMake generates. Clients may use the API
+ by writing query files to a specific location in a build tree to request zero
+ or more Object Kinds. When CMake generates the buildsystem in that build tree
+ it will read the query files and write reply files for the client to read.</p>
+
+<p> The file-based API uses a <build>/.cmake/api/ directory at the top of a build
+ tree. The API is versioned to support changes to the layout of files within
+ the API directory. API file layout versioning is orthogonal to the versioning
+ of Object Kinds used in replies. This version of CMake supports only one API
+ version, API v1.- it will lead the query files and write reply files for the
+ client to read.</p>
+    <h3>Info:</h3>
+    <ul>
+        <li><strong>Copyright</strong>: 2021, Hrle97</li>
+        <li><strong>Release</strong>: 1.0.0</li>
+        <li><strong>License</strong>: MIT License</li>
+        <li><strong>Author</strong>: Hrle97</li>
+    </ul>
+
+
+<h2><a href="#Queries">Queries </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#write_shared_stateless_query">write_shared_stateless_query (build, kind, version[, callback])</a></td>
+	<td class="summary">Write a shared stateless query for the CMake file API.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_client_stateless_query">write_client_stateless_query (build, kind, version[, callback])</a></td>
+	<td class="summary">Write a client stateless query for the CMake file API.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_client_stateful_query">write_client_stateful_query (build, query[, callback])</a></td>
+	<td class="summary">Write a query for the CMake file API.</td>
+	</tr>
+</table>
+<h2><a href="#Reply">Reply </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#read_reply">read_reply (build[, callback])</a></td>
+	<td class="summary">Read a reply from the CMake file API (it rhymes!).</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#object">object</a></td>
+	<td class="summary">Reply object class</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cmake_file_api.object.is_object">cmake_file_api.object.is_object (value)</a></td>
+	<td class="summary">Check if a value is an <a href="cmake_file_api.html#object">object</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#object:new">object:new (path, data)</a></td>
+	<td class="summary">Create a new <a href="cmake_file_api.html#object">object</a></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#lazy">lazy</a></td>
+	<td class="summary">Lazy object field class</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cmake_file_api.lazy.is_lazy">cmake_file_api.lazy.is_lazy (value)</a></td>
+	<td class="summary">Check if a value is a <a href="cmake_file_api.html#lazy">lazy</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#object:new">object:new (path)</a></td>
+	<td class="summary">Create a new <a href="cmake_file_api.html#lazy">lazy</a></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#lazy:load">lazy:load ([callback])</a></td>
+	<td class="summary">Load a <a href="cmake_file_api.html#lazy">lazy</a>.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header has-description"><a name="Queries"></a>Queries </h2>
+
+          <div class="section-description">
+           Functions to call before configuring CMake in order to instruct it what data
+ to generate using the API.
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "write_shared_stateless_query"></a>
+    <strong>write_shared_stateless_query (build, kind, version[, callback])</strong>
+    </dt>
+    <dd>
+    Write a shared stateless query for the CMake file API. </p>
+
+<p> The query will be shared with other clients such as IDE's and editors. See
+ the shared stateless query documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <li>Shared stateless query
+ https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-shared-stateless-query-files</li>
+         <li> Object kind
+ https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds</li>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the generated buildsystem. It has to be an already
+ existing directory on the filesystem.
+        </li>
+        <li><span class="parameter">kind</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The kind of query to send. Valid values are: "codemodel", "cache",
+ "cmakeFiles", and "tkolchains". See the object kind documentation for more
+ info.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span> or <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The major version of the query kind to send. Valid values depend on the query
+ kind. See the cmake-file-api documentation for more info.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         It can be a Lua function, a Vim command string, or nil.
+ If not nil, the function will run asynchronously and call the callback upon
+ completion. Otherwise, it will run synchronously.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "write_client_stateless_query"></a>
+    <strong>write_client_stateless_query (build, kind, version[, callback])</strong>
+    </dt>
+    <dd>
+    Write a client stateless query for the CMake file API. </p>
+
+<p> The query won't be shared with other clients such as IDE's and editors. See
+ the client stateless query documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <li>Client stateless query
+ https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateless-query-files</li>
+         <li> Object kind
+ https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds</li>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the generated buildsystem. It has to be an already
+ existing directory on the filesystem.
+        </li>
+        <li><span class="parameter">kind</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The kind of query to send. Valid values are: "codemodel", "cache",
+ "cmakeFiles", and "toolchains". See the object kind documentation for more
+ info.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span> or <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The major version of the query kind to send. Valid values depend on the query
+ kind. See the cmake-file-api documentation for more info.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         It can be a Lua function, a Vim command string, or nil.
+ If not nil, the function will run asynchronously and call the callback upon
+ completion. Otherwise, it will run synchronously.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "write_client_stateful_query"></a>
+    <strong>write_client_stateful_query (build, query[, callback])</strong>
+    </dt>
+    <dd>
+    Write a query for the CMake file API. </p>
+
+<p> The query will be shared with other clients such as IDE's and editors. See
+ the shared stateless query documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <li>Client stateful query
+ https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files</li>
+         <li> Object kind
+ https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds</li>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the generated buildsystem. It has to be an already
+ existing directory on the filesystem.
+        </li>
+        <li><span class="parameter">query</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         The query to send to the CMake file API. Reqd the client statefull query
+ documentation for more info.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         It can be a Lua function, a Vim command string, or nil.
+ If not nil, the function will run asynchronously and call the callback upon
+ completion. Otherwise, it will run synchronously.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Reply"></a>Reply </h2>
+
+          <div class="section-description">
+           Functions and classes to use after configuring CMake in order to read the
+ reply of the API.
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "read_reply"></a>
+    <strong>read_reply (build[, callback])</strong>
+    </dt>
+    <dd>
+    Read a reply from the CMake file API (it rhymes!). </p>
+
+<p> See the reply index file documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+          Reply index file
+ https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-reply-index-file
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the generated buildsystem. It has to be an already
+ existing directory on the filesystem.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         It can be a Lua function, a Vim command string, or nil.
+ If not nil, the function will run asynchronously and call the callback upon
+ completion. Otherwise, it will run synchronously.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+         Returns an <a href="cmake_file_api.html#object">object</a> represention the reply.
+ All the fields of this type are the same as in the reply index file
+ documentation except for special fields that have the key "jsonFile". These
+ fields are not immediately loaded and are instead initialized as a <a href="cmake_file_api.html#lazy">lazy</a>.
+ Lazy objects have a path field and a load method which can run synchronously
+ and asynchronously to retrieve the desired field as an <a href="cmake_file_api.html#object">object</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="cmake_file_api.html#object">object</a></li>
+         <li><a href="cmake_file_api.html#lazy">lazy</a></li>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "object"></a>
+    <strong>object</strong>
+    </dt>
+    <dd>
+    Reply object class
+
+    <h3>Links:</h3>
+    <ul>
+          Reply index file
+ https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-reply-index-file</p>
+
+<p> Returned by the <a href="cmake_file_api.html#read_reply">read_reply</a> function.
+ All the fields of this type are the same as in the reply
+ index file documentation except for special fields that have the key
+ "jsonFile". These fields are not immediately loaded and are instead
+ initialized as a <a href="cmake_file_api.html#lazy">lazy</a>. Lazy objects have a path field and a load method
+ which can run synchronously and asynchronously to retrieve the desired field
+ as an <a href="cmake_file_api.html#object">object</a>.
+    </ul>
+
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="cmake_file_api.html#read_reply">read_reply</a></li>
+         <li><a href="cmake_file_api.html#lazy">lazy</a></li>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "cmake_file_api.object.is_object"></a>
+    <strong>cmake_file_api.object.is_object (value)</strong>
+    </dt>
+    <dd>
+    Check if a value is an <a href="cmake_file_api.html#object">object</a>.
+
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+           Value to check against.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        Whether the value is an <a href="cmake_file_api.html#object">object</a>.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "object:new"></a>
+    <strong>object:new (path, data)</strong>
+    </dt>
+    <dd>
+    Create a new <a href="cmake_file_api.html#object">object</a>  Values of fields with the key "jsonFile" are going to be converted to
+ <a href="cmake_file_api.html#lazy">lazy</a> values.
+
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Path to the JSON file from which this was read.
+        </li>
+        <li><span class="parameter">data</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         Data representing some values of the reply.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Constructed <a href="cmake_file_api.html#object">object</a>.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "lazy"></a>
+    <strong>lazy</strong>
+    </dt>
+    <dd>
+    Lazy object field class
+
+    <h3>Links:</h3>
+    <ul>
+          cmake-file-api
+ https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files</p>
+
+<p> Values of fields with the key "jsonFiles" of API replies are converted to
+ <a href="cmake_file_api.html#lazy">lazy</a> values that can be loaded synchronously or asynchronously with the
+ <a href="cmake_file_api.html#lazy:load">lazy:load</a> method into an <a href="cmake_file_api.html#object">object</a>.
+    </ul>
+
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="cmake_file_api.html#object">object</a></li>
+         <li><a href="cmake_file_api.html#read_reply">read_reply</a></li>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "cmake_file_api.lazy.is_lazy"></a>
+    <strong>cmake_file_api.lazy.is_lazy (value)</strong>
+    </dt>
+    <dd>
+    Check if a value is a <a href="cmake_file_api.html#lazy">lazy</a>.
+
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+           Value to check against.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        Whether the value is a <a href="cmake_file_api.html#lazy">lazy</a>.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "object:new"></a>
+    <strong>object:new (path)</strong>
+    </dt>
+    <dd>
+    Create a new <a href="cmake_file_api.html#lazy">lazy</a>  The <a href="cmake_file_api.html#lazy">lazy</a> can be loaded later into an <a href="cmake_file_api.html#object">object</a> with the <a href="cmake_file_api.html#lazy:load">lazy:load</a>
+ method.
+
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Path to the JSON file from which this will be read.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Constructed <a href="cmake_file_api.html#lazy">lazy</a>.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "lazy:load"></a>
+    <strong>lazy:load ([callback])</strong>
+    </dt>
+    <dd>
+    Load a <a href="cmake_file_api.html#lazy">lazy</a>. </p>
+
+<p> Load a <a href="cmake_file_api.html#lazy">lazy</a> int an <a href="cmake_file_api.html#object">object</a> synchronously or asynchronously.
+
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         It can be a Lua function, a Vim command string, or nil.
+ If not nil, the function will run asynchronously and call the callback upon
+ completion. Otherwise, it will run synchronously.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Loaded <a href="cmake_file_api.html#lazy">lazy</a> as an <a href="cmake_file_api.html#object">object</a>.
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2021-11-06 16:09:31 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
