@@ -6,15 +6,16 @@
 -- or more Object Kinds. When CMake generates the buildsystem in that build tree
 -- it will read the query files and write reply files for the client to read.
 --
--- @link cmake-file-api documentation
+-- @link CMake File API documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files
 --
 -- @module nvim.cmake_file_api
 --
--- @author Hrle97
--- @copyright 2021, Hrle97
+-- @author Hrle97 <https://github.com/Hrle97>
+-- @copyright © 2021 Hrle97 <https://github.com/Hrle97>
 -- @license MIT License
--- @release 1.0.0
+-- @release 0.0.1
+-- @homepage https://github.com/Hrle97/nvim.cmake_file_api
 local cmake_file_api = {}
 
 local query = require "nvim.cmake_file_api.query"
@@ -53,7 +54,7 @@ local object = require "nvim.cmake_file_api.object"
 --
 -- @tparam number|string version
 -- The major version of the query kind to send. Valid values depend on the query
--- kind. See the cmake-file-api documentation for more info.
+-- kind. See the CMake File API documentation for more info.
 --
 -- @tparam[opt] function|string|nil callback
 -- It can be a Lua function, a Vim command string, or nil.
@@ -91,7 +92,7 @@ end
 --
 -- @tparam number|string version
 -- The major version of the query kind to send. Valid values depend on the query
--- kind. See the cmake-file-api documentation for more info.
+-- kind. See the CMake File API documentation for more info.
 --
 -- @tparam[opt] function|string|nil callback
 -- It can be a Lua function, a Vim command string, or nil.
@@ -184,18 +185,24 @@ end
 -- method which can run synchronously and asynchronously to retrieve the desired
 -- field as an @{object}.
 --
+-- @type object
+--
 -- @link Reply index file documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-reply-index-file
 --
 -- @see read_reply
 -- @see lazy
 cmake_file_api.object = {}
+cmake_file_api.object.__index = cmake_file_api.object
 
 --- Check if a value is an @{object}.
+--
+-- @function object:is_object
+--
 -- @param   value   Value to check against.
 -- @treturn boolean Whether the value is an @{object}.
-function cmake_file_api.object.is_object(value)
-  return object.object.is_object(value)
+function cmake_file_api.object:is_object(value)
+  return object.object.is_object(self, value)
 end
 
 --- Create a new @{object}.
@@ -218,19 +225,24 @@ end
 -- @{lazy} values that can be loaded synchronously or asynchronously with the
 -- @{lazy:load} method into an @{object}.
 --
--- @link cmake-file-api documentation
+-- @type lazy
+--
+-- @link CMake File API documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files
 --
 -- @see object
 -- @see read_reply
 cmake_file_api.lazy = {}
+cmake_file_api.lazy.__index = cmake_file_api.lazy
 
 --- Check if a value is a @{lazy}.
 --
+-- @function lazy:is_lazy
+--
 -- @param   value   Value to check against.
 -- @treturn boolean Whether the value is a @{lazy}.
-function cmake_file_api.lazy.is_lazy(value)
-  return object.lazy.is_lazy(value)
+function cmake_file_api.lazy:is_lazy(value)
+  return object.lazy.is_lazy(self, value)
 end
 
 --- Create a new @{lazy}
@@ -238,7 +250,7 @@ end
 -- The @{lazy} can be loaded later into an @{object} with the @{lazy:load}
 -- method.
 --
--- @function object:new
+-- @function lazy:new
 --
 -- @tparam  string path Path to the JSON file from which this will be read.
 -- @treturn @{lazy}     Constructed @{lazy}.

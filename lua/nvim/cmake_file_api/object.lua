@@ -6,8 +6,8 @@ object.__index = object
 local lazy = {}
 lazy.__index = lazy
 
-function object.is_object(data)
-  return getmetatable(data) == object
+local function is_lazy_key(key)
+  return key == "jsonFile"
 end
 
 local function get_absolute_lazy_path(relative_path, object_path)
@@ -24,7 +24,7 @@ local function init_lazy_objects(data, object_path)
   end
 
   for key, value in pairs(data) do
-    if lazy.is_lazy_key(key) then
+    if is_lazy_key(key) then
       local lazy_path = get_absolute_lazy_path(value, object_path)
       data[key] = lazy:new(lazy_path)
     else
@@ -33,17 +33,17 @@ local function init_lazy_objects(data, object_path)
   end
 end
 
+function object:is_object(data)
+  return getmetatable(data) == self
+end
+
 function object:new(path, data)
   init_lazy_objects(data, path)
   return setmetatable({ path = path, data = data }, self)
 end
 
-function lazy.is_lazy_key(key)
-  return key == "jsonFile"
-end
-
-function lazy.is_lazy(data)
-  return getmetatable(data) == lazy
+function lazy:is_lazy(data)
+  return getmetatable(data) == self
 end
 
 function lazy:new(path)

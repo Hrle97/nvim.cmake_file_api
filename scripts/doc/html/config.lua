@@ -24,4 +24,5 @@ custom_tags = {
       return fmt:format(link, name)
     end,
   },
+  { "homepage" },
 }

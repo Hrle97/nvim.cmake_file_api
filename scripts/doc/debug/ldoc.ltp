@@ -1,0 +1,129 @@
+# local pairs = ldoc.pairs
+# local ipairs = ldoc.ipairs
+#
+# local print = ldoc.print
+#
+#
+# local string = ""
+#
+# function to_string(x)
+#   return string.format("%s", x)
+# end
+#
+#
+# local table = {}
+#
+# function table.length(x)
+#   local l = 0
+#   for _, _ in pairs(x) do l = l + 1 end
+#   return l
+# end
+#
+#
+# function is_array(x)
+#   local str = to_string(x)
+#   return string.match(str, "^%{.*%}$")
+# end
+#
+# function is_table(x)
+#   local str = to_string(x)
+#   return string.match(str, "^table: 0x[0-9a-f]*$")
+# end
+#
+# function is_function(x)
+#   local str = to_string(x)
+#   return string.match(str, "^function: 0x[0-9a-f]*$")
+# end
+#
+#
+# function to_repr(x)
+#   if is_function(x) then
+#     return "<" .. to_string(x) .. ">"
+#
+#   elseif is_table(x) then
+#     local l = table.length(x)
+#     local s = "empty"
+#     if l == 1 then
+#       s = l .. " item"
+#     elseif l > 1 then
+#       s = l .. " items"
+#     end
+#
+#     return "<table: { " .. s .. " }>"
+#
+#   elseif is_array(x) then
+#     local l = #x
+#     local s = "empty"
+#     if l == 1 then
+#       s = l .. " item"
+#     elseif l > 1 then
+#       s = l .. " items"
+#     end
+#
+#     return "<array: { " .. #x .. " items" .. " }>"
+#
+#   else
+#     return string.format("%q", x)
+#   end
+# end
+#
+#
+# function __inspect(x, l, i, d)
+#   i = i or ""
+#   d = d or 1
+#
+#   if not is_table(x) and not is_array(x) or d > l then
+#     return to_repr(x)
+#   end
+#
+#   local r = "{"
+#
+#   if is_table(x) then
+#     for k, v in pairs(x) do
+#       local ks = "\n" .. i .. ' ' .. to_repr(k) .. ': '
+#       local vs = __inspect(v, l, i .. "  ", d + 1)
+#       local l = ks .. vs
+#       r = r .. l
+#     end
+#   elseif is_array(x) then
+#     for k, v in ipairs(x) do
+#       local ks = "\n" .. i .. ' ' .. to_repr(k) .. ': '
+#       local vs = __inspect(v, l, i .. "  ", d + 1)
+#       local l = ks .. vs
+#       r = r .. l
+#     end
+#   end
+#
+#   return r .. "\n" .. i .. "}"
+# end
+#
+# function inspect(x, l)
+#   l = l or 1
+#   if l > 10 then l = 10 elseif l < 1 then l = 1 end
+#   return __inspect(x, l)
+# end
+==============================================================================
+LDOC:
+
+ldoc = $(inspect(ldoc))
+
+ldoc.kinds = $(inspect(ldoc.kinds, 2))
+
+ldoc.items = $(inspect(ldoc.items, 2))
+
+ldoc.modules = $(inspect(ldoc.modules, 2))
+
+==============================================================================
+MODULE:
+
+module = $(inspect(module))
+
+module.kinds = $(inspect(module.kinds, 2))
+
+module.items = $(inspect(module.items, 2))
+
+module.modifiers = $(inspect(module.modifiers, 2))
+
+module.tags = $(inspect(module.tags, 2))
+
+module.sections = $(inspect(module.sections, 2))
