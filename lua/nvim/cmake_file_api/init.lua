@@ -58,7 +58,7 @@ local object = require "nvim.cmake_file_api.object"
 --
 -- @tparam[opt] function|string|nil callback
 -- It can be a Lua function, a Vim command string, or nil.
--- If not nil, the function will run asynchronously and call the callback upon
+-- If not nil, the method will run asynchronously and call the callback upon
 -- completion. Otherwise, it will run synchronously.
 function cmake_file_api.write_shared_stateless_query(
   build,
@@ -96,7 +96,7 @@ end
 --
 -- @tparam[opt] function|string|nil callback
 -- It can be a Lua function, a Vim command string, or nil.
--- If not nil, the function will run asynchronously and call the callback upon
+-- If not nil, the method will run asynchronously and call the callback upon
 -- completion. Otherwise, it will run synchronously.
 function cmake_file_api.write_client_stateless_query(
   build,
@@ -129,7 +129,7 @@ end
 --
 -- @tparam[opt] function|string|nil callback
 -- It can be a Lua function, a Vim command string, or nil.
--- If not nil, the function will run asynchronously and call the callback upon
+-- If not nil, the method will run asynchronously and call the callback upon
 -- completion. Otherwise, it will run synchronously.
 function cmake_file_api.write_client_stateful_query(build, _query, callback)
   return query.write_client_stateful_query(build, _query, callback)
@@ -159,7 +159,7 @@ end
 --
 -- @tparam[opt] function|string|nil callback
 -- It can be a Lua function, a Vim command string, or nil.
--- If not nil, the function will run asynchronously and call the callback upon
+-- If not nil, the method will run asynchronously and call the callback upon
 -- completion. Otherwise, it will run synchronously.
 --
 -- @treturn @{object}
@@ -178,14 +178,21 @@ end
 
 --- Reply object class.
 --
--- Returned by the @{read_reply} function. All the fields of this type are the
+-- Returned by the @{read_reply} method. All the fields of this type are the
 -- same as in the reply index file documentation except for special fields that
 -- have the key "jsonFile". These fields are not immediately loaded and are
 -- instead initialized as a @{lazy}. Lazy objects have a path field and a load
 -- method which can run synchronously and asynchronously to retrieve the desired
--- field as an @{object}.
+-- field as a @{object}.
 --
 -- @type object
+--
+-- @tfield string path
+-- Path to the JSON file from which this will be read with the @{lazy:load}
+-- function.
+--
+-- @field data
+-- Data that was read from the JSON file that this was loaded from.
 --
 -- @link Reply index file documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-reply-index-file
@@ -195,7 +202,7 @@ end
 cmake_file_api.object = {}
 cmake_file_api.object.__index = cmake_file_api.object
 
---- Check if a value is an @{object}.
+--- Check if a value is a @{object}.
 --
 -- @function object:is_object
 --
@@ -227,6 +234,10 @@ end
 --
 -- @type lazy
 --
+-- @tfield string path
+-- Path to the JSON file from which this will be read with the @{lazy:load}
+-- function.
+--
 -- @link CMake File API documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files
 --
@@ -252,8 +263,8 @@ end
 --
 -- @function lazy:new
 --
--- @tparam  string path Path to the JSON file from which this will be read.
--- @treturn @{lazy}     Constructed @{lazy}.
+-- @tparam  string  path Path to the JSON file from which this will be read.
+-- @treturn @{lazy}      Constructed @{lazy}.
 function cmake_file_api.lazy:new(path)
   return object.lazy.new(self, path)
 end
@@ -266,7 +277,7 @@ end
 --
 -- @tparam[opt] function|string|nil callback
 -- It can be a Lua function, a Vim command string, or nil.
--- If not nil, the function will run asynchronously and call the callback upon
+-- If not nil, the method will run asynchronously and call the callback upon
 -- completion. Otherwise, it will run synchronously.
 --
 -- @treturn @{object}

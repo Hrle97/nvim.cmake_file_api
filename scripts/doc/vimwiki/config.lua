@@ -10,9 +10,19 @@ full_description = "CMake provides a file-based API that clients may use to "
 
 not_luadoc = true
 
-format = "markdown"
-
 custom_tags = {
-  { "link", title = "Links" },
+  {
+    "link",
+    title = "Links",
+    format = function(text)
+      local name = text:gsub("^%s*(.-)%s*http.*$", "%1", 1)
+      local link = text:gsub("^.*%s*(http.-)%s*$", "%1", 1)
+      local fmt = "%s: <%s>"
+
+      return fmt:format(name, link)
+    end,
+  },
   { "homepage", title = "Homepage" },
 }
+
+alias("tfield", { "field", modifiers = { type = "$1" } })

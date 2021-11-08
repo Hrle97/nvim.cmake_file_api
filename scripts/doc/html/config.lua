@@ -10,8 +10,6 @@ full_description = "CMake provides a file-based API that clients may use to "
 
 not_luadoc = true
 
-format = "markdown"
-
 custom_tags = {
   {
     "link",
@@ -26,3 +24,5 @@ custom_tags = {
   },
   { "homepage" },
 }
+
+alias("tfield", { "field", modifiers = { type = "$1" } })

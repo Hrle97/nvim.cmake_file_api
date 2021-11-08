@@ -1,131 +1,403 @@
+# -- #########################################################################
+# -- PROJECT
+#
 # local help_tag_prefix = ldoc.project:gsub("nvim%.", "", 1)
 #
-# function wrap(str, limit, indent, indent1)
-#   indent = indent or ""
-#   indent1 = indent1 or indent
-#   limit = limit or 79
-#   local here = 1 - #indent1
-#   local function check(sp, st, word, fi)
-#     if fi - here > limit then
-#       here = st - #indent
-#       return "\n" .. indent .. word
-#     end
-#   end
-#   return indent1 .. str:gsub("(%s+)()(%S+)()", check)
+# local function tag(str)
+#   local fmt = "%80s"
+#   return fmt:format("*" .. str .. "*")
 # end
 #
-# function trim(str)
+# local function prefixed_tag(str)
+#   return tag(help_tag_prefix .. str)
+# end
+#
+# local function link_help(str)
+#   return str:gsub("@%{(.-)%}", "|" .. help_tag_prefix .. ".%1|")
+# end
+#
+#
+# local show_params = not ldoc.no_return_or_parms
+# local show_return = not ldoc.no_return_or_parms
+# local show_summary = not ldoc.no_summary
+#
+# local custom_tags = ldoc.custom_tags
+#
+#
+# -- #########################################################################
+# -- LIB
+#
+# local print = ldoc.print
+#
+#
+# local string = ""
+#
+# function to_string(x)
+#   return string.format("%s", x)
+# end
+#
+# local function is_empty(str)
+#   return str and str:match("^%s*$")
+# end
+#
+# local function args(str)
+#   return str:gsub("(%w+)", "{%1}")
+# end
+#
+# local function types(str)
+#   str = str:gsub("|", ", ")
+#   str = str:gsub("(nil)", "`%1`")
+#   str = str:gsub("(boolean)", "`%1`")
+#   str = str:gsub("(number)", "`%1`")
+#   str = str:gsub("(string)", "`%1`")
+#   str = str:gsub("(function)", "`%1`")
+#   str = str:gsub("(table)", "`%1`")
+#   str = str:gsub("(userdata)", "`%1`")
+#   return link_help(str)
+# end
+#
+# local function trim(str)
 #   str = str:gsub("^%s+", "")
 #   str = str:gsub("%s+$", "")
 #   return str
 # end
 #
+# local function join(str)
+#   return str:gsub("%s+", " ")
+# end
+#
+# local function wrap(str, indent, limit)
+#   indent = indent or 0
+#   limit = (limit or 79) - indent - 1
+#   indent = (" "):rep(indent)
+#
+#   local last_break = 1
+#   local function sub(word_begin, word, word_end)
+#     if word_end - last_break > limit then
+#       last_break = word_begin
+#       return "\n" .. indent .. word
+#     end
+#   end
+#
+#   return indent .. str:gsub("%s+()(%S+)()", sub)
+# end
+#
+# local function pretty(str, indent, limit)
+#   return wrap(join(trim(types(str))), indent, limit)
+# end
+#
+#
+# local table = {}
+#
+# function table.length(x)
+#   local l = 0
+#   for _, _ in pairs(x) do l = l + 1 end
+#   return l
+# end
+#
+# local iter = ldoc.modules.iter
+# local pairs = ldoc.pairs
+# local ipairs = ldoc.ipairs
+#
+#
+# function is_array(x)
+#   local str = to_string(x)
+#   return string.match(str, "^%{.*%}$")
+# end
+#
+# function is_table(x)
+#   local str = to_string(x)
+#   return string.match(str, "^table: 0x[0-9a-f]*$")
+# end
+#
+# function is_function(x)
+#   local str = to_string(x)
+#   return string.match(str, "^function: 0x[0-9a-f]*$")
+# end
+#
+#
+# function to_repr(x)
+#   if is_function(x) then
+#     return "<" .. to_string(x) .. ">"
+#
+#   elseif is_table(x) then
+#     local l = table.length(x)
+#     local s = "empty"
+#     if l == 1 then
+#       s = l .. " item"
+#     elseif l > 1 then
+#       s = l .. " items"
+#     end
+#
+#     return "<table: { " .. s .. " }>"
+#
+#   elseif is_array(x) then
+#     local l = #x
+#     local s = "empty"
+#     if l == 1 then
+#       s = l .. " item"
+#     elseif l > 1 then
+#       s = l .. " items"
+#     end
+#
+#     return "<array: { " .. #x .. " items" .. " }>"
+#
+#   else
+#     return string.format("%q", x)
+#   end
+# end
+#
+#
+# function __inspect(x, l, i, d)
+#   i = i or ""
+#   d = d or 1
+#
+#   if not is_table(x) and not is_array(x) or d > l then
+#     return to_repr(x)
+#   end
+#
+#   local r = "{"
+#
+#   if is_table(x) then
+#     for k, v in pairs(x) do
+#       local ks = "\n" .. i .. ' ' .. to_repr(k) .. ': '
+#       local vs = __inspect(v, l, i .. "  ", d + 1)
+#       local l = ks .. vs
+#       r = r .. l
+#     end
+#   elseif is_array(x) then
+#     for k, v in ipairs(x) do
+#       local ks = "\n" .. i .. ' ' .. to_repr(k) .. ': '
+#       local vs = __inspect(v, l, i .. "  ", d + 1)
+#       local l = ks .. vs
+#       r = r .. l
+#     end
+#   end
+#
+#   return r .. "\n" .. i .. "}"
+# end
+#
+# function inspect(x, l, i)
+#   l = l or 1
+#   if l > 10 then l = 10 elseif l < 1 then l = 1 end
+#   i = (" "):rep(i or 0)
+#   return __inspect(x, l, i)
+# end
+#
+#
+# -- #########################################################################
+# -- TEMPLATE
+#
 *$(help_tag_prefix).txt*
-                                      *$(help_tag_prefix)* *$(ldoc.project)*
+$(tag(ldoc.project))
+$(tag(help_tag_prefix))
 
-$(wrap(ldoc.description))
+$(pretty(ldoc.description))
 
 # if module.info then
-#   local fmt = "%-10s:     %s"
+#   local fmt = "%-10s:    %s"
 #   for tag, value in module.info:iter() do
     $(fmt:format(tag, value))
 #   end
 # end
 # if module.tags.homepage then
-    Homepage  :     <$(module.tags.homepage[1])>
+    Homepage  :    <$(module.tags.homepage[1])>
 # end
 
+
 ==============================================================================
+$(prefixed_tag("_contents"))
+
 CONTENTS
-                                      *$(help_tag_prefix)-contents*
 
     1. Intro ........................ |$(help_tag_prefix)_intro|
-    2. API .......................... |$(help_tag_prefix)-api|
-# local i = 1
-# local fmt = "%s %s"
-# for kind, items, type in ldoc.kinds() do
+    2. API .......................... |$(help_tag_prefix)_api|
+# local j = 1
+# for kind, items, type in module.kinds() do
 #   if ldoc.allowed_in_contents(type, module) then
-#     for item in items() do
-#       local j = 1
-#
-#       for kind, items, type in item.kinds() do
-#         if ldoc.allowed_in_contents(type, module) then
-#           kind = trim(kind:gsub("Class ", ""))
-#           local num = "2." .. j .. "."
-#           local sec = num .. " " .. kind .. "........................"
-#           local help_tag = help_tag_prefix .. "-" .. kind:lower()
-      $(fmt:format(sec:sub(1, 31), help_tag))
-#
-#           j = j + 1
-#         end
-#       end
-#     end
+#     local kind_name = trim(kind:gsub("Class ", ""))
+#     local kind_num = "2." .. j .. "."
+#     local kind_sec = kind_num .. " " .. kind_name
+#     local kind_index = (kind_sec .. "......................."):sub(1, 31)
+#     local kind_sep = kind:match("Class") and "." or "_"
+#     local kind_help_tag = help_tag_prefix .. kind_sep .. kind_name:lower()
+#     local kind_link = "|" .. kind_help_tag .. "|"
+      $(kind_index) $(kind_link)
+#     j = j + 1
 #   end
 # end
-    3. Examples ..................... |$(help_tag_prefix)-examples|
-    4. Changelog .................... |$(help_tag_prefix)-changelog|
-    5. Bugs ......................... |$(help_tag_prefix)-bugs|
-    6. Contributing ................. |$(help_tag_prefix)-contributing|
-    7. License ...................... |$(help_tag_prefix)-license|
+    3. Examples ..................... |$(help_tag_prefix)_examples|
+    4. Changelog .................... |$(help_tag_prefix)_changelog|
+    5. Bugs ......................... |$(help_tag_prefix)_bugs|
+    6. Contributing ................. |$(help_tag_prefix)_contributing|
+    7. License ...................... |$(help_tag_prefix)_license|
+
 
 ==============================================================================
+$(prefixed_tag("_intro"))
+
 1. Intro
-                                      *$(help_tag_prefix)-intro*
 
-$(wrap(ldoc.full_description))
+$(pretty(ldoc.full_description))
+
 
 ==============================================================================
+$(prefixed_tag("_api"))
+
 2. API
-                                      *$(help_tag_prefix)-api*
 
-# local i = 1
-# local fmt = "%-10s %s"
-# for kind, items, type in ldoc.kinds() do
+The API consists of functions that query the CMake File API, functions to read
+the reply of the API and classes that wrap the reply.
+
+
+# local j = 1
+# for kind, items, type in module.kinds() do
 #   if ldoc.allowed_in_contents(type, module) then
-#     for item in items() do
-#       local j = 1
-#
-#       for kind, items, type in item.kinds() do
-#         if ldoc.allowed_in_contents(type, module) then
-#           kind = trim(kind:gsub("Class ", ""))
-#           local num = "2." .. j .. "."
-#           local sec = num .. " " .. kind
-#           local help_tag = help_tag_prefix .. "-" .. kind:lower()
+#     local kind_name = trim(kind:gsub("Class ", ""))
+#     local kind_num = "2." .. j .. "."
+#     local kind_header = kind_num .. " " .. kind_name
+#     local kind_sep = kind.type == "section" and "_" or "."
+#     local kind_help_tag = kind_sep .. kind_name:lower()
 ------------------------------------------------------------------------------
-$(sec)
-                                      *$(help_tag)*
+$(prefixed_tag(kind_help_tag))
 
-$(wrap(ldoc.descript(kind)))
+$(kind_header)
 
-#
-#           j = j + 1
-#         end
-#       end
+#     local kind_item = module.kinds:get_item(kind)
+#     if kind_item then
+$(pretty(kind_item.description))
+
+
 #     end
-#   end
-# end
+#
+#     -- Kind items
+#     for item in items() do
+$(prefixed_tag("." .. item.name))
+
+$(item.name)$(args(item.args))
+
+$(pretty(item.summary))
+#       if item.description ~= "" then
+
+$(pretty(item.description))
+#       end
+
+#       if show_params and item.params then
+  Parameters:
+
+#         for param in iter(item.params) do
+#           for subparam in iter(item:subparam(param)) do
+#             local subparam_name = item:display_name_of(subparam)
+#             local subparam_type = types(item:type_of_param(subparam))
+#             local subparam_default = item:default_of_param(subparam)
+#             local subparam_readonly = item:readonly(subparam) and "!" or ""
+#
+#             if subparam_default == true then
+    [{$(subparam_name)} $(subparam_type)$(subparam_readonly)]
+#             elseif subparam_default then
+    {$(subparam_name)} $(subparam_type)$(subparam_readonly) = $(subparam_default)
+#             else
+    {$(subparam_name)} $(subparam_type)$(subparam_readonly)
+#             end
+#
+$(pretty(item.params.map[subparam], 6))
+
+#           end -- for iter(item:subparam(param))
+#         end -- for iter(item.params)
+#       end -- if show_params
+#
+#       if show_return and item.retgroups then
+  Returns:
+
+#         for _, group in ipairs(item.retgroups) do
+#           for ret in group:iter() do
+#             local type = item:return_type(ret)
+#             if not is_empty(type) then
+$(pretty(type, 4))
+#             end
+#             if not is_empty(ret.text) then
+$(pretty(ret.text, 6))
+
+#             end
+#           end -- for ret
+#         end -- for ipairs(item.retgroups)
+#       end -- if show_return
+#
+#       if show_return and item.raise then
+          $(item.raise)
+
+#       end
+#
+#       if item.see then
+  See also:
+
+#         for see in iter(item.see) do
+    |$(help_tag_prefix .. "." .. see.label)|
+#         end
+
+#       end -- if item.see
+#
+#       if item.usage then
+  Usage:
+
+#         for usage in iter(item.usage) do
+$(pretty(usage, 4))
+
+#         end
+#       end -- if item.usage
+#
+#       if custom_tags then
+#         for tag in iter(custom_tags) do
+#           item_tag = item.tags[tag[1]]
+#           if item_tag and not item_tag.hidden then
+#             if not is_empty(tag.title) then
+  $(tag.title):
+
+#             end
+#             for value in iter(item_tag) do
+$(pretty(tag.format and tag.format(value) or value, 4))
+
+#             end
+#           end -- if item_tag and not item_tag.hidden
+#         end -- iter custom_tags
+#       end -- if custom_tags
+
+#     end -- for items()
+#
+#     j = j + 1
+#   end -- if ldoc.allowed_in_contents(type, module)
+# end -- for module.kinds()
 ==============================================================================
+$(prefixed_tag("_examples"))
+
 3. Examples
-                                      *$(help_tag_prefix)-examples*
+
 
 ==============================================================================
+$(prefixed_tag("_examples"))
+
 4. Changelog
-                                      *$(help_tag_prefix)-changelog*
 
 6 Nov 2021                                                              v0.0.1
   Initial Release
 
+
 ==============================================================================
+$(prefixed_tag("_bugs"))
+
 5. Bugs
-                                      *$(help_tag_prefix)-bugs*
+
 
 ==============================================================================
+$(prefixed_tag("_contributing"))
+
 6. Contributing
-                                      *$(help_tag_prefix)-contributing*
+
 
 ==============================================================================
+$(prefixed_tag("_license"))
+
 7. License
-                                      *$(help_tag_prefix)-license*
 >
   MIT License
   Copyright $(module.tags.copyright)

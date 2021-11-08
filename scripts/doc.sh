@@ -29,19 +29,6 @@ doc_vimwiki_gen_ext="txt"
 declare -g doc_vimwiki_unnecessary_css_path
 doc_vimwiki_unnecessary_css_path="$doc_vimwiki_gen_path/ldoc.css"
 
-declare -g doc_debug_scripts_root_path doc_debug_config_file
-doc_debug_scripts_root_path="$doc_scripts_root_path/debug"
-doc_debug_config_file="$doc_debug_scripts_root_path/config.lua"
-
-declare -g doc_debug_gen_path 
-doc_debug_gen_path="$root_path/.doc/debug"
-declare -g doc_debug_gen_name 
-doc_debug_gen_name="debug"
-declare -g doc_debug_gen_ext 
-doc_debug_gen_ext="txt"
-declare -g doc_debug_unnecessary_css_path
-doc_debug_unnecessary_css_path="$doc_debug_gen_path/ldoc.css"
-
 function main() 
 {
   ldoc \
@@ -59,16 +46,6 @@ function main()
     "$doc_file"
 
   rm "$doc_vimwiki_unnecessary_css_path"
-
-  ldoc \
-    --config "$doc_debug_config_file" \
-    --template "$doc_debug_scripts_root_path" \
-    --dir "$doc_debug_gen_path" \
-    --output "$doc_debug_gen_name" \
-    --ext "$doc_debug_gen_ext" \
-    "$doc_file"
-
-  rm "$doc_debug_unnecessary_css_path"
 }
 
 main "$@"

@@ -1,34 +1,39 @@
 *cmake_file_api.txt*
-                                      *cmake_file_api* *nvim.cmake_file_api*
+                                                           *nvim.cmake_file_api*
+                                                                *cmake_file_api*
 
 Library for dealing with the CMake file API used to extract information about
 generated build systems.
 
-    Copyright :     © 2021 Hrle97 <https://github.com/Hrle97>
-    Release   :     0.0.1
-    License   :     MIT License
-    Author    :     Hrle97 <https://github.com/Hrle97>
-    Homepage  :     <https://github.com/Hrle97/nvim.cmake_file_api>
+    Copyright :    © 2021 Hrle97 <https://github.com/Hrle97>
+    Release   :    0.0.1
+    License   :    MIT License
+    Author    :    Hrle97 <https://github.com/Hrle97>
+    Homepage  :    <https://github.com/Hrle97/nvim.cmake_file_api>
+
 
 ==============================================================================
+                                                       *cmake_file_api_contents*
+
 CONTENTS
-                                      *cmake_file_api-contents*
 
     1. Intro ........................ |cmake_file_api_intro|
-    2. API .......................... |cmake_file_api-api|
-      2.1. Queries................... cmake_file_api-queries
-      2.2. Reply..................... cmake_file_api-reply
-      2.3. object.................... cmake_file_api-object
-      2.4. lazy...................... cmake_file_api-lazy
-    3. Examples ..................... |cmake_file_api-examples|
-    4. Changelog .................... |cmake_file_api-changelog|
-    5. Bugs ......................... |cmake_file_api-bugs|
-    6. Contributing ................. |cmake_file_api-contributing|
-    7. License ...................... |cmake_file_api-license|
+    2. API .......................... |cmake_file_api_api|
+      2.1. Queries................... |cmake_file_api_queries|
+      2.2. Reply..................... |cmake_file_api_reply|
+      2.3. object.................... |cmake_file_api.object|
+      2.4. lazy...................... |cmake_file_api.lazy|
+    3. Examples ..................... |cmake_file_api_examples|
+    4. Changelog .................... |cmake_file_api_changelog|
+    5. Bugs ......................... |cmake_file_api_bugs|
+    6. Contributing ................. |cmake_file_api_contributing|
+    7. License ...................... |cmake_file_api_license|
+
 
 ==============================================================================
+                                                          *cmake_file_api_intro*
+
 1. Intro
-                                      *cmake_file_api-intro*
 
 CMake provides a file-based API that clients may use to get semantic
 information about the buildsystems CMake generates. Clients may use the API by
@@ -36,56 +41,339 @@ writing query files to a specific location in a build tree to request zero or
 more Object Kinds. When CMake generates the buildsystem in that build tree it
 will read the query files and write reply files for the client to read.
 
+
 ==============================================================================
+                                                            *cmake_file_api_api*
+
 2. API
-                                      *cmake_file_api-api*
+
+The API consists of functions that query the CMake File API, functions to read
+the reply of the API and classes that wrap the reply.
+
 
 ------------------------------------------------------------------------------
+                                                        *cmake_file_api.queries*
+
 2.1. Queries
-                                      *cmake_file_api-queries*
 
+Functions to call before configuring CMake in order to instruct it what data
+to generate using the API.
+
+
+                                   *cmake_file_api.write_shared_stateless_query*
+
+write_shared_stateless_query({build}, {kind}, {version}[, {callback}])
+
+Write a shared stateless query for the CMake file API.
+
+The query will be shared with other clients such as IDE's and editors. See the
+shared stateless query documentation for more info.
+
+  Parameters:
+
+    {build} `string`
+      The build directory of the generated buildsystem. It has to be an
+      already existing directory on the filesystem.
+
+    {kind} `string`
+      The kind of query to send. Valid values are: "codemodel", "cache",
+      "cmakeFiles", and "tkolchains". See the object kind documentation for
+      more info.
+
+    {version} `number`, `string`
+      The major version of the query kind to send. Valid values depend on the
+      query kind. See the CMake File API documentation for more info.
+
+    [{callback} `function`, `string`, `nil`]
+      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
+      `nil`, the method will run asynchronously and call the callback upon
+      completion. Otherwise, it will run synchronously.
+
+  Links:
+
+    Shared stateless query documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-shared-stateless-query-files>
+
+    Object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds>
+
+
+                                   *cmake_file_api.write_client_stateless_query*
+
+write_client_stateless_query({build}, {kind}, {version}[, {callback}])
+
+Write a client stateless query for the CMake file API.
+
+The query won't be shared with other clients such as IDE's and editors. See
+the client stateless query documentation for more info.
+
+  Parameters:
+
+    {build} `string`
+      The build directory of the generated buildsystem. It has to be an
+      already existing directory on the filesystem.
+
+    {kind} `string`
+      The kind of query to send. Valid values are: "codemodel", "cache",
+      "cmakeFiles", and "toolchains". See the object kind documentation for
+      more info.
+
+    {version} `number`, `string`
+      The major version of the query kind to send. Valid values depend on the
+      query kind. See the CMake File API documentation for more info.
+
+    [{callback} `function`, `string`, `nil`]
+      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
+      `nil`, the method will run asynchronously and call the callback upon
+      completion. Otherwise, it will run synchronously.
+
+  Links:
+
+    Client stateless query documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateless-query-files>
+
+    Object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds>
+
+
+                                    *cmake_file_api.write_client_stateful_query*
+
+write_client_stateful_query({build}, {query}[, {callback}])
+
+Write a query for the CMake file API.
+
+The query will be shared with other clients such as IDE's and editors. See the
+shared stateless query documentation for more info.
+
+  Parameters:
+
+    {build} `string`
+      The build directory of the generated buildsystem. It has to be an
+      already existing directory on the filesystem.
+
+    {query} `table`
+      The query to send to the CMake file API. Reqd the client statefull query
+      documentation for more info.
+
+    [{callback} `function`, `string`, `nil`]
+      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
+      `nil`, the method will run asynchronously and call the callback upon
+      completion. Otherwise, it will run synchronously.
+
+  Links:
+
+    Client stateful query documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files>
+
+    Object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds>
 
 
 ------------------------------------------------------------------------------
+                                                          *cmake_file_api.reply*
+
 2.2. Reply
-                                      *cmake_file_api-reply*
 
+Functions and classes to use after configuring CMake in order to read the
+reply of the API.
+
+
+                                                     *cmake_file_api.read_reply*
+
+read_reply({build}[, {callback}])
+
+Read a reply from the CMake file API (it rhymes!).
+
+See the reply index file documentation for more info.
+
+  Parameters:
+
+    {build} `string`
+      The build directory of the generated buildsystem. It has to be an
+      already existing directory on the filesystem.
+
+    [{callback} `function`, `string`, `nil`]
+      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
+      `nil`, the method will run asynchronously and call the callback upon
+      completion. Otherwise, it will run synchronously.
+
+  Returns:
+
+    |cmake_file_api.object|
+      Returns an |cmake_file_api.object| represention the reply. All the
+      fields of this type are the same as in the reply index file
+      documentation except for special fields that have the key "jsonFile".
+      These fields are not immediately loaded and are instead initialized as a
+      |cmake_file_api.lazy|. Lazy objects have a path field and a load method
+      which can run synchronously and asynchronously to retrieve the desired
+      field as an |cmake_file_api.object|.
+
+  See also:
+
+    |cmake_file_api.object|
+    |cmake_file_api.lazy|
+
+  Links:
+
+    Reply index file documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-reply-index-file>
 
 
 ------------------------------------------------------------------------------
+                                                         *cmake_file_api.object*
+
 2.3. object
-                                      *cmake_file_api-object*
 
+Returned by the |cmake_file_api.read_reply| method. All the fields of this
+type are the same as in the reply index file documentation except for special
+fields that have the key "jsonFile". These fields are not immediately loaded
+and are instead initialized as a |cmake_file_api.lazy|. Lazy objects have a
+path field and a load method which can run synchronously and asynchronously to
+retrieve the desired field as a |cmake_file_api.object|. Data that was read
+from the JSON file that this was loaded from.
+
+
+                                               *cmake_file_api.object:is_object*
+
+object:is_object({value})
+
+Check if a value is a |cmake_file_api.object|.
+
+  Parameters:
+
+    {value}
+      Value to check against.
+
+  Returns:
+
+    `boolean`
+      Whether the value is an |cmake_file_api.object|.
+
+
+                                                     *cmake_file_api.object:new*
+
+object:new({path}, {data})
+
+Create a new |cmake_file_api.object|.
+
+Values of fields with the key "jsonFile" are going to be converted to
+|cmake_file_api.lazy| values.
+
+  Parameters:
+
+    {path} `string`
+      Path to the JSON file from which this was read.
+
+    {data} `table`
+      Data representing some values of the reply.
+
+  Returns:
+
+    |cmake_file_api.object|
+      Constructed |cmake_file_api.object|.
 
 
 ------------------------------------------------------------------------------
+                                                           *cmake_file_api.lazy*
+
 2.4. lazy
-                                      *cmake_file_api-lazy*
 
+Values of fields with the key "jsonFiles" of API replies are converted to
+|cmake_file_api.lazy| values that can be loaded synchronously or
+asynchronously with the |cmake_file_api.lazy:load| method into an
+|cmake_file_api.object|.
+
+
+                                                   *cmake_file_api.lazy:is_lazy*
+
+lazy:is_lazy({value})
+
+Check if a value is a |cmake_file_api.lazy|.
+
+  Parameters:
+
+    {value}
+      Value to check against.
+
+  Returns:
+
+    `boolean`
+      Whether the value is a |cmake_file_api.lazy|.
+
+
+                                                       *cmake_file_api.lazy:new*
+
+lazy:new({path})
+
+Create a new |cmake_file_api.lazy|
+
+The |cmake_file_api.lazy| can be loaded later into an |cmake_file_api.object|
+with the |cmake_file_api.lazy:load| method.
+
+  Parameters:
+
+    {path} `string`
+      Path to the JSON file from which this will be read.
+
+  Returns:
+
+    |cmake_file_api.lazy|
+      Constructed |cmake_file_api.lazy|.
+
+
+                                                      *cmake_file_api.lazy:load*
+
+lazy:load([{callback}])
+
+Load a |cmake_file_api.lazy|.
+
+Load a |cmake_file_api.lazy| int an |cmake_file_api.object| synchronously or
+asynchronously.
+
+  Parameters:
+
+    [{callback} `function`, `string`, `nil`]
+      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
+      `nil`, the method will run asynchronously and call the callback upon
+      completion. Otherwise, it will run synchronously.
+
+  Returns:
+
+    |cmake_file_api.object|
+      Loaded |cmake_file_api.lazy| as an |cmake_file_api.object|.
 
 
 ==============================================================================
+                                                       *cmake_file_api_examples*
+
 3. Examples
-                                      *cmake_file_api-examples*
+
 
 ==============================================================================
+                                                       *cmake_file_api_examples*
+
 4. Changelog
-                                      *cmake_file_api-changelog*
 
 6 Nov 2021                                                              v0.0.1
   Initial Release
 
+
 ==============================================================================
+                                                           *cmake_file_api_bugs*
+
 5. Bugs
-                                      *cmake_file_api-bugs*
+
 
 ==============================================================================
+                                                   *cmake_file_api_contributing*
+
 6. Contributing
-                                      *cmake_file_api-contributing*
+
 
 ==============================================================================
+                                                        *cmake_file_api_license*
+
 7. License
-                                      *cmake_file_api-license*
 >
   MIT License
   Copyright © 2021 Hrle97 <https://github.com/Hrle97>
