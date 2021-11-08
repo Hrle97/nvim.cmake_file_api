@@ -4,8 +4,7 @@
 # local help_tag_prefix = ldoc.project:gsub("nvim%.", "", 1)
 #
 # local function tag(str)
-#   local fmt = "%80s"
-#   return fmt:format("*" .. str .. "*")
+#   return ("%80s"):format("*" .. str .. "*")
 # end
 #
 # local function prefixed_tag(str)
@@ -30,43 +29,67 @@
 # local print = ldoc.print
 #
 #
+# local function is_nil(x)
+#   return x == nil
+# end
+#
+# local function nil_to_repr(x)
+#   return "nil"
+# end
+#
+#
+# local bool = true
+#
+# local function to_bool(x)
+#   return x and true or false
+# end
+#
+# local function is_bool(x)
+#   return x == true or x == false
+# end
+#
+#
+# local number = 1
+#
+#
 # local string = ""
 #
-# function to_string(x)
-#   return string.format("%s", x)
+# local function to_string(x)
+#   return ("%s"):format(x)
 # end
 #
-# local function is_empty(str)
-#   return str and str:match("^%s*$")
+# local function string_is_empty(x)
+#   return to_bool(not x or x:match("^%s*$"))
 # end
 #
-# local function args(str)
-#   return str:gsub("(%w+)", "{%1}")
+#
+# local function args(x)
+#   return x:gsub("(%w+)", "{%1}")
 # end
 #
-# local function types(str)
-#   str = str:gsub("|", ", ")
-#   str = str:gsub("(nil)", "`%1`")
-#   str = str:gsub("(boolean)", "`%1`")
-#   str = str:gsub("(number)", "`%1`")
-#   str = str:gsub("(string)", "`%1`")
-#   str = str:gsub("(function)", "`%1`")
-#   str = str:gsub("(table)", "`%1`")
-#   str = str:gsub("(userdata)", "`%1`")
-#   return link_help(str)
+# local function types(x)
+#   x = x:gsub("|", ", ")
+#   x = x:gsub("(nil)", "`%1`")
+#   x = x:gsub("(boolean)", "`%1`")
+#   x = x:gsub("(number)", "`%1`")
+#   x = x:gsub("(string)", "`%1`")
+#   x = x:gsub("(function)", "`%1`")
+#   x = x:gsub("(table)", "`%1`")
+#   x = x:gsub("(userdata)", "`%1`")
+#   return link_help(x)
 # end
 #
-# local function trim(str)
-#   str = str:gsub("^%s+", "")
-#   str = str:gsub("%s+$", "")
-#   return str
+# local function trim(x)
+#   x = x:gsub("^%s+", "")
+#   x = x:gsub("%s+$", "")
+#   return x
 # end
 #
-# local function join(str)
-#   return str:gsub("%s+", " ")
+# local function join(x)
+#   return x:gsub("%s+", " ")
 # end
 #
-# local function wrap(str, indent, limit)
+# local function wrap(x, indent, limit)
 #   indent = indent or 0
 #   limit = (limit or 79) - indent - 1
 #   indent = (" "):rep(indent)
@@ -79,15 +102,52 @@
 #     end
 #   end
 #
-#   return indent .. str:gsub("%s+()(%S+)()", sub)
+#   return indent .. x:gsub("%s+()(%S+)()", sub)
 # end
 #
-# local function pretty(str, indent, limit)
-#   return wrap(join(trim(types(str))), indent, limit)
+# local function pretty(x, indent, limit)
+#   return wrap(join(trim(types(x))), indent, limit)
+# end
+#
+#
+# local array = {}
+#
+# local ipairs = ldoc.ipairs
+#
+# local function is_array(x)
+#   return to_string(x):match("^%{.*%}$")
+# end
+#
+# function array.length(x)
+#   return #x
+# end
+#
+# function array.is_empty(x)
+#   return array.length(x) == 0
+# end
+#
+# function array.to_repr(x)
+#   local l = array.length(x)
+#
+#   local s = "empty"
+#   if l == 1 then
+#     s = l .. " item"
+#   elseif l > 1 then
+#     s = l .. " items"
+#   end
+#
+#   return "<array: { " .. s .. " }>"
 # end
 #
 #
 # local table = {}
+#
+# local iter = ldoc.modules.iter
+# local pairs = ldoc.pairs
+#
+# local function is_table(x)
+#   return to_string(x):match("^table: 0x[0-9a-f]*$")
+# end
 #
 # function table.length(x)
 #   local l = 0
@@ -95,60 +155,54 @@
 #   return l
 # end
 #
-# local iter = ldoc.modules.iter
-# local pairs = ldoc.pairs
-# local ipairs = ldoc.ipairs
-#
-#
-# function is_array(x)
-#   local str = to_string(x)
-#   return string.match(str, "^%{.*%}$")
+# function table.is_empty(x)
+#   return table.length(x) == 0
 # end
 #
-# function is_table(x)
-#   local str = to_string(x)
-#   return string.match(str, "^table: 0x[0-9a-f]*$")
-# end
+# function table.to_repr(x)
+#   local l = table.length(x)
 #
-# function is_function(x)
-#   local str = to_string(x)
-#   return string.match(str, "^function: 0x[0-9a-f]*$")
+#   local s = "empty"
+#   if l == 1 then
+#     s = l .. " item"
+#   elseif l > 1 then
+#     s = l .. " items"
+#   end
+#
+#   return "<table: { " .. s .. " }>"
 # end
 #
 #
-# function to_repr(x)
+# local func = function() end
+#
+# local function is_function(x)
+#   return to_string(x):match("^function: 0x[0-9a-f]*$")
+# end
+#
+# local function func_to_repr(x)
+#   return "<" .. to_string(x) .. ">"
+# end
+#
+#
+# local function to_repr(x)
 #   if is_function(x) then
-#     return "<" .. to_string(x) .. ">"
+#     return func_to_repr(x)
 #
 #   elseif is_table(x) then
-#     local l = table.length(x)
-#     local s = "empty"
-#     if l == 1 then
-#       s = l .. " item"
-#     elseif l > 1 then
-#       s = l .. " items"
-#     end
-#
-#     return "<table: { " .. s .. " }>"
+#     return table.to_repr(x)
 #
 #   elseif is_array(x) then
-#     local l = #x
-#     local s = "empty"
-#     if l == 1 then
-#       s = l .. " item"
-#     elseif l > 1 then
-#       s = l .. " items"
-#     end
+#     return array.to_repr(x)
 #
-#     return "<array: { " .. #x .. " items" .. " }>"
+#   elseif is_nil(x) then
+#     return nil_to_repr(x)
 #
 #   else
-#     return string.format("%q", x)
+#     return ("%q"):format(x)
 #   end
 # end
 #
-#
-# function __inspect(x, l, i, d)
+# local function __inspect(x, l, i, d)
 #   i = i or ""
 #   d = d or 1
 #
@@ -177,7 +231,7 @@
 #   return r .. "\n" .. i .. "}"
 # end
 #
-# function inspect(x, l, i)
+# local function inspect(x, l, i)
 #   l = l or 1
 #   if l > 10 then l = 10 elseif l < 1 then l = 1 end
 #   i = (" "):rep(i or 0)
@@ -262,36 +316,65 @@ the reply of the API and classes that wrap the reply.
 $(prefixed_tag(kind_help_tag))
 
 $(kind_header)
-
 #     local kind_item = module.kinds:get_item(kind)
 #     if kind_item then
+#       if not string_is_empty(kind_item.summary) then
+
+$(pretty(kind_item.summary))
+#       end
+#       if not string_is_empty(kind_item.description) then
+
 $(pretty(kind_item.description))
-
-
-#     end
+#       end
 #
-#     -- Kind items
+#       if kind_item.tags and
+#          kind_item.tags.field and
+#          kind_item.type == "type" then
+
+  Fields: ~
+#         for i, field in ipairs(kind_item.tags.field) do
+#           local field_name = field:match("%s*(%w+)")
+#           local field_description = field:match("%s*%w+(.*)")
+#
+#           local field_type = ""
+#           if kind_item.modifiers and kind_item.modifiers.field then
+#             field_type = kind_item.modifiers.field[i].type
+#           end
+#
+#           if not string_is_empty(field_type) then
+
+    {$(field_name)} $(types(trim(field_type)))
+#           else
+
+    {$(field_name)}
+#           end
+#
+$(pretty(field_description, 6))
+#         end -- for ipairs(kind_item.tags.field)
+#       end -- if kind_item.tags.field
+#     end -- if kind_item
+
+
 #     for item in items() do
 $(prefixed_tag("." .. item.name))
 
 $(item.name)$(args(item.args))
 
 $(pretty(item.summary))
-#       if item.description ~= "" then
+#       if not string_is_empty(item.description) then
 
 $(pretty(item.description))
 #       end
-
 #       if show_params and item.params then
-  Parameters:
 
+  Parameters: ~
 #         for param in iter(item.params) do
 #           for subparam in iter(item:subparam(param)) do
 #             local subparam_name = item:display_name_of(subparam)
 #             local subparam_type = types(item:type_of_param(subparam))
 #             local subparam_default = item:default_of_param(subparam)
 #             local subparam_readonly = item:readonly(subparam) and "!" or ""
-#
+
 #             if subparam_default == true then
     [{$(subparam_name)} $(subparam_type)$(subparam_readonly)]
 #             elseif subparam_default then
@@ -301,48 +384,48 @@ $(pretty(item.description))
 #             end
 #
 $(pretty(item.params.map[subparam], 6))
-
 #           end -- for iter(item:subparam(param))
 #         end -- for iter(item.params)
 #       end -- if show_params
 #
 #       if show_return and item.retgroups then
-  Returns:
 
+  Returns: ~
 #         for _, group in ipairs(item.retgroups) do
 #           for ret in group:iter() do
 #             local type = item:return_type(ret)
-#             if not is_empty(type) then
+#             if not string_is_empty(type) then
+
 $(pretty(type, 4))
 #             end
-#             if not is_empty(ret.text) then
+#             if not string_is_empty(ret.text) then
 $(pretty(ret.text, 6))
-
 #             end
 #           end -- for ret
 #         end -- for ipairs(item.retgroups)
 #       end -- if show_return
 #
 #       if show_return and item.raise then
-          $(item.raise)
 
-#       end
+  Raises: ~
+    $(item.raise)
+#       end -- if item.raise
 #
 #       if item.see then
-  See also:
+
+  See also: ~
 
 #         for see in iter(item.see) do
     |$(help_tag_prefix .. "." .. see.label)|
 #         end
-
 #       end -- if item.see
 #
 #       if item.usage then
-  Usage:
 
+  Usage: ~
 #         for usage in iter(item.usage) do
-$(pretty(usage, 4))
 
+$(pretty(usage, 4))
 #         end
 #       end -- if item.usage
 #
@@ -350,17 +433,18 @@ $(pretty(usage, 4))
 #         for tag in iter(custom_tags) do
 #           item_tag = item.tags[tag[1]]
 #           if item_tag and not item_tag.hidden then
-#             if not is_empty(tag.title) then
-  $(tag.title):
+#             if not string_is_empty(tag.title) then
 
+  $(tag.title): ~
 #             end
 #             for value in iter(item_tag) do
-$(pretty(tag.format and tag.format(value) or value, 4))
 
+$(pretty(tag.format and tag.format(value) or value, 4))
 #             end
 #           end -- if item_tag and not item_tag.hidden
-#         end -- iter custom_tags
+#         end -- for iter(custom_tags)
 #       end -- if custom_tags
+
 
 #     end -- for items()
 #
@@ -378,7 +462,7 @@ $(prefixed_tag("_examples"))
 
 4. Changelog
 
-6 Nov 2021                                                              v0.0.1
+08 Nov 2021                                                             v0.0.1
   Initial Release
 
 

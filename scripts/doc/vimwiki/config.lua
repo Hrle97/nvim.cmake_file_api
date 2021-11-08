@@ -10,6 +10,8 @@ full_description = "CMake provides a file-based API that clients may use to "
 
 not_luadoc = true
 
+template = true
+
 custom_tags = {
   {
     "link",

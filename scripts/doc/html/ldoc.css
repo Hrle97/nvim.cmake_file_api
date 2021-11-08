@@ -6,13 +6,13 @@ body {
   background: #2d3349;
 }
 a:link {
-  color: #008fee;
+  color: #908fee;
 }
 a:visited {
-  color: #008fee;
+  color: #506fce;
 }
 a:hover {
-  color: #22a7ff;
+  color: #42a7ff;
 }
 h1 {
   font-size: 26px;
@@ -274,7 +274,7 @@ ul ol {
 }
 /* make the target distinct; helps when we're navigating to a function */
 a:target + * {
-  background-color: #ff9;
+  background-color: #f0c790;
 }
 /* styles for prettification of source */
 pre .comment {
@@ -295,7 +295,7 @@ pre .library {
 }
 pre .marker {
   color: #512b1e;
-  background: #fedc56;
+  background: #fedca6;
   font-weight: bold;
 }
 pre .string {

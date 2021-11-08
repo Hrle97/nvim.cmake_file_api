@@ -33,13 +33,11 @@ function main()
 {
   ldoc \
     --config "$doc_html_config_file" \
-    --style "$doc_html_scripts_root_path" \
     --dir "$doc_html_gen_path" \
     "$doc_file"
 
   ldoc \
     --config "$doc_vimwiki_config_file" \
-    --template "$doc_vimwiki_scripts_root_path" \
     --dir "$doc_vimwiki_gen_path" \
     --output "$doc_vimwiki_gen_name" \
     --ext "$doc_vimwiki_gen_ext" \

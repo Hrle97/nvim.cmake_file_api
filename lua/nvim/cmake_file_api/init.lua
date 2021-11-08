@@ -189,10 +189,9 @@ end
 --
 -- @tfield string path
 -- Path to the JSON file from which this will be read with the @{lazy:load}
--- function.
+-- method.
 --
--- @field data
--- Data that was read from the JSON file that this was loaded from.
+-- @field data Data that was read from the JSON file that this was loaded from.
 --
 -- @link Reply index file documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-reply-index-file
@@ -236,7 +235,7 @@ end
 --
 -- @tfield string path
 -- Path to the JSON file from which this will be read with the @{lazy:load}
--- function.
+-- method.
 --
 -- @link CMake File API documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files
