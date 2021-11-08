@@ -13,7 +13,7 @@ function query.write_shared_stateless_query(build, kind, version, callback)
     kind,
     "Shared stateless query requires a valid object kind."
   )
-  version = assert.ensure_object_kind_version(
+  version = assert.ensure_object_version(
     kind,
     version,
     "Shared stateless query requires a valid object kind version."
@@ -23,9 +23,19 @@ function query.write_shared_stateless_query(build, kind, version, callback)
     "Shared stateless query requires a valid callback."
   )
 
-  local query_path = build .. path.query_infix .. kind .. "-v" .. version
+  local query_dir = build .. path.query_infix
+  local query_path = query_dir .. kind .. "-v" .. version
 
-  fs.write(query_path, "", callback)
+  if not callback then
+    fs.mkdir(query_dir)
+    fs.touch(query_path)
+  end
+
+  fs.mkdir(query_dir, function()
+    fs.touch(query_path, function()
+      callback()
+    end)
+  end)
 end
 
 function query.write_client_stateless_query(build, kind, version, callback)
@@ -37,7 +47,7 @@ function query.write_client_stateless_query(build, kind, version, callback)
     kind,
     "Client stateless query requires a valid object kind."
   )
-  version = assert.ensure_object_kind_version(
+  version = assert.ensure_object_version(
     kind,
     version,
     "Client stateless query requires a valid object kind version."
@@ -47,9 +57,19 @@ function query.write_client_stateless_query(build, kind, version, callback)
     "Client stateless query requires a valid callback."
   )
 
-  local query_path = build .. path.client_query_infix .. kind .. "-v" .. version
+  local query_dir = build .. path.client_query_infix
+  local query_path = query_dir .. kind .. "-v" .. version
 
-  fs.write(query_path, "", callback)
+  if not callback then
+    fs.mkdir(query_dir)
+    fs.touch(query_path)
+  end
+
+  fs.mkdir(query_dir, function()
+    fs.touch(query_path, function()
+      callback()
+    end)
+  end)
 end
 
 function query.write_client_stateful_query(build, _query, callback)
@@ -62,9 +82,19 @@ function query.write_client_stateful_query(build, _query, callback)
     "Client stateful query requires a valid callback."
   )
 
-  local query_path = build .. path.client_stateful_query_suffix
+  local query_dir = build .. path.client_query_infix
+  local query_path = query_dir .. path.client_stateful_query_file_name
 
-  fs.write(query_path, _query, callback)
+  if not callback then
+    fs.mkdir(query_dir)
+    fs.write(query_path, _query)
+  end
+
+  fs.mkdir(query_dir, function()
+    fs.write(query_path, _query, function()
+      callback()
+    end)
+  end)
 end
 
 return query

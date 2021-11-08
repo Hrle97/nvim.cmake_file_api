@@ -14,13 +14,13 @@ function assert.wrap_message(message)
 end
 
 function assert.ensure_dir(path, message)
-  assert(vim.fn.isdirectory(path), assert.wrap_message(message))
+  _G.assert(vim.fn.isdirectory(path), assert.wrap_message(message))
 
   return string.gsub(path, "/?$", "/", 1)
 end
 
 function assert.ensure_object_kind(kind, message)
-  assert(
+  _G.assert(
     kind == "codemodel"
       or kind == "cache"
       or kind == "cmakeFiles"
@@ -33,7 +33,7 @@ end
 
 -- TODO: better checking
 function assert.ensure_object_version(_, version, message)
-  assert(
+  _G.assert(
     type(version) == "number",
     assert.wrap_message(message .. " " .. object_kind_assert_message)
   )
@@ -42,7 +42,7 @@ function assert.ensure_object_version(_, version, message)
 end
 
 function assert.ensure_callback_or_nil(callback, message)
-  assert(
+  _G.assert(
     type(callback) == "function"
       or type(callback) == "nil"
       or type(callback) == "string",
