@@ -5,7 +5,7 @@
 Library for dealing with the CMake file API used to extract information about
 generated build systems.
 
-    Copyright :    © 2021 Hrle97 <https://github.com/Hrle97>
+    Copyright :    © 2021 Hrle97 <32d9c8c6-8118-45e7-857e-8b45522f395d@anonaddy.me>
     Release   :    0.0.1
     License   :    MIT License
     Author    :    Hrle97 <https://github.com/Hrle97>
@@ -243,9 +243,9 @@ retrieve the desired field as a |cmake_file_api.object|.
       Data that was read from the JSON file that this was loaded from.
 
 
-                                               *cmake_file_api.object:is_object*
+                                               *cmake_file_api.object.is_object*
 
-object:is_object({value})
+object.is_object({value})
 
 Check if a value is a |cmake_file_api.object|.
 
@@ -260,9 +260,9 @@ Check if a value is a |cmake_file_api.object|.
       Whether the value is an |cmake_file_api.object|.
 
 
-                                                     *cmake_file_api.object:new*
+                                                     *cmake_file_api.object.new*
 
-object:new({path}, {data})
+object.new({path}, {data})
 
 Create a new |cmake_file_api.object|.
 
@@ -302,9 +302,9 @@ asynchronously with the |cmake_file_api.lazy:load| method into an
       |cmake_file_api.lazy:load| method.
 
 
-                                                   *cmake_file_api.lazy:is_lazy*
+                                                   *cmake_file_api.lazy.is_lazy*
 
-lazy:is_lazy({value})
+lazy.is_lazy({value})
 
 Check if a value is a |cmake_file_api.lazy|.
 
@@ -319,9 +319,9 @@ Check if a value is a |cmake_file_api.lazy|.
       Whether the value is a |cmake_file_api.lazy|.
 
 
-                                                       *cmake_file_api.lazy:new*
+                                                       *cmake_file_api.lazy.new*
 
-lazy:new({path})
+lazy.new({path})
 
 Create a new |cmake_file_api.lazy|
 
@@ -394,7 +394,7 @@ asynchronously.
 7. License
 >
   MIT License
-  Copyright © 2021 Hrle97 <https://github.com/Hrle97>
+  Copyright © 2021 Hrle97 <32d9c8c6-8118-45e7-857e-8b45522f395d@anonaddy.me>
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the “Software”), to deal
   in the Software without restriction, including without limitation the rights

@@ -12,7 +12,7 @@
 -- @module nvim.cmake_file_api
 --
 -- @author Hrle97 <https://github.com/Hrle97>
--- @copyright © 2021 Hrle97 <https://github.com/Hrle97>
+-- @copyright © 2021 Hrle97 <32d9c8c6-8118-45e7-857e-8b45522f395d@anonaddy.me>
 -- @license MIT License
 -- @release 0.0.1
 -- @homepage https://github.com/Hrle97/nvim.cmake_file_api
