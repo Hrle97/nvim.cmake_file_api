@@ -8,7 +8,7 @@ declare -g doc_gen_root_path
 doc_gen_root_path="$root_path/.doc"
 
 declare -g cmake_gen_root_path
-cmake_gen_root_path="$root_path/.build"
+cmake_gen_root_path="$root_path/test/cmake/.build"
 
 function main() 
 {

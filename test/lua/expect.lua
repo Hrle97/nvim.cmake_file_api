@@ -30,7 +30,7 @@ local function print_snippet(content, line)
   end
 end
 
-function expect.wrap(condition)
+function expect.seal(condition)
   return function(...)
     if not condition(...) then
       -- 0 getinfo
@@ -51,10 +51,29 @@ function expect.wrap(condition)
   end
 end
 
+function expect.wrap(condition)
+  return setmetatable({ condition = condition }, {
+    __call = expect.seal(function(_, ...)
+      return condition(...)
+    end),
+  })
+end
+
 expect = setmetatable(expect, {
-  __call = expect.wrap(function(_, pass)
+  __call = expect.seal(function(_, pass)
     return pass
   end),
+})
+
+expect.nay = setmetatable({}, {
+  __call = expect.seal(function(_, fail)
+    return not fail
+  end),
+  __index = function(_, key)
+    return expect.wrap(function(...)
+      return not expect[key].condition(...)
+    end)
+  end,
 })
 
 expect.eq = expect.wrap(function(lhs, rhs)
@@ -95,12 +114,15 @@ expect.is_function = expect.is "function"
 expect.is_userdata = expect.is "userdata"
 expect.is_thread = expect.is "thread"
 
-function expect.exists(p)
+expect.exists = expect.wrap(function(p)
   return vim.fn.filereadable(p) == 1
-end
+end)
 
-function expect.pexists(p)
+expect.pexists = expect.wrap(function(p)
   return #vim.fn.glob(p, 0, 1) ~= 0
-end
+end)
+
+expect.is_object = expect.wrap(cmake_file_api.object.is_object)
+expect.is_lazy = expect.wrap(cmake_file_api.lazy.is_lazy)
 
 return expect

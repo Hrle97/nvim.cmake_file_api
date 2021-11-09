@@ -199,16 +199,15 @@ end
 -- @see read_reply
 -- @see lazy
 cmake_file_api.object = {}
-cmake_file_api.object.__index = cmake_file_api.object
 
 --- Check if a value is a @{object}.
 --
--- @function object:is_object
+-- @function object.is_object
 --
 -- @param   value   Value to check against.
 -- @treturn boolean Whether the value is an @{object}.
-function cmake_file_api.object:is_object(value)
-  return object.object.is_object(self, value)
+function cmake_file_api.object.is_object(value)
+  return object.object.is_object(value)
 end
 
 --- Create a new @{object}.
@@ -216,13 +215,13 @@ end
 -- Values of fields with the key "jsonFile" are going to be converted to
 -- @{lazy} values.
 --
--- @function object:new
+-- @function object.new
 --
 -- @tparam  string path Path to the JSON file from which this was read.
 -- @tparam  table  data Data representing some values of the reply.
 -- @treturn @{object}   Constructed @{object}.
-function cmake_file_api.object:new(path, data)
-  return object.object.new(self, path, data)
+function cmake_file_api.object.new(path, data)
+  return object.object.new(path, data)
 end
 
 --- Lazy object field class.
@@ -243,16 +242,15 @@ end
 -- @see object
 -- @see read_reply
 cmake_file_api.lazy = {}
-cmake_file_api.lazy.__index = cmake_file_api.lazy
 
 --- Check if a value is a @{lazy}.
 --
--- @function lazy:is_lazy
+-- @function lazy.is_lazy
 --
 -- @param   value   Value to check against.
 -- @treturn boolean Whether the value is a @{lazy}.
-function cmake_file_api.lazy:is_lazy(value)
-  return object.lazy.is_lazy(self, value)
+function cmake_file_api.lazy.is_lazy(value)
+  return object.lazy.is_lazy(value)
 end
 
 --- Create a new @{lazy}
@@ -260,12 +258,12 @@ end
 -- The @{lazy} can be loaded later into an @{object} with the @{lazy:load}
 -- method.
 --
--- @function lazy:new
+-- @function lazy.new
 --
 -- @tparam  string  path Path to the JSON file from which this will be read.
 -- @treturn @{lazy}      Constructed @{lazy}.
-function cmake_file_api.lazy:new(path)
-  return object.lazy.new(self, path)
+function cmake_file_api.lazy.new(path)
+  return object.lazy.new(path)
 end
 
 --- Load a @{lazy}.

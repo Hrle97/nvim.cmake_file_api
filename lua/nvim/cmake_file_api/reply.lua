@@ -3,7 +3,7 @@ local reply = {}
 local path = require "nvim.cmake_file_api.path"
 local assert = require "nvim.cmake_file_api.assert"
 local fs = require "nvim.cmake_file_api.fs"
-local object = require "nvim.cmake_file_api.object"
+local object = require("nvim.cmake_file_api.object").object
 
 function reply.read_reply(build, callback)
   build = assert.ensure_dir(build, "Reply requires a valid build directory.")
@@ -19,7 +19,7 @@ function reply.read_reply(build, callback)
       if string.match(entry.name, "^index") then
         local _path = reply_dir_path .. entry.name
         local data = fs.read(_path)
-        local _object = object:new(path, data)
+        local _object = object.new(_path, data)
         return _object
       end
     end
@@ -30,7 +30,7 @@ function reply.read_reply(build, callback)
       if string.match(entry.name, "^index") then
         local _path = reply_dir_path .. entry.name
         fs.read(_path, function(data)
-          local _object = object:new(_path, data)
+          local _object = object.new(_path, data)
           callback(_object)
         end)
       end

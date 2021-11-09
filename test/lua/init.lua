@@ -1,8 +1,9 @@
 local unit_test_pattern = vim.g.test_root_path .. "/lua/unit/**/*.lua"
 local unit_test_paths = vim.fn.split(vim.fn.glob(unit_test_pattern))
 
-_G.expect = require "expect"
 _G.cmake_file_api = require "nvim.cmake_file_api"
+_G.expect = require "expect"
+_G.fs = require "fs"
 
 for _, unit_test_path in ipairs(unit_test_paths) do
   local unit_test_name = vim.fn.fnamemodify(unit_test_path, ":t:r")
