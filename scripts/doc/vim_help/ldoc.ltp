@@ -240,7 +240,7 @@
 #
 # local function split(x, s)
 #   s = s or "%s"
-#   return x:gmatch("([^" .. s .. "]+)")
+#   return x:gmatch("([^" .. s .. "]*)")
 # end
 #
 # local function indent(x, i)
@@ -248,13 +248,13 @@
 #   local r = ""
 #   local f = true
 #   for line in split(x, "\n") do
-#     if f == true then
+#     if f ~= true then
 #       r = r .. "\n"
-#       f = false
 #     end
 #     r = r .. i .. line
+#     f = false
 #   end
-#   return join(r)
+#   return r
 # end
 #
 #
@@ -284,29 +284,13 @@ $(prefixed_tag("_contents"))
 CONTENTS
 
     1. Intro ........................ |$(help_tag_prefix)_intro|
-    2. API .......................... |$(help_tag_prefix)_api|
-# local i = 1
-# for kind, items, type in module.kinds() do
-#   if ldoc.allowed_in_contents(type, module) then
-#     local kind_name = trim(kind:gsub("Class ", ""))
-#     local kind_num = "2." .. i .. "."
-#     local kind_sec = kind_num .. " " .. kind_name
-#     local kind_index =
-#       (kind_sec .. ".........................,,,.........."):sub(1, 31)
-#     local kind_sep = kind:match("Class") and "." or "_"
-#     local kind_help_tag = help_tag_prefix .. kind_sep .. kind_name:lower()
-#     local kind_link = "|" .. kind_help_tag .. "|"
-      $(kind_index) $(kind_link)
-#     i = i + 1
-#   end
-# end
-    3. Examples ..................... |$(help_tag_prefix)_examples|
+    2. Examples ..................... |$(help_tag_prefix)_examples|
 # for kind, mods, type in ldoc.kinds() do
 #   if kind == "Examples" then
 #     local i = 1
 #     for example in mods() do
-#       local example_name = example.name:gsub("%.lua", "")
-#       local example_num = "3." .. i .. "."
+#       local example_name = example.name:gsub("%.lua", ""):gsub("[0-9]+_", "")
+#       local example_num = "2." .. i .. "."
 #       local example_sec = example_num .. " " .. example_name
 #       local example_index =
 #         (example_sec .. "................................."):sub(1, 31)
@@ -317,6 +301,24 @@ CONTENTS
       $(example_index) $(example_link)
 #       i = i + 1
 #     end
+#   end
+# end
+    3. API .......................... |$(help_tag_prefix)_api|
+# local i = 1
+# for kind, items, type in module.kinds() do
+#   if ldoc.allowed_in_contents(type, module) then
+#     local kind_name = trim(kind:gsub("Class ", ""))
+#     local kind_num = "3." .. i .. "."
+#     local kind_sec = kind_num .. " " .. kind_name
+#     local kind_index =
+#       (kind_sec .. ".........................,,,.........."):sub(1, 31)
+#     local kind_sep = kind:match("Class") and "." or "_"
+#     local kind_help_tag =
+#       help_tag_prefix .. kind_sep ..
+#       kind_name:lower():gsub(" ", "_")
+#     local kind_link = "|" .. kind_help_tag .. "|"
+      $(kind_index) $(kind_link)
+#     i = i + 1
 #   end
 # end
     4. Changelog .................... |$(help_tag_prefix)_changelog|
@@ -334,11 +336,38 @@ $(pretty(ldoc.full_description))
 
 
 ==============================================================================
+$(prefixed_tag("_examples"))
+
+2. Examples
+
+Here are some examples of how to use the API to extract valueable buildsystem
+information.
+# for kind, mods, type in ldoc.kinds() do
+#   if kind == "Examples" then
+#     local i = 1
+#     for example in mods() do
+#       local example_name = example.name:gsub("%.lua", ""):gsub("[0-9]+_", "")
+
+
+------------------------------------------------------------------------------
+$(prefixed_tag("_" .. example_name:lower() .. "_example"))
+$(pretty("2." .. i .. ". " .. example_name, 2))
+
+>
+$(indent(trim(example.body), (" "):rep(4)))
+<
+#       i = i + 1
+#     end
+#   end
+# end
+
+
+==============================================================================
 $(prefixed_tag("_api"))
 
-2. API
+3. API
 
-The API consists of functions that query the CMake File API, functions to read
+The API consists of methods that query the CMake File API, methods to read
 the reply of the API and classes that wrap the reply.
 
 
@@ -346,10 +375,10 @@ the reply of the API and classes that wrap the reply.
 # for kind, items, type in module.kinds() do
 #   if ldoc.allowed_in_contents(type, module) then
 #     local kind_name = trim(kind:gsub("Class ", ""))
-#     local kind_num = "2." .. j .. "."
+#     local kind_num = "3." .. j .. "."
 #     local kind_header = kind_num .. " " .. kind_name
-#     local kind_sep = kind.type == "section" and "_" or "."
-#     local kind_help_tag = kind_sep .. kind_name:lower()
+#     local kind_sep = kind:match("Class") and "." or "_"
+#     local kind_help_tag = kind_sep .. kind_name:gsub(" ", "_"):lower()
 ------------------------------------------------------------------------------
 $(prefixed_tag(kind_help_tag))
 
@@ -489,31 +518,6 @@ $(pretty(tag.format and tag.format(value) or value, 4))
 #     j = j + 1
 #   end -- if ldoc.allowed_in_contents(type, module)
 # end -- for module.kinds()
-==============================================================================
-$(prefixed_tag("_examples"))
-
-3. Examples
-
-Here are some examples of how to use the API to extract valueable buildsystem
-information.
-# for kind, mods, type in ldoc.kinds() do
-#   if kind == "Examples" then
-#     local i = 1
-#     for example in mods() do
-#       local example_name = example.name:gsub("%.lua", "")
-
-
-------------------------------------------------------------------------------
-$(prefixed_tag("_" .. example_name:lower() .. "_example"))
-$(pretty("3." .. i .. ". " .. example_name, 2))
-
->
-$(indent(trim(example.body), (" "):rep(4)))
-<
-#       i = i + 1
-#     end
-#   end
-# end
 
 
 ==============================================================================

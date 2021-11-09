@@ -18,13 +18,16 @@ generated build systems.
 CONTENTS
 
     1. Intro ........................ |cmake_file_api_intro|
-    2. API .......................... |cmake_file_api_api|
-      2.1. Queries................... |cmake_file_api_queries|
-      2.2. Reply..................... |cmake_file_api_reply|
-      2.3. object.................... |cmake_file_api.object|
-      2.4. lazy...................... |cmake_file_api.lazy|
-    3. Examples ..................... |cmake_file_api_examples|
-      3.1. basic..................... |cmake_file_api_basic_example|
+    2. Examples ..................... |cmake_file_api_examples|
+      2.1. start..................... |cmake_file_api_start_example|
+      2.2. basic..................... |cmake_file_api_basic_example|
+      2.3. advanced.................. |cmake_file_api_advanced_example|
+    3. API .......................... |cmake_file_api_api|
+      3.1. All in one................ |cmake_file_api_all_in_one|
+      3.2. Queries................... |cmake_file_api_queries|
+      3.3. Reply..................... |cmake_file_api_reply|
+      3.4. object.................... |cmake_file_api.object|
+      3.5. lazy...................... |cmake_file_api.lazy|
     4. Changelog .................... |cmake_file_api_changelog|
     5. Bugs ......................... |cmake_file_api_bugs|
     6. Contributing ................. |cmake_file_api_contributing|
@@ -44,37 +47,308 @@ will read the query files and write reply files for the client to read.
 
 
 ==============================================================================
+                                                       *cmake_file_api_examples*
+
+2. Examples
+
+Here are some examples of how to use the API to extract valueable buildsystem
+information.
+
+
+------------------------------------------------------------------------------
+                                                  *cmake_file_api_start_example*
+  2.1. start
+
+>
+    local cmake_file_api = require "nvim.cmake_file_api"
+
+    local reply = cmake_file_api.write_configure_read(build, function()
+      vim.fn.system { "cmake", "-S", source, "-B", build }
+    end)
+    expect.is_object(reply)
+<
+
+
+------------------------------------------------------------------------------
+                                                  *cmake_file_api_basic_example*
+  2.2. basic
+
+>
+    local cmake_file_api = require "nvim.cmake_file_api"
+
+    -- write codemodel query
+    cmake_file_api.write_codemodel_query(build)
+
+    -- configure CMake
+    vim.fn.system { "cmake", "-S", source, "-B", build }
+
+    -- read reply index
+    local reply = cmake_file_api.read_reply(build)
+    expect.is_object(reply)
+
+    -- read client reply
+    local client_reply = reply.data.reply["client-nvim"]
+    local codemodel_lazy = client_reply["codemodel-v2"].jsonFile
+    expect.is_lazy(codemodel_lazy)
+
+    -- load codemodel reply
+    local codemodel = codemodel_lazy:load()
+    expect.is_object(codemodel)
+    expect.eq(codemodel.path, codemodel_lazy.path)
+
+    -- get main target info
+    local targets = codemodel.data.configurations[1].targets
+    local main_target_lazy = targets[1].jsonFile
+    expect.is_lazy(main_target_lazy)
+
+    -- load main target info
+    local main_target = main_target_lazy:load()
+    expect.is_object(main_target)
+    expect.eq(main_target.path, main_target_lazy.path)
+    expect.eq(main_target.data.name, "main")
+    expect.eq(main_target.data.type, "EXECUTABLE")
+    expect.eq(main_target.data.artifacts[1].path, "main")
+<
+
+
+------------------------------------------------------------------------------
+                                               *cmake_file_api_advanced_example*
+  2.3. advanced
+
+>
+    local cmake_file_api = require "nvim.cmake_file_api"
+<
+
+
+==============================================================================
                                                             *cmake_file_api_api*
 
-2. API
+3. API
 
-The API consists of functions that query the CMake File API, functions to read
+The API consists of methods that query the CMake File API, methods to read
 the reply of the API and classes that wrap the reply.
 
 
 ------------------------------------------------------------------------------
-                                                        *cmake_file_api.queries*
+                                                     *cmake_file_api_all_in_one*
 
-2.1. Queries
+3.1. All in one
 
-Functions to call before configuring CMake in order to instruct it what data
-to generate using the API.
+Methods that write a CMake File API query, run a method that generates a
+buildsystem and read the reply of the CMake File API.
+
+
+                                           *cmake_file_api.write_configure_read*
+
+write_configure_read({build}, {function}[, {callback}])
+
+Write a query for everything, configure CMake, and read the reply of the CMake
+File API.
+
+This is the best way to start using the CMake File API if you want to get
+started quickly because it enables you to extract all information the CMake
+File API can give you. If you already know how the CMake File API works then
+this writes "codemodel" , "cache", "cmakeFiles", and "tooolchains" stateless
+client queries and reads their replies after the configure step is done. The
+versions of these queries are 2, 2, 1, and 1 respectively.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    {function} configure
+      The method to call after writing the query to generate the buildsystem.
+      If a callback parameter is provided this method should take a callback
+      parameter, so it can configure CMake asynchronously and call the
+      callback. If a callback is not provided, this method will be called
+      without parameters and everything wiill be executed synchronously.
+
+    [{callback} `function`, `string`, `nil`]
+      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
+      `nil`, the method will run asynchronously and call the callback upon
+      completion with the reply |cmake_file_api.object| as the single
+      arugument. Otherwise, it will run synchronously and return the reply
+      |cmake_file_api.object| normally.
+
+  Links: ~
+
+    CMake File API documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html>
+
+
+------------------------------------------------------------------------------
+                                                        *cmake_file_api_queries*
+
+3.2. Queries
+
+methods to call before configuring CMake in order to instruct it what data to
+generate using the API.
+
+
+                                                    *cmake_file_api.write_query*
+
+write_query({build}[, {callback}])
+
+Write a query for everything to the CMake File API.
+
+This is the best way to start using the CMake File API if you want to get
+started quickly and you don't want to use the "all-in-one"
+|cmake_file_api.write_configure_read| method. If you already know how the
+CMake File API works then this writes "codemodel" , "cache", "cmakeFiles", and
+"tooolchains" stateless client queries. The versions of these queries are 2,
+2, 1, and 1 respectively.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    [{callback} `function`, `string`, `nil`]
+      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
+      `nil`, the method will run asynchronously and call the callback upon
+      completion. Otherwise, it will run synchronously.
+
+  Links: ~
+
+    CMake File API documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html>
+
+
+                                          *cmake_file_api.write_codemodel_query*
+
+write_codemodel_query({build}[, {version}[, {callback}]])
+
+Write a "codemodel" query for the CMake File API.
+
+The "codemodel" query can be used to extract information about directories,
+configurations and targets of the generated build system. More technically, it
+writes a stateless client "codemodel" query of version 2.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    [{version} `number`, `string`, `nil`]
+      The major version of the "codemodel" query to send. Valid values are: 1
+      and 2. If `nil`, 2 is used.
+
+    [{callback} `function`, `string`, `nil`]
+      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
+      `nil`, the method will run asynchronously and call the callback upon
+      completion. Otherwise, it will run synchronously.
+
+  Links: ~
+
+    "codemodel" object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-codemodel>
+
+
+                                              *cmake_file_api.write_cache_query*
+
+write_cache_query({build}[, {version}[, {callback}]])
+
+Write a "cache" query for the CMake File API.
+
+The "cache" query can be used to extract information about the CMake cache.
+More technically, it writes a stateless client "cache" query of version 2.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    [{version} `number`, `string`, `nil`]
+      The major version of the "cache" query to send. Valid values are: 1 and
+      2. If `nil`, 2 is used.
+
+    [{callback} `function`, `string`, `nil`]
+      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
+      `nil`, the method will run asynchronously and call the callback upon
+      completion. Otherwise, it will run synchronously.
+
+  Links: ~
+
+    "cache" object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cache>
+
+
+                                        *cmake_file_api.write_cmake_files_query*
+
+write_cmake_files_query({build}[, {version}[, {callback}]])
+
+Write a "cmakeFiles" query for the CMake File API.
+
+The "cmakeFiles" query can be used to extract information about the generated
+CMake build system files. More technically, it writes a stateless client
+"cmakeFiles" query of version 1.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    [{version} `number`, `string`, `nil`]
+      The major version of the "cmakeFiles" query to send. Valid values are: 1
+      and 2. If `nil`, 1 is used.
+
+    [{callback} `function`, `string`, `nil`]
+      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
+      `nil`, the method will run asynchronously and call the callback upon
+      completion. Otherwise, it will run synchronously.
+
+  Links: ~
+
+    "cmakeFiles" object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cmakeFiles>
+
+
+                                         *cmake_file_api.write_toolchains_query*
+
+write_toolchains_query({build}[, {version}[, {callback}]])
+
+Write a "toolchains" query for the CMake File API.
+
+The "toolchains" query can be used to extract information about directories,
+configurations and targets of the generated build system. More technically, it
+writes a stateless client "toolchains" query of version 2.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    [{version} `number`, `string`, `nil`]
+      The major version of the "toolchains" query to send. Valid values are: 1
+      and 2. If `nil`, 1 is used.
+
+    [{callback} `function`, `string`, `nil`]
+      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
+      `nil`, the method will run asynchronously and call the callback upon
+      completion. Otherwise, it will run synchronously.
+
+  Links: ~
+
+    "toolchains" object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-toolchains>
 
 
                                    *cmake_file_api.write_shared_stateless_query*
 
 write_shared_stateless_query({build}, {kind}, {version}[, {callback}])
 
-Write a shared stateless query for the CMake file API.
+Write a shared stateless query for the CMake File API.
 
-The query will be shared with other clients such as IDE's and editors. See the
-shared stateless query documentation for more info.
+The query will be shared with other clients such as IDE's and editors and is
+therefore not recommended for use, but is implemented for the sake of
+completion of the API. See the shared stateless query documentation for more
+info.
 
   Parameters: ~
 
     {build} `string`
-      The build directory of the generated buildsystem. It has to be an
-      already existing directory on the filesystem.
+      The build directory of the to be generated buildsystem.
 
     {kind} `string`
       The kind of query to send. Valid values are: "codemodel", "cache",
@@ -103,7 +377,7 @@ shared stateless query documentation for more info.
 
 write_client_stateless_query({build}, {kind}, {version}[, {callback}])
 
-Write a client stateless query for the CMake file API.
+Write a client stateless query for the CMake File API.
 
 The query won't be shared with other clients such as IDE's and editors. See
 the client stateless query documentation for more info.
@@ -111,8 +385,7 @@ the client stateless query documentation for more info.
   Parameters: ~
 
     {build} `string`
-      The build directory of the generated buildsystem. It has to be an
-      already existing directory on the filesystem.
+      The build directory of the to be generated buildsystem.
 
     {kind} `string`
       The kind of query to send. Valid values are: "codemodel", "cache",
@@ -141,7 +414,7 @@ the client stateless query documentation for more info.
 
 write_client_stateful_query({build}, {query}[, {callback}])
 
-Write a query for the CMake file API.
+Write a query for the CMake File API.
 
 The query will be shared with other clients such as IDE's and editors. See the
 shared stateless query documentation for more info.
@@ -149,11 +422,10 @@ shared stateless query documentation for more info.
   Parameters: ~
 
     {build} `string`
-      The build directory of the generated buildsystem. It has to be an
-      already existing directory on the filesystem.
+      The build directory of the to be generated buildsystem.
 
     {query} `table`
-      The query to send to the CMake file API. Reqd the client statefull query
+      The query to send to the CMake File API. Reqd the client statefull query
       documentation for more info.
 
     [{callback} `function`, `string`, `nil`]
@@ -171,9 +443,9 @@ shared stateless query documentation for more info.
 
 
 ------------------------------------------------------------------------------
-                                                          *cmake_file_api.reply*
+                                                          *cmake_file_api_reply*
 
-2.2. Reply
+3.3. Reply
 
 Functions and classes to use after configuring CMake in order to read the
 reply of the API.
@@ -183,7 +455,7 @@ reply of the API.
 
 read_reply({build}[, {callback}])
 
-Read a reply from the CMake file API (it rhymes!).
+Read a reply from the CMake File API (it rhymes!).
 
 See the reply index file documentation for more info.
 
@@ -196,7 +468,9 @@ See the reply index file documentation for more info.
     [{callback} `function`, `string`, `nil`]
       It can be a Lua `function`, a Vim command `string`, or `nil`. If not
       `nil`, the method will run asynchronously and call the callback upon
-      completion. Otherwise, it will run synchronously.
+      completion with the returned |cmake_file_api.object| as the single
+      argument. Otherwise, it will run synchronously and return the
+      |cmake_file_api.object| normally.
 
   Returns: ~
 
@@ -223,7 +497,7 @@ See the reply index file documentation for more info.
 ------------------------------------------------------------------------------
                                                          *cmake_file_api.object*
 
-2.3. object
+3.4. object
 
 Reply object class.
 
@@ -287,7 +561,7 @@ Values of fields with the key "jsonFile" are going to be converted to
 ------------------------------------------------------------------------------
                                                            *cmake_file_api.lazy*
 
-2.4. lazy
+3.5. lazy
 
 Lazy object field class.
 
@@ -362,22 +636,6 @@ asynchronously.
       Loaded |cmake_file_api.lazy| as an |cmake_file_api.object|.
 
 
-==============================================================================
-                                                       *cmake_file_api_examples*
-
-3. Examples
-
-Here are some examples of how to use the API to extract valueable buildsystem
-information.
-
-
-------------------------------------------------------------------------------
-                                                  *cmake_file_api_basic_example*
-  3.1. basic
-
->
- print "aaa"
-<
 
 
 ==============================================================================

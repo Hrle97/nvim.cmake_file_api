@@ -1,8 +1,7 @@
 local fs = {}
 
-local p = require "nvim.cmake_file_api.path"
+local assert = require "assert"
 
--- Reference: https://github.com/luvit/luv/blob/master/docs.md#file-system-operations
 local uv = vim.loop
 
 local offset = 0
@@ -11,11 +10,11 @@ local write_flags = "w"
 local write_mode = 438 -- rwxrwxrw
 local write_offset = offset
 
-local max_dir_entries = 1024
-
 local read_flags = "r"
 local read_mode = 292 -- rwxrwxrw
 local read_offset = offset
+
+local max_dir_entries = 1024
 
 function fs.readdir(path, callback)
   if not callback then

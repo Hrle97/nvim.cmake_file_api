@@ -29,6 +29,7 @@
 
 <h2>Contents</h2>
 <ul>
+<li><a href="#All_in_one">All in one </a></li>
 <li><a href="#Queries">Queries </a></li>
 <li><a href="#Reply">Reply </a></li>
 <li><a href="#Class_object">Class object </a></li>
@@ -46,7 +47,9 @@
 </ul>
 <h2>Examples</h2>
 <ul class="nowrap">
-  <li><a href="examples/basic.lua.html">basic.lua</a></li>
+  <li><a href="examples/1_start.lua.html">1_start.lua</a></li>
+  <li><a href="examples/2_basic.lua.html">2_basic.lua</a></li>
+  <li><a href="examples/3_advanced.lua.html">3_advanced.lua</a></li>
 </ul>
 
 </div>
@@ -69,26 +72,54 @@
     </ul>
 
 
+<h2><a href="#All_in_one">All in one </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#write_configure_read">write_configure_read (build, function[, callback])</a></td>
+	<td class="summary">Write a query for everything, configure CMake, and read the reply of the
+  CMake File API.</td>
+	</tr>
+</table>
 <h2><a href="#Queries">Queries </a></h2>
 <table class="function_list">
 	<tr>
+	<td class="name" nowrap><a href="#write_query">write_query (build[, callback])</a></td>
+	<td class="summary">Write a query for everything to the CMake File API.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_codemodel_query">write_codemodel_query (build[, version[, callback]])</a></td>
+	<td class="summary">Write a "codemodel" query for the CMake File API.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_cache_query">write_cache_query (build[, version[, callback]])</a></td>
+	<td class="summary">Write a "cache" query for the CMake File API.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_cmake_files_query">write_cmake_files_query (build[, version[, callback]])</a></td>
+	<td class="summary">Write a "cmakeFiles" query for the CMake File API.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_toolchains_query">write_toolchains_query (build[, version[, callback]])</a></td>
+	<td class="summary">Write a "toolchains" query for the CMake File API.</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#write_shared_stateless_query">write_shared_stateless_query (build, kind, version[, callback])</a></td>
-	<td class="summary">Write a shared stateless query for the CMake file API.</td>
+	<td class="summary">Write a shared stateless query for the CMake File API.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#write_client_stateless_query">write_client_stateless_query (build, kind, version[, callback])</a></td>
-	<td class="summary">Write a client stateless query for the CMake file API.</td>
+	<td class="summary">Write a client stateless query for the CMake File API.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#write_client_stateful_query">write_client_stateful_query (build, query[, callback])</a></td>
-	<td class="summary">Write a query for the CMake file API.</td>
+	<td class="summary">Write a query for the CMake File API.</td>
 	</tr>
 </table>
 <h2><a href="#Reply">Reply </a></h2>
 <table class="function_list">
 	<tr>
 	<td class="name" nowrap><a href="#read_reply">read_reply (build[, callback])</a></td>
-	<td class="summary">Read a reply from the CMake file API (it rhymes!).</td>
+	<td class="summary">Read a reply from the CMake File API (it rhymes!).</td>
 	</tr>
 </table>
 <h2><a href="#Class_object">Class object </a></h2>
@@ -122,22 +153,316 @@
 <br/>
 
 
+    <h2 class="section-header has-description"><a name="All_in_one"></a>All in one </h2>
+
+          <div class="section-description">
+           Methods that write a CMake File API query, run a method that generates
+ a buildsystem and read the reply of the CMake File API.
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "write_configure_read"></a>
+    <strong>write_configure_read (build, function[, callback])</strong>
+    </dt>
+    <dd>
+    Write a query for everything, configure CMake, and read the reply of the
+  CMake File API. </p>
+
+<p> This is the best way to start using the CMake File API if you want to get
+ started quickly because it enables you to extract all information the CMake
+ File API can give you.</p>
+
+<p> If you already know how the CMake File API works then this writes
+ "codemodel" , "cache", "cmakeFiles", and "tooolchains" stateless client
+ queries and reads their replies after the configure step is done. The
+ versions of these queries are 2, 2, 1, and 1 respectively.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html
+">CMake File API documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">function</span>
+            <span class="types"><span class="type">configure</span></span>
+         The method to call after writing the query to generate the buildsystem. If
+ a callback parameter is provided this method should take a callback
+ parameter, so it can configure CMake asynchronously and call the callback.
+ If a callback is not provided, this method will be called without
+ parameters and everything wiill be executed synchronously.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         It can be a Lua function, a Vim command string, or nil.
+ If not nil, the method will run asynchronously and call the callback upon
+ completion with the reply <a href="index.html#object">object</a> as the single arugument. Otherwise,
+ it will run synchronously and return the reply <a href="index.html#object">object</a> normally.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
     <h2 class="section-header has-description"><a name="Queries"></a>Queries </h2>
 
           <div class="section-description">
-           Functions to call before configuring CMake in order to instruct it what data
+           methods to call before configuring CMake in order to instruct it what data
  to generate using the API.
           </div>
     <dl class="function">
+    <dt>
+    <a name = "write_query"></a>
+    <strong>write_query (build[, callback])</strong>
+    </dt>
+    <dd>
+    Write a query for everything to the CMake File API. </p>
+
+<p> This is the best way to start using the CMake File API if you want to get
+ started quickly and you don't want to use the "all-in-one"
+ <a href="index.html#write_configure_read">write_configure_read</a> method.</p>
+
+<p> If you already know how the CMake File API works then this writes
+ "codemodel" , "cache", "cmakeFiles", and "tooolchains" stateless client
+ queries. The versions of these queries are 2, 2, 1, and 1 respectively.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html
+">CMake File API documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         It can be a Lua function, a Vim command string, or nil.
+ If not nil, the method will run asynchronously and call the callback upon
+ completion. Otherwise, it will run synchronously.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "write_codemodel_query"></a>
+    <strong>write_codemodel_query (build[, version[, callback]])</strong>
+    </dt>
+    <dd>
+    Write a "codemodel" query for the CMake File API. </p>
+
+<p> The "codemodel" query can be used to extract information about directories,
+ configurations and targets of the generated build system.</p>
+
+<p> More technically, it writes a stateless client "codemodel" query of version
+ 2.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-codemodel
+">"codemodel" object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major version of the "codemodel" query to send. Valid values are: 1 and
+ 2. If nil, 2 is used.
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         It can be a Lua function, a Vim command string, or nil.
+ If not nil, the method will run asynchronously and call the callback upon
+ completion. Otherwise, it will run synchronously.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "write_cache_query"></a>
+    <strong>write_cache_query (build[, version[, callback]])</strong>
+    </dt>
+    <dd>
+    Write a "cache" query for the CMake File API. </p>
+
+<p> The "cache" query can be used to extract information about the CMake cache.</p>
+
+<p> More technically, it writes a stateless client "cache" query of version
+ 2.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cache
+">"cache" object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major version of the "cache" query to send. Valid values are: 1 and
+ 2. If nil, 2 is used.
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         It can be a Lua function, a Vim command string, or nil.
+ If not nil, the method will run asynchronously and call the callback upon
+ completion. Otherwise, it will run synchronously.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "write_cmake_files_query"></a>
+    <strong>write_cmake_files_query (build[, version[, callback]])</strong>
+    </dt>
+    <dd>
+    Write a "cmakeFiles" query for the CMake File API. </p>
+
+<p> The "cmakeFiles" query can be used to extract information about the
+ generated CMake build system files.</p>
+
+<p> More technically, it writes a stateless client "cmakeFiles" query of version
+ 1.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cmakeFiles
+">"cmakeFiles" object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major version of the "cmakeFiles" query to send. Valid values are: 1 and
+ 2. If nil, 1 is used.
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         It can be a Lua function, a Vim command string, or nil.
+ If not nil, the method will run asynchronously and call the callback upon
+ completion. Otherwise, it will run synchronously.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "write_toolchains_query"></a>
+    <strong>write_toolchains_query (build[, version[, callback]])</strong>
+    </dt>
+    <dd>
+    Write a "toolchains" query for the CMake File API. </p>
+
+<p> The "toolchains" query can be used to extract information about directories,
+ configurations and targets of the generated build system.</p>
+
+<p> More technically, it writes a stateless client "toolchains" query of version
+ 2.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-toolchains
+">"toolchains" object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major version of the "toolchains" query to send. Valid values are: 1 and
+ 2. If nil, 1 is used.
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         It can be a Lua function, a Vim command string, or nil.
+ If not nil, the method will run asynchronously and call the callback upon
+ completion. Otherwise, it will run synchronously.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
     <dt>
     <a name = "write_shared_stateless_query"></a>
     <strong>write_shared_stateless_query (build, kind, version[, callback])</strong>
     </dt>
     <dd>
-    Write a shared stateless query for the CMake file API. </p>
+    Write a shared stateless query for the CMake File API. </p>
 
-<p> The query will be shared with other clients such as IDE's and editors. See
- the shared stateless query documentation for more info.
+<p> The query will be shared with other clients such as IDE's and editors and is
+ therefore not recommended for use, but is implemented for the sake of
+ completion of the API. See the shared stateless query documentation for more
+ info.
 
     <h3>Links:</h3>
     <ul>
@@ -153,8 +478,7 @@
     <ul>
         <li><span class="parameter">build</span>
             <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-         The build directory of the generated buildsystem. It has to be an already
- existing directory on the filesystem.
+         The build directory of the to be generated buildsystem.
         </li>
         <li><span class="parameter">kind</span>
             <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
@@ -186,7 +510,7 @@
     <strong>write_client_stateless_query (build, kind, version[, callback])</strong>
     </dt>
     <dd>
-    Write a client stateless query for the CMake file API. </p>
+    Write a client stateless query for the CMake File API. </p>
 
 <p> The query won't be shared with other clients such as IDE's and editors. See
  the client stateless query documentation for more info.
@@ -205,8 +529,7 @@
     <ul>
         <li><span class="parameter">build</span>
             <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-         The build directory of the generated buildsystem. It has to be an already
- existing directory on the filesystem.
+         The build directory of the to be generated buildsystem.
         </li>
         <li><span class="parameter">kind</span>
             <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
@@ -238,7 +561,7 @@
     <strong>write_client_stateful_query (build, query[, callback])</strong>
     </dt>
     <dd>
-    Write a query for the CMake file API. </p>
+    Write a query for the CMake File API. </p>
 
 <p> The query will be shared with other clients such as IDE's and editors. See
  the shared stateless query documentation for more info.
@@ -257,12 +580,11 @@
     <ul>
         <li><span class="parameter">build</span>
             <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-         The build directory of the generated buildsystem. It has to be an already
- existing directory on the filesystem.
+         The build directory of the to be generated buildsystem.
         </li>
         <li><span class="parameter">query</span>
             <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
-         The query to send to the CMake file API. Reqd the client statefull query
+         The query to send to the CMake File API. Reqd the client statefull query
  documentation for more info.
         </li>
         <li><span class="parameter">callback</span>
@@ -292,7 +614,7 @@
     <strong>read_reply (build[, callback])</strong>
     </dt>
     <dd>
-    Read a reply from the CMake file API (it rhymes!). </p>
+    Read a reply from the CMake File API (it rhymes!). </p>
 
 <p> See the reply index file documentation for more info.
 
@@ -315,7 +637,8 @@
             <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
          It can be a Lua function, a Vim command string, or nil.
  If not nil, the method will run asynchronously and call the callback upon
- completion. Otherwise, it will run synchronously.
+ completion with the returned <a href="index.html#object">object</a> as the single argument. Otherwise,
+ it will run synchronously and return the <a href="index.html#object">object</a> normally.
          (<em>optional</em>)
         </li>
     </ul>
@@ -525,7 +848,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2021-11-09 14:25:16 </i>
+<i style="float:right;">Last updated 2021-11-09 16:26:55 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

@@ -97,4 +97,41 @@ function query.write_client_stateful_query(build, _query, callback)
   end)
 end
 
+function query.write_query(build, kind, version, callback)
+  query.write_client_stateless_query(build, kind, version, callback)
+end
+
+function query.write_codemodel_query(build, version, callback)
+  query.write_query(build, "codemodel", version, callback)
+end
+
+function query.write_cache_query(build, version, callback)
+  query.write_query(build, "cache", version, callback)
+end
+
+function query.write_cmake_files_query(build, version, callback)
+  query.write_query(build, "cmakeFiles", version, callback)
+end
+
+function query.write_toolchains_query(build, version, callback)
+  query.write_query(build, "toolchains", version, callback)
+end
+
+function query.write_all_queries(build, callback)
+  if not callback then
+    query.write_codemodel_query(build)
+    query.write_cache_query(build)
+    query.write_cmake_files_query(build)
+    query.write_toolchains_query(build)
+  end
+
+  query.write_codemodel_query(build, nil, function()
+    query.write_cache_query(build, nil, function()
+      query.write_cmake_files_query(build, nil, function()
+        query.write_toolchains_query(build, nil, callback)
+      end)
+    end)
+  end)
+end
+
 return query

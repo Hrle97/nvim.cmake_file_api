@@ -9,44 +9,79 @@ local object_kind_assert_message = "See here: " .. object_kind_link .. "."
 local callback_assert_message = "A callback should either be a Lua function"
   .. ", a Vim command string, or nil."
 
+local reply_index_assert_message = "Reply index should be present. "
+  .. "Check that you configured CMake before running this."
+
+local client_reply_assert_message = "Reply index should contain a reply "
+  .. "for the 'nvim' client. Did you forget to write a client query?"
+
+local client_kind_reply_assert_message = {
+  ["codemodel"] = "Client reply should contain a reply for the "
+    .. 'codemodel object kind. Did you forget to write a "codemodel" query? '
+    .. object_kind_link,
+  ["cach"] = "Client reply should contain a reply for the "
+    .. 'cache object kind. Did you forget to write a "cache" query? '
+    .. object_kind_link,
+  ["cmakeFiles"] = "Client reply should contain a reply for the "
+    .. 'cmakeFiles object kind. Did you forget to write a "cmakeFiles" query?'
+    .. object_kind_link,
+  ["toolchains"] = "Client reply should contain a reply for the "
+    .. 'toolchains object kind. Did you forget to write a "toolchains" query?'
+    .. object_kind_link,
+}
+
 function assert.wrap_message(message)
   return "[nvim.cmake_file_api]: " .. message
 end
 
+assert = setmetatable(assert, {
+  __call = function(_, is_true, message)
+    _G.assert(is_true, assert.wrap_message(message))
+  end,
+})
+
 function assert.ensure_dir(path, message)
-  _G.assert(vim.fn.isdirectory(path), assert.wrap_message(message))
+  assert(vim.fn.isdirectory(path), message)
 
   return string.gsub(path, "/?$", "/", 1)
 end
 
 function assert.ensure_object_kind(kind, message)
-  _G.assert(
+  assert(
     kind == "codemodel"
       or kind == "cache"
       or kind == "cmakeFiles"
       or kind == "toolchains",
-    assert.wrap_message(message .. " " .. object_kind_assert_message)
+    message .. " " .. object_kind_assert_message
   )
 
   return kind
 end
 
--- TODO: better checking
-function assert.ensure_object_version(_, version, message)
-  _G.assert(
-    type(version) == "number",
-    assert.wrap_message(message .. " " .. object_kind_assert_message)
+assert.object_kind_latest_version = {
+  ["codemodel"] = 2,
+  ["cache"] = 2,
+  ["cmakeFiles"] = 1,
+  ["toolchains"] = 1,
+}
+
+function assert.ensure_object_version(kind, version, message)
+  assert(
+    type(version) == "number"
+      or type(version) == "string"
+      or type(version) == "nil",
+    message .. " " .. object_kind_assert_message
   )
 
-  return version
+  return tostring(version or assert.object_kind_latest_version[kind])
 end
 
 function assert.ensure_callback_or_nil(callback, message)
-  _G.assert(
+  assert(
     type(callback) == "function"
       or type(callback) == "nil"
       or type(callback) == "string",
-    assert.wrap_message(message .. " " .. callback_assert_message)
+    message .. " " .. callback_assert_message
   )
 
   if type(callback) == "string" then
@@ -56,6 +91,53 @@ function assert.ensure_callback_or_nil(callback, message)
   end
 
   return callback
+end
+
+function assert.ensure_reply_index(entries)
+  local reply_index = nil
+  for entry in entries do
+    if entry.name:match "^index" then
+      reply_index = entry.name
+      break
+    end
+  end
+
+  assert(reply_index, reply_index_assert_message)
+  return reply_index
+end
+
+function assert.ensure_client_reply(reply)
+  assert(
+    type(reply) == "table"
+      and reply.data
+      and type(reply.data) == "table"
+      and reply.data.reply
+      and type(reply.data.reply) == "table"
+      and reply.data.reply["client-nvim"]
+      and type(reply.data.reply["client-nvim"] == "table"),
+    client_reply_assert_message
+  )
+
+  return reply.data.reply["client-nvim"]
+end
+
+function assert.ensure_client_reply_kind(client_reply, kind, version)
+  assert(type(client_reply) == "table", "Client reply should be a table.")
+
+  local pattern = "^" .. kind .. "-v" .. version
+  local reply_kind = nil
+  for k, v in pairs(client_reply) do
+    if k:match(pattern) then
+      reply_kind = v
+    end
+  end
+
+  assert(
+    reply_kind and reply_kind.jsonFile,
+    client_kind_reply_assert_message[kind]
+  )
+
+  return reply_kind
 end
 
 return assert
