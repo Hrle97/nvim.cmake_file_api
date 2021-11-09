@@ -513,6 +513,174 @@ function cmake_file_api.read_reply(build, kind, version, callback)
   return reply.read_reply(build, kind, version, callback)
 end
 
+--- Read a "codemodel" reply from the CMake File API.
+--
+-- Reads the reply index and reads the "codemodel" reply from the file
+-- specifiend in the index. Use this alongside the and the
+-- @{write_codemodel_query} method.
+--
+-- See the "codemodel" object kind documentation for more info.
+--
+-- @link "codemodel" object kind documentation
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-codemodel
+--
+-- @function read_codemodel_reply
+--
+-- @tparam string build
+-- The build directory of the generated buildsystem. It has to be an already
+-- existing directory on the filesystem.
+--
+-- @tparam[opt] number|string|nil version
+-- The major version of the "codemodel" reply to read. Valid values are 1 and
+-- 2. If nil, the version is 2.
+--
+-- @tparam[opt] function|string|nil callback
+-- It can be a Lua function, a Vim command string, or nil.
+-- If not nil, the method will run asynchronously and call the callback upon
+-- completion with the returned @{object} as the single argument. Otherwise,
+-- it will run synchronously and return the @{object} normally.
+--
+-- @treturn @{object}
+-- Returns a @{object} representing the reply.
+-- All the fields of this type are the same as in the reply index file
+-- documentation except for special fields that have the key "jsonFile". These
+-- fields are not immediately loaded and are instead initialized as a @{lazy}.
+-- Lazy objects have a path field and a load method which can run synchronously
+-- and asynchronously to retrieve the desired field as an @{object}.
+--
+-- @see object
+-- @see lazy
+-- @see write_codemodel_query
+function cmake_file_api.read_codemodel_reply(build, version, callback)
+  return reply.read_codemodel_reply(build, version, callback)
+end
+
+--- Read a "cache" reply from the CMake File API.
+--
+-- Reads the reply index and reads the "cache" reply from the file
+-- specifiend in the index. Use this alongside the and the
+-- @{write_cache_query} method.
+--
+-- See the "cache" object kind documentation for more info.
+--
+-- @link "cache" object kind documentation
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cache
+--
+-- @function read_cache_reply
+--
+-- @tparam string build
+-- The build directory of the generated buildsystem. It has to be an already
+-- existing directory on the filesystem.
+--
+-- @tparam[opt] number|string|nil version
+-- The major version of the "cache" reply to read. Valid values are 1 and
+-- 2. If nil, the version is 2.
+--
+-- @tparam[opt] function|string|nil callback
+-- It can be a Lua function, a Vim command string, or nil.
+-- If not nil, the method will run asynchronously and call the callback upon
+-- completion with the returned @{object} as the single argument. Otherwise,
+-- it will run synchronously and return the @{object} normally.
+--
+-- @treturn @{object}
+-- Returns a @{object} representing the reply.
+-- All the fields of this type are the same as in the reply index file
+-- documentation except for special fields that have the key "jsonFile". These
+-- fields are not immediately loaded and are instead initialized as a @{lazy}.
+-- Lazy objects have a path field and a load method which can run synchronously
+-- and asynchronously to retrieve the desired field as an @{object}.
+--
+-- @see object
+-- @see lazy
+-- @see write_cache_query
+function cmake_file_api.read_cache_reply(build, version, callback)
+  return reply.read_cache_reply(build, version, callback)
+end
+
+--- Read a "cmakeFile" reply from the CMake File API.
+--
+-- Reads the reply index and reads the "cmakeFile" reply from the file
+-- specifiend in the index. Use this alongside the and the
+-- @{write_cmake_file_query} method.
+--
+-- See the "cmakeFile" object kind documentation for more info.
+--
+-- @link "cmakeFile" object kind documentation
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cmakeFile
+--
+-- @function read_cmake_file_reply
+--
+-- @tparam string build
+-- The build directory of the generated buildsystem. It has to be an already
+-- existing directory on the filesystem.
+--
+-- @tparam[opt] number|string|nil version
+-- The major version of the "cmakeFile" reply to read. 1 is the only valid
+-- value. If nil, the version is 1.
+--
+-- @tparam[opt] function|string|nil callback
+-- It can be a Lua function, a Vim command string, or nil.
+-- If not nil, the method will run asynchronously and call the callback upon
+-- completion with the returned @{object} as the single argument. Otherwise,
+-- it will run synchronously and return the @{object} normally.
+--
+-- @treturn @{object}
+-- Returns a @{object} representing the reply.
+-- All the fields of this type are the same as in the reply index file
+-- documentation except for special fields that have the key "jsonFile". These
+-- fields are not immediately loaded and are instead initialized as a @{lazy}.
+-- Lazy objects have a path field and a load method which can run synchronously
+-- and asynchronously to retrieve the desired field as an @{object}.
+--
+-- @see object
+-- @see lazy
+-- @see write_cmake_file_query
+function cmake_file_api.read_cmake_file_reply(build, version, callback)
+  return reply.read_cmake_file_reply(build, version, callback)
+end
+
+--- Read a "toolchains" reply from the CMake File API.
+--
+-- Reads the reply index and reads the "toolchains" reply from the file
+-- specifiend in the index. Use this alongside the and the
+-- @{write_toolchains_query} method.
+--
+-- See the "toolchains" object kind documentation for more info.
+--
+-- @link "toolchains" object kind documentation
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-toolchains
+--
+-- @function read_toolchains_reply
+--
+-- @tparam string build
+-- The build directory of the generated buildsystem. It has to be an already
+-- existing directory on the filesystem.
+--
+-- @tparam[opt] number|string|nil version
+-- The major version of the "toolchains" reply to read. 1 is the only valid
+-- value. If nil, the version is 1.
+--
+-- @tparam[opt] function|string|nil callback
+-- It can be a Lua function, a Vim command string, or nil.
+-- If not nil, the method will run asynchronously and call the callback upon
+-- completion with the returned @{object} as the single argument. Otherwise,
+-- it will run synchronously and return the @{object} normally.
+--
+-- @treturn @{object}
+-- Returns a @{object} representing the reply.
+-- All the fields of this type are the same as in the reply index file
+-- documentation except for special fields that have the key "jsonFile". These
+-- fields are not immediately loaded and are instead initialized as a @{lazy}.
+-- Lazy objects have a path field and a load method which can run synchronously
+-- and asynchronously to retrieve the desired field as an @{object}.
+--
+-- @see object
+-- @see lazy
+-- @see write_toolchains_query
+function cmake_file_api.read_toolchains_reply(build, version, callback)
+  return reply.read_toolchains_reply(build, version, callback)
+end
+
 --- Reply object class.
 --
 -- Returned by the read_reply methods. All the fields of this type are

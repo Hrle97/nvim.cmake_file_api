@@ -1,6 +1,6 @@
 local fs = {}
 
-local assert = require "assert"
+local assert = require "nvim.cmake_file_api.assert"
 
 local uv = vim.loop
 
