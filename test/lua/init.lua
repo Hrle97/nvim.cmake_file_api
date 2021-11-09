@@ -4,8 +4,8 @@ local unit_test_paths = vim.fn.glob(unit_test_pattern, 0, 1)
 local example_pattern = vim.g.example_root_path .. "/**/*.lua"
 local example_paths = vim.fn.glob(example_pattern, 0, 1)
 
-_G.build = vim.g.cmake_build_path
-_G.source = vim.g.cmake_source_path
+_G.build = vim.g.test_root_path .. "/cmake/build"
+_G.source = vim.g.test_root_path .. "/cmake"
 _G.cmake_file_api = require "nvim.cmake_file_api"
 _G.expect = require "util.expect"
 _G.fs = require "util.fs"

@@ -40,8 +40,6 @@ declare -g doc_vim_help_unnecessary_css_path
 doc_vim_help_unnecessary_css_path="$doc_vim_help_gen_path/ldoc.css"
 declare -g doc_vim_help_unnecessary_examples_path
 doc_vim_help_unnecessary_examples_path="$doc_vim_help_gen_path/examples"
-declare -g doc_vim_help_unnecessary_topics_path
-doc_vim_help_unnecessary_topics_path="$doc_vim_help_gen_path/topics"
 
 
 function main() 
@@ -60,7 +58,6 @@ function main()
 
   rm "$doc_vim_help_unnecessary_css_path"
   rm -r "$doc_vim_help_unnecessary_examples_path"
-  # rm -r "$doc_vim_help_unnecessary_topics_path"
 }
 
 main "$@"
