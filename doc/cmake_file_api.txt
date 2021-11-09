@@ -62,7 +62,7 @@ information.
 >
     local cmake_file_api = require "nvim.cmake_file_api"
 
-    local reply = cmake_file_api.write_configure_read(build, function()
+    local reply = cmake_file_api.write_configure_read_all(build, function()
       vim.fn.system { "cmake", "-S", source, "-B", build }
     end)
     expect.is_object(reply)
@@ -82,19 +82,9 @@ information.
     -- configure CMake
     vim.fn.system { "cmake", "-S", source, "-B", build }
 
-    -- read reply index
-    local reply = cmake_file_api.read_reply(build)
-    expect.is_object(reply)
-
-    -- read client reply
-    local client_reply = reply.data.reply["client-nvim"]
-    local codemodel_lazy = client_reply["codemodel-v2"].jsonFile
-    expect.is_lazy(codemodel_lazy)
-
-    -- load codemodel reply
-    local codemodel = codemodel_lazy:load()
+    -- read codemodel reply
+    local codemodel = cmake_file_api.read_codemodel_reply(build)
     expect.is_object(codemodel)
-    expect.eq(codemodel.path, codemodel_lazy.path)
 
     -- get main target info
     local targets = codemodel.data.configurations[1].targets
@@ -135,12 +125,13 @@ the reply of the API and classes that wrap the reply.
 3.1. All in one
 
 Methods that write a CMake File API query, run a method that generates a
-buildsystem and read the reply of the CMake File API.
+buildsystem and read the reply of the CMake File API - easiest to use for
+beginners.
 
 
                                        *cmake_file_api.write_configure_read_all*
 
-write_configure_read_all({build}, {function}[, {callback}])
+write_configure_read_all({build}, {configure}[, {callback}])
 
 Write a query for everything, configure CMake, and read the reply index of the
 CMake File API.
@@ -158,7 +149,7 @@ API documentation for more info.
     {build} `string`
       The build directory of the to be generated buildsystem.
 
-    {function} configure
+    {configure} `function`
       The method to call after writing the query to generate the buildsystem.
       If a callback parameter is provided this method should take a callback
       parameter, so it can configure CMake asynchronously and call the
@@ -259,6 +250,8 @@ specified kind and version. See the object kind documentation for more info.
 
     |cmake_file_api.read_reply|
     |cmake_file_api.read_codemodel_reply|
+    |cmake_file_api.read_cache_reply|
+    |cmake_file_api.read_cmake_files_reply|
     |cmake_file_api.read_toolchains_reply|
 
   Links: ~
@@ -372,6 +365,7 @@ kind documentation for more info.
   See also: ~
 
     |cmake_file_api.read_reply|
+    |cmake_file_api.read_cmake_files_reply|
 
   Links: ~
 
@@ -756,15 +750,15 @@ method. See the "cache" object kind documentation for more info.
     <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cache>
 
 
-                                          *cmake_file_api.read_cmake_file_reply*
+                                         *cmake_file_api.read_cmake_files_reply*
 
-read_cmake_file_reply({build}[, {version}[, {callback}]])
+read_cmake_files_reply({build}[, {version}[, {callback}]])
 
 Read a "cmakeFile" reply from the CMake File API.
 
 Reads the reply index and reads the "cmakeFile" reply from the file specifiend
 in the index. Use this alongside the and the
-|cmake_file_api.write_cmake_file_query| method. See the "cmakeFile" object
+|cmake_file_api.write_cmake_files_query| method. See the "cmakeFile" object
 kind documentation for more info.
 
   Parameters: ~
@@ -799,6 +793,7 @@ kind documentation for more info.
 
     |cmake_file_api.object|
     |cmake_file_api.lazy|
+    |cmake_file_api.write_cmake_files_query|
 
   Links: ~
 

@@ -7,11 +7,11 @@ expect.nay.exists(query)
 cmake_file_api.write_client_stateless_query(build, "codemodel", 2)
 expect.exists(query)
 
-vim.fn.system { "cmake", "-S", source, "-B", build }
+cmake.configure()
 expect.pexists(preply)
 
 cmake_file_api.write_client_stateless_query(build, "codemodel", 2)
 expect.exists(query)
 
-vim.fn.system { "cmake", "-S", source, "-B", build }
+cmake.configure()
 expect.pexists(preply)

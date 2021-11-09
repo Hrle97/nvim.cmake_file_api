@@ -16,6 +16,8 @@
 -- @license MIT License
 -- @release 0.0.1
 -- @homepage https://github.com/Hrle97/nvim.cmake_file_api
+--
+-- @todo break up docs into smaller files
 local cmake_file_api = {}
 
 local query = require "nvim.cmake_file_api.query"
@@ -27,7 +29,8 @@ local object = require "nvim.cmake_file_api.object"
 --- All in one
 --
 -- Methods that write a CMake File API query, run a method that generates
--- a buildsystem and read the reply of the CMake File API.
+-- a buildsystem and read the reply of the CMake File API - easiest to use for
+-- beginners.
 --
 -- @section all_in_one
 
@@ -53,7 +56,7 @@ local object = require "nvim.cmake_file_api.object"
 -- @tparam string build
 -- The build directory of the to be generated buildsystem.
 --
--- @tparam configure function
+-- @tparam function configure
 -- The method to call after writing the query to generate the buildsystem. If
 -- a callback parameter is provided this method should take a callback
 -- parameter, so it can configure CMake asynchronously and call the callback.
@@ -156,7 +159,7 @@ end
 --
 -- @see read_reply
 -- @see read_codemodel_reply
--- @see read_cached_reply
+-- @see read_cache_reply
 -- @see read_cmake_files_reply
 -- @see read_toolchains_reply
 function cmake_file_api.write_query(build, kind, version, callback)
@@ -601,14 +604,14 @@ end
 --
 -- Reads the reply index and reads the "cmakeFile" reply from the file
 -- specifiend in the index. Use this alongside the and the
--- @{write_cmake_file_query} method.
+-- @{write_cmake_files_query} method.
 --
 -- See the "cmakeFile" object kind documentation for more info.
 --
 -- @link "cmakeFile" object kind documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cmakeFile
 --
--- @function read_cmake_file_reply
+-- @function read_cmake_files_reply
 --
 -- @tparam string build
 -- The build directory of the generated buildsystem. It has to be an already
@@ -634,9 +637,9 @@ end
 --
 -- @see object
 -- @see lazy
--- @see write_cmake_file_query
-function cmake_file_api.read_cmake_file_reply(build, version, callback)
-  return reply.read_cmake_file_reply(build, version, callback)
+-- @see write_cmake_files_query
+function cmake_file_api.read_cmake_files_reply(build, version, callback)
+  return reply.read_cmake_files_reply(build, version, callback)
 end
 
 --- Read a "toolchains" reply from the CMake File API.

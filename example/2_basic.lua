@@ -6,19 +6,9 @@ cmake_file_api.write_codemodel_query(build)
 -- configure CMake
 vim.fn.system { "cmake", "-S", source, "-B", build }
 
--- read reply index
-local reply = cmake_file_api.read_reply(build)
-expect.is_object(reply)
-
--- read client reply
-local client_reply = reply.data.reply["client-nvim"]
-local codemodel_lazy = client_reply["codemodel-v2"].jsonFile
-expect.is_lazy(codemodel_lazy)
-
--- load codemodel reply
-local codemodel = codemodel_lazy:load()
+-- read codemodel reply
+local codemodel = cmake_file_api.read_codemodel_reply(build)
 expect.is_object(codemodel)
-expect.eq(codemodel.path, codemodel_lazy.path)
 
 -- get main target info
 local targets = codemodel.data.configurations[1].targets

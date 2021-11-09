@@ -1,42 +1,65 @@
 local assert = {}
 
 local cmake_manual_link = "https://cmake.org/cmake/help/latest/manual/"
-
 local object_kind_link = cmake_manual_link
   .. "cmake-file-api.7.html#object-kinds"
+local codemodel_object_kind_link = cmake_manual_link
+  .. "cmake-file-api.7.html#object-kind-codemodel"
+local cache_object_kind_link = cmake_manual_link
+  .. "cmake-file-api.7.html#object-kind-cache"
+local cmake_files_object_kind_link = cmake_manual_link
+  .. "cmake-file-api.7.html#object-kind-cmakeFiles"
+local toolchains_object_kind_link = cmake_manual_link
+  .. "cmake-file-api.7.html#object-kind-toolchains"
+
 local object_kind_assert_message = "See here: " .. object_kind_link .. "."
 
 local callback_assert_message = "A callback should either be a Lua function"
   .. ", a Vim command string, or nil."
 
 local reply_index_assert_message = "Reply index should be present. "
-  .. "Check that you configured CMake before running this."
+  .. "Check that you wrote a query and configured CMake before running this."
 
 local client_reply_assert_message = "Reply index should contain a reply "
   .. "for the 'nvim' client. Did you forget to write a client query?"
 
 local client_kind_reply_assert_message = {
   ["codemodel"] = "Client reply should contain a reply for the "
-    .. 'codemodel object kind. Did you forget to write a "codemodel" query? '
-    .. object_kind_link,
+    .. '"codemodel" object kind. Did you forget to write a "codemodel" '
+    .. "query or configure CMake?"
+    .. "See here: "
+    .. codemodel_object_kind_link,
   ["cach"] = "Client reply should contain a reply for the "
-    .. 'cache object kind. Did you forget to write a "cache" query? '
-    .. object_kind_link,
+    .. '"cache" object kind. Did you forget to write a "cache" '
+    .. "query or configure CMake?"
+    .. "See here: "
+    .. cache_object_kind_link,
   ["cmakeFiles"] = "Client reply should contain a reply for the "
-    .. 'cmakeFiles object kind. Did you forget to write a "cmakeFiles" query?'
-    .. object_kind_link,
+    .. '"cmakeFiles" object kind. Did you forget to write a "cmakeFiles" '
+    .. "query or configure CMake?"
+    .. "See here: "
+    .. cmake_files_object_kind_link,
   ["toolchains"] = "Client reply should contain a reply for the "
-    .. 'toolchains object kind. Did you forget to write a "toolchains" query?'
-    .. object_kind_link,
+    .. '"toolchains" object kind. Did you forget to write a "toolchains" '
+    .. "query or configure CMake?"
+    .. "See here: "
+    .. toolchains_object_kind_link,
 }
 
 function assert.wrap_message(message)
-  return "[nvim.cmake_file_api]: " .. message
+  return "[nvim.cmake_file_api]: " .. (message or "ERROR")
 end
 
 assert = setmetatable(assert, {
   __call = function(_, is_true, message)
-    _G.assert(is_true, assert.wrap_message(message))
+    if vim.g.cmake_file_api_testing then
+      if not is_true then
+        _G.print(assert.wrap_message(message) .. "\n")
+        vim.cmd [[ cq ]]
+      end
+    else
+      _G.assert(is_true, assert.wrap_message(message))
+    end
   end,
 })
 
@@ -95,7 +118,7 @@ end
 
 function assert.ensure_reply_index(entries)
   local reply_index = nil
-  for entry in entries do
+  for _, entry in ipairs(entries) do
     if entry.name:match "^index" then
       reply_index = entry.name
       break
@@ -124,7 +147,7 @@ end
 function assert.ensure_client_reply_kind(client_reply, kind, version)
   assert(type(client_reply) == "table", "Client reply should be a table.")
 
-  local pattern = "^" .. kind .. "-v" .. version
+  local pattern = "^(" .. kind .. "%-v" .. version .. ")"
   local reply_kind = nil
   for k, v in pairs(client_reply) do
     if k:match(pattern) then
