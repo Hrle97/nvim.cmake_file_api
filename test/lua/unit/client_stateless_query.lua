@@ -1,5 +1,5 @@
-local source = vim.g.cmake_root_path
-local build = source .. "/.build"
+local source = vim.g.cmake_source_path
+local build = vim.g.cmake_build_path
 local query = build .. "/.cmake/api/v1/query/client-nvim/codemodel-v2"
 local preply = build .. "/.cmake/api/v1/reply/index-*.json"
 

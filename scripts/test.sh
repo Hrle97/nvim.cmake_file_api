@@ -4,7 +4,10 @@ set -euo pipefail
 declare -g root_path test_root_path
 root_path="$(realpath -e "${BASH_SOURCE[0]}" | xargs dirname | xargs dirname)"
 test_root_path="$root_path/test"
-cmake_root_path="$root_path/test/cmake"
+
+declare -g cmake_source_path cmake_build_path
+cmake_source_path="$root_path/test/cmake"
+cmake_build_path="$root_path/test/cmake/build"
 
 # declare -g out_file
 # out_file="$(mktemp)"
@@ -17,7 +20,8 @@ function main()
   if nvim --headless --noplugin \
       -c "lua vim.g.root_path = '$root_path'" \
       -c "lua vim.g.test_root_path = '$test_root_path'" \
-      -c "lua vim.g.cmake_root_path = '$cmake_root_path'" \
+      -c "lua vim.g.cmake_source_path = '$cmake_source_path'" \
+      -c "lua vim.g.cmake_build_path = '$cmake_build_path'" \
       -c "lua vim.o.runtimepath = 
             vim.o.runtimepath .. ',' .. 
             vim.g.root_path .. ',' .. 
