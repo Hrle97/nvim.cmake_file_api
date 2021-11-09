@@ -176,6 +176,245 @@ API documentation for more info.
     <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html>
 
 
+                                           *cmake_file_api.write_configure_read*
+
+write_configure_read({build}, {kind}[, {version}], {configure}[, {callback}])
+
+Write a query, configure CMake, and read the reply of specified kind and
+version.
+
+More technically, this writes a client stateless query and reads the reply of
+the specified kind and version. See the object kind documentation for more
+info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    {kind} `string`
+      The object kind of query and reply. Valid values are: "codemodel",
+      "cache", "cmakeFiles", and "tkolchains". See the object kind
+      documentation for more info.
+
+    [{version} `number`, `string`, `nil`]
+      The major object version of the query and reply. Valid values depend on
+      the query kind. If `nil`, the latest version for the object kind will be
+      used. See the CMake File API documentation for more info.
+
+    {configure} `function`
+      The method to call after writing the query to generate the buildsystem.
+      If a callback parameter is provided this method should take a callback
+      parameter, so it can configure CMake asynchronously and call the
+      callback. If a callback is not provided, this method will be called
+      without parameters and everything wiill be executed synchronously.
+
+    [{callback} `function`, `string`, `nil`]
+      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
+      `nil`, the method will run asynchronously and call the callback upon
+      completion with the reply |cmake_file_api.object| as the single
+      arugument. Otherwise, it will run synchronously and return the reply
+      |cmake_file_api.object| normally.
+
+  See also: ~
+
+    |cmake_file_api.object|
+    |cmake_file_api.lazy|
+    |cmake_file_api.write_query|
+    |cmake_file_api.read_reply|
+
+  Links: ~
+
+    Object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds>
+
+    CMake File API documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html>
+
+
+                                 *cmake_file_api.write_configure_read_codemodel*
+
+write_configure_read_codemodel({build}[, {version}], {configure}[, {callback}])
+
+Write a query, configure CMake, and read the reply of the "codemodel" kind.
+
+More technically, this writes a client stateless query and reads the reply of
+the "codemodel" kind. See the "codemodel" object kind documentation for more
+info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    [{version} `number`, `string`, `nil`]
+      The major object version of the query and reply. Valid values are 1 and
+      2. If `nil`, 2 is used.
+
+    {configure} `function`
+      The method to call after writing the query to generate the buildsystem.
+      If a callback parameter is provided this method should take a callback
+      parameter, so it can configure CMake asynchronously and call the
+      callback. If a callback is not provided, this method will be called
+      without parameters and everything wiill be executed synchronously.
+
+    [{callback} `function`, `string`, `nil`]
+      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
+      `nil`, the method will run asynchronously and call the callback upon
+      completion with the reply |cmake_file_api.object| as the single
+      arugument. Otherwise, it will run synchronously and return the reply
+      |cmake_file_api.object| normally.
+
+  See also: ~
+
+    |cmake_file_api.object|
+    |cmake_file_api.lazy|
+    |cmake_file_api.write_codemodel_query|
+    |cmake_file_api.read_codemodel_reply|
+
+  Links: ~
+
+    "codemodel" object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-codemodel>
+
+
+                                     *cmake_file_api.write_configure_read_cache*
+
+write_configure_read_cache({build}[, {version}], {configure}[, {callback}])
+
+Write a query, configure CMake, and read the reply of the "cache" kind.
+
+More technically, this writes a client stateless query and reads the reply of
+the "cache" kind. See the "cache" object kind documentation for more info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    [{version} `number`, `string`, `nil`]
+      The major object version of the query and reply. Valid values are 1 and
+      2. If `nil`, 2 is used.
+
+    {configure} `function`
+      The method to call after writing the query to generate the buildsystem.
+      If a callback parameter is provided this method should take a callback
+      parameter, so it can configure CMake asynchronously and call the
+      callback. If a callback is not provided, this method will be called
+      without parameters and everything wiill be executed synchronously.
+
+    [{callback} `function`, `string`, `nil`]
+      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
+      `nil`, the method will run asynchronously and call the callback upon
+      completion with the reply |cmake_file_api.object| as the single
+      arugument. Otherwise, it will run synchronously and return the reply
+      |cmake_file_api.object| normally.
+
+  See also: ~
+
+    |cmake_file_api.object|
+    |cmake_file_api.lazy|
+    |cmake_file_api.write_cache_query|
+    |cmake_file_api.read_cache_reply|
+
+  Links: ~
+
+    "cache" object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cache>
+
+
+                               *cmake_file_api.write_configure_read_cmake_files*
+
+write_configure_read_cmake_files({build}[, {version}], {configure}[, {callback}])
+
+Write a query, configure CMake, and read the reply of the "cmakeFiles" kind.
+
+More technically, this writes a client stateless query and reads the reply of
+the "cmakeFiles" kind. See the "cmakeFiles" object kind documentation for more
+info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    [{version} `number`, `string`, `nil`]
+      The major object version of the query and reply. Valid values are 1 and
+      2. If `nil`, 2 is used.
+
+    {configure} `function`
+      The method to call after writing the query to generate the buildsystem.
+      If a callback parameter is provided this method should take a callback
+      parameter, so it can configure CMake asynchronously and call the
+      callback. If a callback is not provided, this method will be called
+      without parameters and everything wiill be executed synchronously.
+
+    [{callback} `function`, `string`, `nil`]
+      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
+      `nil`, the method will run asynchronously and call the callback upon
+      completion with the reply |cmake_file_api.object| as the single
+      arugument. Otherwise, it will run synchronously and return the reply
+      |cmake_file_api.object| normally.
+
+  See also: ~
+
+    |cmake_file_api.object|
+    |cmake_file_api.lazy|
+    |cmake_file_api.write_cmake_files_query|
+    |cmake_file_api.read_cmake_files_reply|
+
+  Links: ~
+
+    "cmakeFiles" object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cmakeFiles>
+
+
+                                *cmake_file_api.write_configure_read_toolchains*
+
+write_configure_read_toolchains({build}[, {version}], {configure}[, {callback}])
+
+Write a query, configure CMake, and read the reply of the "toolchains" kind.
+
+More technically, this writes a client stateless query and reads the reply of
+the "toolchains" kind. See the "toolchains" object kind documentation for more
+info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    [{version} `number`, `string`, `nil`]
+      The major object version of the query and reply. Valid values are 1 and
+      2. If `nil`, 2 is used.
+
+    {configure} `function`
+      The method to call after writing the query to generate the buildsystem.
+      If a callback parameter is provided this method should take a callback
+      parameter, so it can configure CMake asynchronously and call the
+      callback. If a callback is not provided, this method will be called
+      without parameters and everything wiill be executed synchronously.
+
+    [{callback} `function`, `string`, `nil`]
+      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
+      `nil`, the method will run asynchronously and call the callback upon
+      completion with the reply |cmake_file_api.object| as the single
+      arugument. Otherwise, it will run synchronously and return the reply
+      |cmake_file_api.object| normally.
+
+  See also: ~
+
+    |cmake_file_api.object|
+    |cmake_file_api.lazy|
+    |cmake_file_api.write_toolchains_query|
+    |cmake_file_api.read_toolchains_reply|
+
+  Links: ~
+
+    "toolchains" object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-toolchains>
+
+
 ------------------------------------------------------------------------------
                                                         *cmake_file_api_queries*
 

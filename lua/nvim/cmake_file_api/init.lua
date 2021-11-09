@@ -87,6 +87,292 @@ function cmake_file_api.write_configure_read_all(build, configure, callback)
   end)
 end
 
+--- Write a query, configure CMake, and read the reply of specified kind and
+--  version.
+--
+-- More technically, this writes a client stateless query and reads the reply of
+-- the specified kind and version.
+--
+-- See the object kind documentation for more info.
+--
+-- @link Object kind documentation
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
+--
+-- @link CMake File API documentation
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html
+--
+-- @function write_configure_read
+--
+-- @tparam string build
+-- The build directory of the to be generated buildsystem.
+--
+-- @tparam string kind
+-- The object kind of query and reply. Valid values are: "codemodel", "cache",
+-- "cmakeFiles", and "tkolchains". See the object kind documentation for more
+-- info.
+--
+-- @tparam[opt] number|string|nil version
+-- The major object version of the query and reply. Valid values depend on the
+-- query kind. If nil, the latest version for the object kind will be used.
+-- See the CMake File API documentation for more info.
+--
+-- @tparam function configure
+-- The method to call after writing the query to generate the buildsystem. If
+-- a callback parameter is provided this method should take a callback
+-- parameter, so it can configure CMake asynchronously and call the callback.
+-- If a callback is not provided, this method will be called without
+-- parameters and everything wiill be executed synchronously.
+--
+-- @tparam[opt] function|string|nil callback
+-- It can be a Lua function, a Vim command string, or nil.
+-- If not nil, the method will run asynchronously and call the callback upon
+-- completion with the reply @{object} as the single arugument. Otherwise,
+-- it will run synchronously and return the reply @{object} normally.
+--
+-- @see object
+-- @see lazy
+-- @see write_query
+-- @see read_reply
+function cmake_file_api.write_configure_read(
+  build,
+  kind,
+  version,
+  configure,
+  callback
+)
+  if not callback then
+    query.write_query(build, kind, version)
+    configure()
+    return reply.read_reply(build, kind)
+  end
+
+  query.write_query(build, kind, version, function()
+    configure(function()
+      reply.read_reply(build, kind, version, callback)
+    end)
+  end)
+end
+
+--- Write a query, configure CMake, and read the reply of the "codemodel" kind.
+--
+-- More technically, this writes a client stateless query and reads the reply of
+-- the "codemodel" kind.
+--
+-- See the "codemodel" object kind documentation for more info.
+--
+-- @link "codemodel" object kind documentation
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-codemodel
+--
+-- @function write_configure_read_codemodel
+--
+-- @tparam string build
+-- The build directory of the to be generated buildsystem.
+--
+-- @tparam[opt] number|string|nil version
+-- The major object version of the query and reply. Valid values are 1 and 2.
+-- If nil, 2 is used.
+--
+-- @tparam function configure
+-- The method to call after writing the query to generate the buildsystem. If
+-- a callback parameter is provided this method should take a callback
+-- parameter, so it can configure CMake asynchronously and call the callback.
+-- If a callback is not provided, this method will be called without
+-- parameters and everything wiill be executed synchronously.
+--
+-- @tparam[opt] function|string|nil callback
+-- It can be a Lua function, a Vim command string, or nil.
+-- If not nil, the method will run asynchronously and call the callback upon
+-- completion with the reply @{object} as the single arugument. Otherwise,
+-- it will run synchronously and return the reply @{object} normally.
+--
+-- @see object
+-- @see lazy
+-- @see write_codemodel_query
+-- @see read_codemodel_reply
+function cmake_file_api.write_configure_read_codemodel(
+  build,
+  version,
+  configure,
+  callback
+)
+  if not callback then
+    query.write_codemodel_query(build, version)
+    configure()
+    return reply.read_codemodel_reply(build)
+  end
+
+  query.write_codemodel_query(build, version, function()
+    configure(function()
+      reply.read_codemodel_reply(build, version, callback)
+    end)
+  end)
+end
+
+--- Write a query, configure CMake, and read the reply of the "cache" kind.
+--
+-- More technically, this writes a client stateless query and reads the reply of
+-- the "cache" kind.
+--
+-- See the "cache" object kind documentation for more info.
+--
+-- @link "cache" object kind documentation
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cache
+--
+-- @function write_configure_read_cache
+--
+-- @tparam string build
+-- The build directory of the to be generated buildsystem.
+--
+-- @tparam[opt] number|string|nil version
+-- The major object version of the query and reply. Valid values are 1 and 2.
+-- If nil, 2 is used.
+--
+-- @tparam function configure
+-- The method to call after writing the query to generate the buildsystem. If
+-- a callback parameter is provided this method should take a callback
+-- parameter, so it can configure CMake asynchronously and call the callback.
+-- If a callback is not provided, this method will be called without
+-- parameters and everything wiill be executed synchronously.
+--
+-- @tparam[opt] function|string|nil callback
+-- It can be a Lua function, a Vim command string, or nil.
+-- If not nil, the method will run asynchronously and call the callback upon
+-- completion with the reply @{object} as the single arugument. Otherwise,
+-- it will run synchronously and return the reply @{object} normally.
+--
+-- @see object
+-- @see lazy
+-- @see write_cache_query
+-- @see read_cache_reply
+function cmake_file_api.write_configure_read_cache(
+  build,
+  version,
+  configure,
+  callback
+)
+  if not callback then
+    query.write_cache_query(build, version)
+    configure()
+    return reply.read_cache_reply(build)
+  end
+
+  query.write_cache_query(build, version, function()
+    configure(function()
+      reply.read_cache_reply(build, version, callback)
+    end)
+  end)
+end
+
+--- Write a query, configure CMake, and read the reply of the "cmakeFiles" kind.
+--
+-- More technically, this writes a client stateless query and reads the reply of
+-- the "cmakeFiles" kind.
+--
+-- See the "cmakeFiles" object kind documentation for more info.
+--
+-- @link "cmakeFiles" object kind documentation
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cmakeFiles
+--
+-- @function write_configure_read_cmake_files
+--
+-- @tparam string build
+-- The build directory of the to be generated buildsystem.
+--
+-- @tparam[opt] number|string|nil version
+-- The major object version of the query and reply. Valid values are 1 and 2.
+-- If nil, 2 is used.
+--
+-- @tparam function configure
+-- The method to call after writing the query to generate the buildsystem. If
+-- a callback parameter is provided this method should take a callback
+-- parameter, so it can configure CMake asynchronously and call the callback.
+-- If a callback is not provided, this method will be called without
+-- parameters and everything wiill be executed synchronously.
+--
+-- @tparam[opt] function|string|nil callback
+-- It can be a Lua function, a Vim command string, or nil.
+-- If not nil, the method will run asynchronously and call the callback upon
+-- completion with the reply @{object} as the single arugument. Otherwise,
+-- it will run synchronously and return the reply @{object} normally.
+--
+-- @see object
+-- @see lazy
+-- @see write_cmake_files_query
+-- @see read_cmake_files_reply
+function cmake_file_api.write_configure_read_cmake_files(
+  build,
+  version,
+  configure,
+  callback
+)
+  if not callback then
+    query.write_cmake_files_query(build, version)
+    configure()
+    return reply.read_cmake_files_reply(build)
+  end
+
+  query.write_cmake_files_query(build, version, function()
+    configure(function()
+      reply.read_cmake_files_reply(build, version, callback)
+    end)
+  end)
+end
+
+--- Write a query, configure CMake, and read the reply of the "toolchains" kind.
+--
+-- More technically, this writes a client stateless query and reads the reply of
+-- the "toolchains" kind.
+--
+-- See the "toolchains" object kind documentation for more info.
+--
+-- @link "toolchains" object kind documentation
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-toolchains
+--
+-- @function write_configure_read_toolchains
+--
+-- @tparam string build
+-- The build directory of the to be generated buildsystem.
+--
+-- @tparam[opt] number|string|nil version
+-- The major object version of the query and reply. Valid values are 1 and 2.
+-- If nil, 2 is used.
+--
+-- @tparam function configure
+-- The method to call after writing the query to generate the buildsystem. If
+-- a callback parameter is provided this method should take a callback
+-- parameter, so it can configure CMake asynchronously and call the callback.
+-- If a callback is not provided, this method will be called without
+-- parameters and everything wiill be executed synchronously.
+--
+-- @tparam[opt] function|string|nil callback
+-- It can be a Lua function, a Vim command string, or nil.
+-- If not nil, the method will run asynchronously and call the callback upon
+-- completion with the reply @{object} as the single arugument. Otherwise,
+-- it will run synchronously and return the reply @{object} normally.
+--
+-- @see object
+-- @see lazy
+-- @see write_toolchains_query
+-- @see read_toolchains_reply
+function cmake_file_api.write_configure_read_toolchains(
+  build,
+  version,
+  configure,
+  callback
+)
+  if not callback then
+    query.write_toolchains_query(build, version)
+    configure()
+    return reply.read_toolchains_reply(build)
+  end
+
+  query.write_toolchains_query(build, version, function()
+    configure(function()
+      reply.read_toolchains_reply(build, version, callback)
+    end)
+  end)
+end
+
 --- Queries
 --
 -- Methods to call before configuring CMake in order to instruct it what data

@@ -79,6 +79,27 @@
 	<td class="summary">Write a query for everything, configure CMake, and read the reply index of
   the CMake File API.</td>
 	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_configure_read">write_configure_read (build, kind[, version], configure[, callback])</a></td>
+	<td class="summary">Write a query, configure CMake, and read the reply of specified kind and
+  version.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_configure_read_codemodel">write_configure_read_codemodel (build[, version], configure[, callback])</a></td>
+	<td class="summary">Write a query, configure CMake, and read the reply of the "codemodel" kind.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_configure_read_cache">write_configure_read_cache (build[, version], configure[, callback])</a></td>
+	<td class="summary">Write a query, configure CMake, and read the reply of the "cache" kind.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_configure_read_cmake_files">write_configure_read_cmake_files (build[, version], configure[, callback])</a></td>
+	<td class="summary">Write a query, configure CMake, and read the reply of the "cmakeFiles" kind.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_configure_read_toolchains">write_configure_read_toolchains (build[, version], configure[, callback])</a></td>
+	<td class="summary">Write a query, configure CMake, and read the reply of the "toolchains" kind.</td>
+	</tr>
 </table>
 <h2><a href="#Queries">Queries </a></h2>
 <table class="function_list">
@@ -244,6 +265,327 @@
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_all_queries">write_all_queries</a></li>
          <li><a href="index.html#read_reply_index">read_reply_index</a></li>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "write_configure_read"></a>
+    <strong>write_configure_read (build, kind[, version], configure[, callback])</strong>
+    </dt>
+    <dd>
+    Write a query, configure CMake, and read the reply of specified kind and
+  version. </p>
+
+<p> More technically, this writes a client stateless query and reads the reply of
+ the specified kind and version.</p>
+
+<p> See the object kind documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <li><a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
+">Object kind documentation
+</a></li>
+         <li><a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html
+">CMake File API documentation
+</a></li>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">kind</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The object kind of query and reply. Valid values are: "codemodel", "cache",
+ "cmakeFiles", and "tkolchains". See the object kind documentation for more
+ info.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major object version of the query and reply. Valid values depend on the
+ query kind. If nil, the latest version for the object kind will be used.
+ See the CMake File API documentation for more info.
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">configure</span>
+            <span class="types"><span class="type">function</span></span>
+         The method to call after writing the query to generate the buildsystem. If
+ a callback parameter is provided this method should take a callback
+ parameter, so it can configure CMake asynchronously and call the callback.
+ If a callback is not provided, this method will be called without
+ parameters and everything wiill be executed synchronously.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         It can be a Lua function, a Vim command string, or nil.
+ If not nil, the method will run asynchronously and call the callback upon
+ completion with the reply <a href="index.html#object">object</a> as the single arugument. Otherwise,
+ it will run synchronously and return the reply <a href="index.html#object">object</a> normally.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#object">object</a></li>
+         <li><a href="index.html#lazy">lazy</a></li>
+         <li><a href="index.html#write_query">write_query</a></li>
+         <li><a href="index.html#read_reply">read_reply</a></li>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "write_configure_read_codemodel"></a>
+    <strong>write_configure_read_codemodel (build[, version], configure[, callback])</strong>
+    </dt>
+    <dd>
+    Write a query, configure CMake, and read the reply of the "codemodel" kind. </p>
+
+<p> More technically, this writes a client stateless query and reads the reply of
+ the "codemodel" kind.</p>
+
+<p> See the "codemodel" object kind documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-codemodel
+">"codemodel" object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major object version of the query and reply. Valid values are 1 and 2.
+ If nil, 2 is used.
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">configure</span>
+            <span class="types"><span class="type">function</span></span>
+         The method to call after writing the query to generate the buildsystem. If
+ a callback parameter is provided this method should take a callback
+ parameter, so it can configure CMake asynchronously and call the callback.
+ If a callback is not provided, this method will be called without
+ parameters and everything wiill be executed synchronously.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         It can be a Lua function, a Vim command string, or nil.
+ If not nil, the method will run asynchronously and call the callback upon
+ completion with the reply <a href="index.html#object">object</a> as the single arugument. Otherwise,
+ it will run synchronously and return the reply <a href="index.html#object">object</a> normally.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#object">object</a></li>
+         <li><a href="index.html#lazy">lazy</a></li>
+         <li><a href="index.html#write_codemodel_query">write_codemodel_query</a></li>
+         <li><a href="index.html#read_codemodel_reply">read_codemodel_reply</a></li>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "write_configure_read_cache"></a>
+    <strong>write_configure_read_cache (build[, version], configure[, callback])</strong>
+    </dt>
+    <dd>
+    Write a query, configure CMake, and read the reply of the "cache" kind. </p>
+
+<p> More technically, this writes a client stateless query and reads the reply of
+ the "cache" kind.</p>
+
+<p> See the "cache" object kind documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cache
+">"cache" object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major object version of the query and reply. Valid values are 1 and 2.
+ If nil, 2 is used.
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">configure</span>
+            <span class="types"><span class="type">function</span></span>
+         The method to call after writing the query to generate the buildsystem. If
+ a callback parameter is provided this method should take a callback
+ parameter, so it can configure CMake asynchronously and call the callback.
+ If a callback is not provided, this method will be called without
+ parameters and everything wiill be executed synchronously.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         It can be a Lua function, a Vim command string, or nil.
+ If not nil, the method will run asynchronously and call the callback upon
+ completion with the reply <a href="index.html#object">object</a> as the single arugument. Otherwise,
+ it will run synchronously and return the reply <a href="index.html#object">object</a> normally.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#object">object</a></li>
+         <li><a href="index.html#lazy">lazy</a></li>
+         <li><a href="index.html#write_cache_query">write_cache_query</a></li>
+         <li><a href="index.html#read_cache_reply">read_cache_reply</a></li>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "write_configure_read_cmake_files"></a>
+    <strong>write_configure_read_cmake_files (build[, version], configure[, callback])</strong>
+    </dt>
+    <dd>
+    Write a query, configure CMake, and read the reply of the "cmakeFiles" kind. </p>
+
+<p> More technically, this writes a client stateless query and reads the reply of
+ the "cmakeFiles" kind.</p>
+
+<p> See the "cmakeFiles" object kind documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cmakeFiles
+">"cmakeFiles" object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major object version of the query and reply. Valid values are 1 and 2.
+ If nil, 2 is used.
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">configure</span>
+            <span class="types"><span class="type">function</span></span>
+         The method to call after writing the query to generate the buildsystem. If
+ a callback parameter is provided this method should take a callback
+ parameter, so it can configure CMake asynchronously and call the callback.
+ If a callback is not provided, this method will be called without
+ parameters and everything wiill be executed synchronously.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         It can be a Lua function, a Vim command string, or nil.
+ If not nil, the method will run asynchronously and call the callback upon
+ completion with the reply <a href="index.html#object">object</a> as the single arugument. Otherwise,
+ it will run synchronously and return the reply <a href="index.html#object">object</a> normally.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#object">object</a></li>
+         <li><a href="index.html#lazy">lazy</a></li>
+         <li><a href="index.html#write_cmake_files_query">write_cmake_files_query</a></li>
+         <li><a href="index.html#read_cmake_files_reply">read_cmake_files_reply</a></li>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "write_configure_read_toolchains"></a>
+    <strong>write_configure_read_toolchains (build[, version], configure[, callback])</strong>
+    </dt>
+    <dd>
+    Write a query, configure CMake, and read the reply of the "toolchains" kind. </p>
+
+<p> More technically, this writes a client stateless query and reads the reply of
+ the "toolchains" kind.</p>
+
+<p> See the "toolchains" object kind documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-toolchains
+">"toolchains" object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major object version of the query and reply. Valid values are 1 and 2.
+ If nil, 2 is used.
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">configure</span>
+            <span class="types"><span class="type">function</span></span>
+         The method to call after writing the query to generate the buildsystem. If
+ a callback parameter is provided this method should take a callback
+ parameter, so it can configure CMake asynchronously and call the callback.
+ If a callback is not provided, this method will be called without
+ parameters and everything wiill be executed synchronously.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         It can be a Lua function, a Vim command string, or nil.
+ If not nil, the method will run asynchronously and call the callback upon
+ completion with the reply <a href="index.html#object">object</a> as the single arugument. Otherwise,
+ it will run synchronously and return the reply <a href="index.html#object">object</a> normally.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#object">object</a></li>
+         <li><a href="index.html#lazy">lazy</a></li>
+         <li><a href="index.html#write_toolchains_query">write_toolchains_query</a></li>
+         <li><a href="index.html#read_toolchains_reply">read_toolchains_reply</a></li>
     </ul>
 
 
@@ -1354,7 +1696,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2021-11-09 21:39:32 </i>
+<i style="float:right;">Last updated 2021-11-10 00:18:44 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
