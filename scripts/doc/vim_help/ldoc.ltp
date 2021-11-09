@@ -63,53 +63,6 @@
 # end
 #
 #
-# local function args(x)
-#   return x:gsub("(%w+)", "{%1}")
-# end
-#
-# local function types(x)
-#   x = x:gsub("|", ", ")
-#   x = x:gsub("(nil)", "`%1`")
-#   x = x:gsub("(boolean)", "`%1`")
-#   x = x:gsub("(number)", "`%1`")
-#   x = x:gsub("(string)", "`%1`")
-#   x = x:gsub("(function)", "`%1`")
-#   x = x:gsub("(table)", "`%1`")
-#   x = x:gsub("(userdata)", "`%1`")
-#   return link_help(x)
-# end
-#
-# local function trim(x)
-#   x = x:gsub("^%s+", "")
-#   x = x:gsub("%s+$", "")
-#   return x
-# end
-#
-# local function join(x)
-#   return x:gsub("%s+", " ")
-# end
-#
-# local function wrap(x, indent, limit)
-#   indent = indent or 0
-#   limit = (limit or 79) - indent - 1
-#   indent = (" "):rep(indent)
-#
-#   local last_break = 1
-#   local function sub(word_begin, word, word_end)
-#     if word_end - last_break > limit then
-#       last_break = word_begin
-#       return "\n" .. indent .. word
-#     end
-#   end
-#
-#   return indent .. x:gsub("%s+()(%S+)()", sub)
-# end
-#
-# local function pretty(x, indent, limit)
-#   return wrap(join(trim(types(x))), indent, limit)
-# end
-#
-#
 # local array = {}
 #
 # local ipairs = ldoc.ipairs
@@ -239,6 +192,72 @@
 # end
 #
 #
+# local function args(x)
+#   return x:gsub("(%w+)", "{%1}")
+# end
+#
+# local function types(x)
+#   x = x:gsub("|", ", ")
+#   x = x:gsub("(nil)", "`%1`")
+#   x = x:gsub("(boolean)", "`%1`")
+#   x = x:gsub("(number)", "`%1`")
+#   x = x:gsub("(string)", "`%1`")
+#   x = x:gsub("(function)", "`%1`")
+#   x = x:gsub("(table)", "`%1`")
+#   x = x:gsub("(userdata)", "`%1`")
+#   return link_help(x)
+# end
+#
+# local function trim(x)
+#   x = x:gsub("^%s+", "")
+#   x = x:gsub("%s+$", "")
+#   return x
+# end
+#
+# local function join(x)
+#   return x:gsub("%s+", " ")
+# end
+#
+# local function wrap(x, indent, limit)
+#   indent = indent or 0
+#   limit = (limit or 79) - indent - 1
+#   indent = (" "):rep(indent)
+#
+#   local last_break = 1
+#   local function sub(word_begin, word, word_end)
+#     if word_end - last_break > limit then
+#       last_break = word_begin
+#       return "\n" .. indent .. word
+#     end
+#   end
+#
+#   return indent .. x:gsub("%s+()(%S+)()", sub)
+# end
+#
+# local function pretty(x, indent, limit)
+#   return wrap(join(trim(types(x))), indent, limit)
+# end
+#
+# local function split(x, s)
+#   s = s or "%s"
+#   return x:gmatch("([^" .. s .. "]+)")
+# end
+#
+# local function indent(x, i)
+#   i = i or " "
+#   local r = ""
+#   local f = true
+#   for line in split(x, "\n") do
+#     if f == true then
+#       r = r .. "\n"
+#       f = false
+#     end
+#     r = r .. i .. line
+#   end
+#   return join(r)
+# end
+#
+#
 # -- #########################################################################
 # -- TEMPLATE
 #
@@ -266,21 +285,40 @@ CONTENTS
 
     1. Intro ........................ |$(help_tag_prefix)_intro|
     2. API .......................... |$(help_tag_prefix)_api|
-# local j = 1
+# local i = 1
 # for kind, items, type in module.kinds() do
 #   if ldoc.allowed_in_contents(type, module) then
 #     local kind_name = trim(kind:gsub("Class ", ""))
-#     local kind_num = "2." .. j .. "."
+#     local kind_num = "2." .. i .. "."
 #     local kind_sec = kind_num .. " " .. kind_name
-#     local kind_index = (kind_sec .. "......................."):sub(1, 31)
+#     local kind_index =
+#       (kind_sec .. ".........................,,,.........."):sub(1, 31)
 #     local kind_sep = kind:match("Class") and "." or "_"
 #     local kind_help_tag = help_tag_prefix .. kind_sep .. kind_name:lower()
 #     local kind_link = "|" .. kind_help_tag .. "|"
       $(kind_index) $(kind_link)
-#     j = j + 1
+#     i = i + 1
 #   end
 # end
     3. Examples ..................... |$(help_tag_prefix)_examples|
+# for kind, mods, type in ldoc.kinds() do
+#   if kind == "Examples" then
+#     local i = 1
+#     for example in mods() do
+#       local example_name = example.name:gsub("%.lua", "")
+#       local example_num = "3." .. i .. "."
+#       local example_sec = example_num .. " " .. example_name
+#       local example_index =
+#         (example_sec .. "................................."):sub(1, 31)
+#       local example_help_tag =
+#         help_tag_prefix ..  "_" ..
+#         example_name:lower() .. "_example"
+#       local example_link = "|" .. example_help_tag .. "|"
+      $(example_index) $(example_link)
+#       i = i + 1
+#     end
+#   end
+# end
     4. Changelog .................... |$(help_tag_prefix)_changelog|
     5. Bugs ......................... |$(help_tag_prefix)_bugs|
     6. Contributing ................. |$(help_tag_prefix)_contributing|
@@ -455,6 +493,27 @@ $(pretty(tag.format and tag.format(value) or value, 4))
 $(prefixed_tag("_examples"))
 
 3. Examples
+
+Here are some examples of how to use the API to extract valueable buildsystem
+information.
+# for kind, mods, type in ldoc.kinds() do
+#   if kind == "Examples" then
+#     local i = 1
+#     for example in mods() do
+#       local example_name = example.name:gsub("%.lua", "")
+
+
+------------------------------------------------------------------------------
+$(prefixed_tag("_" .. example_name:lower() .. "_example"))
+$(pretty("3." .. i .. ". " .. example_name, 2))
+
+>
+$(indent(trim(example.body), (" "):rep(4)))
+<
+#       i = i + 1
+#     end
+#   end
+# end
 
 
 ==============================================================================

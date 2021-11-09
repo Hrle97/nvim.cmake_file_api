@@ -24,7 +24,7 @@
 
 <div id="navigation">
 <br/>
-<h1>nvim.cmake_file_api</h1>
+<h1>Neovim CMake File API</h1>
 
 
 <h2>Contents</h2>
@@ -55,19 +55,17 @@
 
 <h1>Module <code>nvim.cmake_file_api</code></h1>
 <p>CMake File API client implementation for Neovim.</p>
-<p>
 <p> CMake provides a file-based API that clients may use to get semantic
  information about the buildsystems CMake generates. Clients may use the API
  by writing query files to a specific location in a build tree to request zero
  or more Object Kinds. When CMake generates the buildsystem in that build tree
- it will read the query files and write reply files for the client to read.
-</p>
+ it will read the query files and write reply files for the client to read.</p>
     <h3>Info:</h3>
     <ul>
-        <li><strong>Copyright</strong>: © 2021 Hrle97 <32d9c8c6-8118-45e7-857e-8b45522f395d@anonaddy.me></li>
+        <li><strong>Copyright</strong>: © 2021 Hrle97 <a href="&#x6d;&#97;&#x69;&#108;&#x74;&#111;&#x3a;3&#50;&#x64;&#57;&#x63;&#56;&#x63;&#54;&#x2d;8&#49;&#x31;&#56;&#x2d;&#52;&#x35;&#101;&#x37;&#45;&#x38;5&#55;&#x65;&#45;&#x38;&#98;&#x34;&#53;&#x35;2&#50;&#x66;&#51;&#x39;&#53;&#x64;&#64;&#x61;&#110;&#x6f;n&#97;&#x64;&#100;&#x79;&#46;&#x6d;&#101;">&#x33;&#50;&#x64;&#57;&#x63;&#56;&#x63;6&#45;&#x38;&#49;&#x31;&#56;&#x2d;&#52;&#x35;e&#55;&#x2d;&#56;&#x35;&#55;&#x65;&#45;&#x38;&#98;&#x34;5&#53;&#x32;&#50;&#x66;&#51;&#x39;&#53;&#x64;&#64;&#x61;n&#111;&#x6e;&#97;&#x64;&#100;&#x79;&#46;&#x6d;e</a></li>
         <li><strong>Release</strong>: 0.0.1</li>
         <li><strong>License</strong>: MIT License</li>
-        <li><strong>Author</strong>: Hrle97 <https://github.com/Hrle97></li>
+        <li><strong>Author</strong>: Hrle97 <a href="https://github.com/Hrle97">https://github.com/Hrle97</a></li>
     </ul>
 
 
@@ -129,7 +127,6 @@
           <div class="section-description">
            Functions to call before configuring CMake in order to instruct it what data
  to generate using the API.
-
           </div>
     <dl class="function">
     <dt>
@@ -137,10 +134,10 @@
     <strong>write_shared_stateless_query (build, kind, version[, callback])</strong>
     </dt>
     <dd>
-    Write a shared stateless query for the CMake file API.
+    Write a shared stateless query for the CMake file API. </p>
+
 <p> The query will be shared with other clients such as IDE's and editors. See
  the shared stateless query documentation for more info.
-
 
     <h3>Links:</h3>
     <ul>
@@ -156,30 +153,23 @@
     <ul>
         <li><span class="parameter">build</span>
             <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
- The build directory of the generated buildsystem. It has to be an already
+         The build directory of the generated buildsystem. It has to be an already
  existing directory on the filesystem.
-
         </li>
         <li><span class="parameter">kind</span>
             <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
- The kind of query to send. Valid values are: "codemodel", "cache",
+         The kind of query to send. Valid values are: "codemodel", "cache",
  "cmakeFiles", and "tkolchains". See the object kind documentation for more
  info.
-
         </li>
         <li><span class="parameter">version</span>
             <span class="types"><span class="type">number</span> or <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
- The major version of the query kind to send. Valid values depend on the query
+         The major version of the query kind to send. Valid values depend on the query
  kind. See the CMake File API documentation for more info.
-
         </li>
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-
- It can be a Lua function, a Vim command string, or nil.
+         It can be a Lua function, a Vim command string, or nil.
  If not nil, the method will run asynchronously and call the callback upon
  completion. Otherwise, it will run synchronously.
          (<em>optional</em>)
@@ -196,10 +186,10 @@
     <strong>write_client_stateless_query (build, kind, version[, callback])</strong>
     </dt>
     <dd>
-    Write a client stateless query for the CMake file API.
+    Write a client stateless query for the CMake file API. </p>
+
 <p> The query won't be shared with other clients such as IDE's and editors. See
  the client stateless query documentation for more info.
-
 
     <h3>Links:</h3>
     <ul>
@@ -215,30 +205,23 @@
     <ul>
         <li><span class="parameter">build</span>
             <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
- The build directory of the generated buildsystem. It has to be an already
+         The build directory of the generated buildsystem. It has to be an already
  existing directory on the filesystem.
-
         </li>
         <li><span class="parameter">kind</span>
             <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
- The kind of query to send. Valid values are: "codemodel", "cache",
+         The kind of query to send. Valid values are: "codemodel", "cache",
  "cmakeFiles", and "toolchains". See the object kind documentation for more
  info.
-
         </li>
         <li><span class="parameter">version</span>
             <span class="types"><span class="type">number</span> or <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
- The major version of the query kind to send. Valid values depend on the query
+         The major version of the query kind to send. Valid values depend on the query
  kind. See the CMake File API documentation for more info.
-
         </li>
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-
- It can be a Lua function, a Vim command string, or nil.
+         It can be a Lua function, a Vim command string, or nil.
  If not nil, the method will run asynchronously and call the callback upon
  completion. Otherwise, it will run synchronously.
          (<em>optional</em>)
@@ -255,10 +238,10 @@
     <strong>write_client_stateful_query (build, query[, callback])</strong>
     </dt>
     <dd>
-    Write a query for the CMake file API.
+    Write a query for the CMake file API. </p>
+
 <p> The query will be shared with other clients such as IDE's and editors. See
  the shared stateless query documentation for more info.
-
 
     <h3>Links:</h3>
     <ul>
@@ -274,22 +257,17 @@
     <ul>
         <li><span class="parameter">build</span>
             <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
- The build directory of the generated buildsystem. It has to be an already
+         The build directory of the generated buildsystem. It has to be an already
  existing directory on the filesystem.
-
         </li>
         <li><span class="parameter">query</span>
             <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
-
- The query to send to the CMake file API. Reqd the client statefull query
+         The query to send to the CMake file API. Reqd the client statefull query
  documentation for more info.
-
         </li>
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-
- It can be a Lua function, a Vim command string, or nil.
+         It can be a Lua function, a Vim command string, or nil.
  If not nil, the method will run asynchronously and call the callback upon
  completion. Otherwise, it will run synchronously.
          (<em>optional</em>)
@@ -307,7 +285,6 @@
           <div class="section-description">
            Functions and classes to use after configuring CMake in order to read the
  reply of the API.
-
           </div>
     <dl class="function">
     <dt>
@@ -315,9 +292,9 @@
     <strong>read_reply (build[, callback])</strong>
     </dt>
     <dd>
-    Read a reply from the CMake file API (it rhymes!).
-<p> See the reply index file documentation for more info.
+    Read a reply from the CMake file API (it rhymes!). </p>
 
+<p> See the reply index file documentation for more info.
 
     <h3>Links:</h3>
     <ul>
@@ -331,18 +308,14 @@
     <ul>
         <li><span class="parameter">build</span>
             <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
-
- The build directory of the generated buildsystem. It has to be an already
+         The build directory of the generated buildsystem. It has to be an already
  existing directory on the filesystem.
-
         </li>
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-
- It can be a Lua function, a Vim command string, or nil.
+         It can be a Lua function, a Vim command string, or nil.
  If not nil, the method will run asynchronously and call the callback upon
  completion. Otherwise, it will run synchronously.
-
          (<em>optional</em>)
         </li>
     </ul>
@@ -350,14 +323,12 @@
     <h3>Returns:</h3>
     <ol>
 
-
- Returns an <a href="index.html#object">object</a> represention the reply.
+         Returns an <a href="index.html#object">object</a> represention the reply.
  All the fields of this type are the same as in the reply index file
  documentation except for special fields that have the key "jsonFile". These
  fields are not immediately loaded and are instead initialized as a <a href="index.html#lazy">lazy</a>.
  Lazy objects have a path field and a load method which can run synchronously
  and asynchronously to retrieve the desired field as an <a href="index.html#object">object</a>.
-
     </ol>
 
 
@@ -373,14 +344,14 @@
     <h2 class="section-header has-description"><a name="Class_object"></a>Class object </h2>
 
           <div class="section-description">
-          Reply object class.
+          Reply object class. </p>
+
 <p> Returned by the <a href="index.html#read_reply">read_reply</a> method. All the fields of this type are the
  same as in the reply index file documentation except for special fields that
  have the key "jsonFile". These fields are not immediately loaded and are
  instead initialized as a <a href="index.html#lazy">lazy</a>. Lazy objects have a path field and a load
  method which can run synchronously and asynchronously to retrieve the desired
  field as a <a href="index.html#object">object</a>.
-
           </div>
     <dl class="function">
     <dt>
@@ -416,10 +387,10 @@
     <strong>object.new (path, data)</strong>
     </dt>
     <dd>
-    Create a new <a href="index.html#object">object</a>.
+    Create a new <a href="index.html#object">object</a>. </p>
+
 <p> Values of fields with the key "jsonFile" are going to be converted to
  <a href="index.html#lazy">lazy</a> values.
-
 
     </ul>
     </ul>
@@ -450,11 +421,11 @@
     <h2 class="section-header has-description"><a name="Class_lazy"></a>Class lazy </h2>
 
           <div class="section-description">
-          Lazy object field class.
+          Lazy object field class. </p>
+
 <p> Values of fields with the key "jsonFiles" of API replies are converted to
  <a href="index.html#lazy">lazy</a> values that can be loaded synchronously or asynchronously with the
  <a href="index.html#lazy:load">lazy:load</a> method into an <a href="index.html#object">object</a>.
-
           </div>
     <dl class="function">
     <dt>
@@ -493,7 +464,6 @@
     Create a new <a href="index.html#lazy">lazy</a>  The <a href="index.html#lazy">lazy</a> can be loaded later into an <a href="index.html#object">object</a> with the <a href="index.html#lazy:load">lazy:load</a>
  method.
 
-
     </ul>
     </ul>
 
@@ -520,9 +490,9 @@
     <strong>lazy:load ([callback])</strong>
     </dt>
     <dd>
-    Load a <a href="index.html#lazy">lazy</a>.
-<p> Load a <a href="index.html#lazy">lazy</a> int an <a href="index.html#object">object</a> synchronously or asynchronously.
+    Load a <a href="index.html#lazy">lazy</a>. </p>
 
+<p> Load a <a href="index.html#lazy">lazy</a> int an <a href="index.html#object">object</a> synchronously or asynchronously.
 
     </ul>
     </ul>
@@ -531,11 +501,9 @@
     <ul>
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-
- It can be a Lua function, a Vim command string, or nil.
+         It can be a Lua function, a Vim command string, or nil.
  If not nil, the method will run asynchronously and call the callback upon
  completion. Otherwise, it will run synchronously.
-
          (<em>optional</em>)
         </li>
     </ul>
@@ -557,7 +525,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2021-11-09 11:21:52 </i>
+<i style="float:right;">Last updated 2021-11-09 14:21:55 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

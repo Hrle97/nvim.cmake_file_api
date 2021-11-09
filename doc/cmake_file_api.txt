@@ -24,6 +24,7 @@ CONTENTS
       2.3. object.................... |cmake_file_api.object|
       2.4. lazy...................... |cmake_file_api.lazy|
     3. Examples ..................... |cmake_file_api_examples|
+      3.1. basic..................... |cmake_file_api_basic_example|
     4. Changelog .................... |cmake_file_api_changelog|
     5. Bugs ......................... |cmake_file_api_bugs|
     6. Contributing ................. |cmake_file_api_contributing|
@@ -365,6 +366,18 @@ asynchronously.
                                                        *cmake_file_api_examples*
 
 3. Examples
+
+Here are some examples of how to use the API to extract valueable buildsystem
+information.
+
+
+------------------------------------------------------------------------------
+                                                  *cmake_file_api_basic_example*
+  3.1. basic
+
+>
+ print "aaa"
+<
 
 
 ==============================================================================
