@@ -1,5 +1,3 @@
-local source = vim.g.cmake_source_path
-local build = vim.g.cmake_build_path
 local query = build .. "/.cmake/api/v1/query/client-nvim/query.json"
 local preply = build .. "/.cmake/api/v1/reply/index-*.json"
 
@@ -12,7 +10,7 @@ cmake_file_api.write_client_stateful_query(
 )
 expect.exists(query)
 
-vim.fn.system { "cmake", "-S", source, "-B", build }
+cmake.configure()
 expect.pexists(preply)
 
 cmake_file_api.write_client_stateful_query(
@@ -21,5 +19,5 @@ cmake_file_api.write_client_stateful_query(
 )
 expect.exists(query)
 
-vim.fn.system { "cmake", "-S", source, "-B", build }
+cmake.configure()
 expect.pexists(preply)

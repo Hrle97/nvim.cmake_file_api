@@ -1,4 +1,5 @@
 project = "nvim.cmake_file_api"
+titile = "Neovim CMake File API"
 description = "Library for dealing with the CMake file API used to extract "
   .. "information about generated build systems."
 full_description = "CMake provides a file-based API that clients may use to "
@@ -11,6 +12,8 @@ full_description = "CMake provides a file-based API that clients may use to "
 not_luadoc = true
 
 template = true
+examples = "example"
+readme = "README.md"
 
 custom_tags = {
   {
