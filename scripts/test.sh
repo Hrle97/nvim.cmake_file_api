@@ -9,14 +9,8 @@ declare -g cmake_source_path cmake_build_path
 cmake_source_path="$root_path/test/cmake"
 cmake_build_path="$root_path/test/cmake/build"
 
-# declare -g out_file
-# out_file="$(mktemp)"
-# trap "rm -f $out_file" EXIT
-
 function main() 
 {
-      # -c "lua vim.g.out_file_path = '$out_file'" \
-      # -c "lua io.output(vim.g.out_file_path)" \
   if nvim --headless --noplugin \
       -c "lua vim.g.root_path = '$root_path'" \
       -c "lua vim.g.test_root_path = '$test_root_path'" \
@@ -28,11 +22,9 @@ function main()
             vim.g.test_root_path" \
       -c "luafile $root_path/test/lua/init.lua" \
       -c ':q' 2>&1; then
-    # cat "$out_file"
-    echo -e "\n\nPASS"
+    echo -e "PASS"
   else
-    # cat "$out_file"
-    echo -e "\n\nFAIL"
+    echo -e "FAIL"
     return 1
   fi
 }
