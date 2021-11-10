@@ -107,6 +107,22 @@ information.
 
 >
     local cmake_file_api = require "nvim.cmake_file_api"
+
+    cmake_file_api.write_client_stateful_query(build, {
+      requests = {
+        {
+          kind = "codemodel",
+          version = 2,
+        },
+      },
+      client = {
+        specific = true,
+      },
+    }, function()
+      cmake_file_api.read_reply_index(build, function(index)
+        expect.is_object(index)
+      end)
+    end)
 <
 
 
@@ -157,11 +173,12 @@ API documentation for more info.
       without parameters and everything wiill be executed synchronously.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion with the reply |cmake_file_api.object| as the single
-      arugument. Otherwise, it will run synchronously and return the reply
-      |cmake_file_api.object| normally.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with the reply
+      |cmake_file_api.object| as the single arugument. Otherwise, it will run
+      synchronously and return the reply |cmake_file_api.object| normally.
+      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
+      throws an assertion.
 
   See also: ~
 
@@ -210,11 +227,12 @@ info.
       without parameters and everything wiill be executed synchronously.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion with the reply |cmake_file_api.object| as the single
-      arugument. Otherwise, it will run synchronously and return the reply
-      |cmake_file_api.object| normally.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with the reply
+      |cmake_file_api.object| as the single arugument. Otherwise, it will run
+      synchronously and return the reply |cmake_file_api.object| normally.
+      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
+      throws an assertion.
 
   See also: ~
 
@@ -259,11 +277,12 @@ info.
       without parameters and everything wiill be executed synchronously.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion with the reply |cmake_file_api.object| as the single
-      arugument. Otherwise, it will run synchronously and return the reply
-      |cmake_file_api.object| normally.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with the reply
+      |cmake_file_api.object| as the single arugument. Otherwise, it will run
+      synchronously and return the reply |cmake_file_api.object| normally.
+      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
+      throws an assertion.
 
   See also: ~
 
@@ -304,11 +323,12 @@ the "cache" kind. See the "cache" object kind documentation for more info.
       without parameters and everything wiill be executed synchronously.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion with the reply |cmake_file_api.object| as the single
-      arugument. Otherwise, it will run synchronously and return the reply
-      |cmake_file_api.object| normally.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with the reply
+      |cmake_file_api.object| as the single arugument. Otherwise, it will run
+      synchronously and return the reply |cmake_file_api.object| normally.
+      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
+      throws an assertion.
 
   See also: ~
 
@@ -350,11 +370,12 @@ info.
       without parameters and everything wiill be executed synchronously.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion with the reply |cmake_file_api.object| as the single
-      arugument. Otherwise, it will run synchronously and return the reply
-      |cmake_file_api.object| normally.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with the reply
+      |cmake_file_api.object| as the single arugument. Otherwise, it will run
+      synchronously and return the reply |cmake_file_api.object| normally.
+      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
+      throws an assertion.
 
   See also: ~
 
@@ -396,11 +417,12 @@ info.
       without parameters and everything wiill be executed synchronously.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion with the reply |cmake_file_api.object| as the single
-      arugument. Otherwise, it will run synchronously and return the reply
-      |cmake_file_api.object| normally.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with the reply
+      |cmake_file_api.object| as the single arugument. Otherwise, it will run
+      synchronously and return the reply |cmake_file_api.object| normally.
+      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
+      throws an assertion.
 
   See also: ~
 
@@ -444,9 +466,10 @@ documentation for more info.
       The build directory of the to be generated buildsystem.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion. Otherwise, it will run synchronously.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with. Otherwise, it
+      will run synchronously. Note: you can't call Vim `function`s in this
+      callback, Otherwise, Neovim throws an assertion.
 
   Links: ~
 
@@ -481,9 +504,10 @@ specified kind and version. See the object kind documentation for more info.
       used. See the CMake File API documentation for more info.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion. Otherwise, it will run synchronously.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with. Otherwise, it
+      will run synchronously. Note: you can't call Vim `function`s in this
+      callback, Otherwise, Neovim throws an assertion.
 
   See also: ~
 
@@ -524,9 +548,10 @@ kind documentation for more info.
       and 2. If `nil`, 2 is used.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion. Otherwise, it will run synchronously.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with. Otherwise, it
+      will run synchronously. Note: you can't call Vim `function`s in this
+      callback, Otherwise, Neovim throws an assertion.
 
   See also: ~
 
@@ -560,9 +585,10 @@ technically, it writes a stateless client "cache" query of version 2. See the
       2. If `nil`, 2 is used.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion. Otherwise, it will run synchronously.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with. Otherwise, it
+      will run synchronously. Note: you can't call Vim `function`s in this
+      callback, Otherwise, Neovim throws an assertion.
 
   See also: ~
 
@@ -597,9 +623,10 @@ kind documentation for more info.
       value. If `nil`, 1 is used.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion. Otherwise, it will run synchronously.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with. Otherwise, it
+      will run synchronously. Note: you can't call Vim `function`s in this
+      callback, Otherwise, Neovim throws an assertion.
 
   See also: ~
 
@@ -634,9 +661,10 @@ object kind documentation for more info.
       value. If `nil`, 1 is used.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion. Otherwise, it will run synchronously.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with. Otherwise, it
+      will run synchronously. Note: you can't call Vim `function`s in this
+      callback, Otherwise, Neovim throws an assertion.
 
   See also: ~
 
@@ -676,9 +704,10 @@ info.
       used. See the CMake File API documentation for more info.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion. Otherwise, it will run synchronously.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with. Otherwise, it
+      will run synchronously. Note: you can't call Vim `function`s in this
+      callback, Otherwise, Neovim throws an assertion.
 
   Links: ~
 
@@ -715,9 +744,10 @@ queries. See the client stateless query documentation for more info.
       used. See the CMake File API documentation for more info.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion. Otherwise, it will run synchronously.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with. Otherwise, it
+      will run synchronously. Note: you can't call Vim `function`s in this
+      callback, Otherwise, Neovim throws an assertion.
 
   See also: ~
 
@@ -756,9 +786,10 @@ documentation for more info.
       documentation for more info.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion. Otherwise, it will run synchronously.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with. Otherwise, it
+      will run synchronously. Note: you can't call Vim `function`s in this
+      callback, Otherwise, Neovim throws an assertion.
 
   Links: ~
 
@@ -798,11 +829,12 @@ documentation for more info.
       already existing directory on the filesystem.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion with the returned |cmake_file_api.object| as the single
-      argument. Otherwise, it will run synchronously and return the
-      |cmake_file_api.object| normally.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with the reply
+      |cmake_file_api.object| as the single arugument. Otherwise, it will run
+      synchronously and return the reply |cmake_file_api.object| normally.
+      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
+      throws an assertion.
 
   Returns: ~
 
@@ -855,11 +887,12 @@ for more info.
       used. See the CMake File API documentation for more info.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion with the returned |cmake_file_api.object| as the single
-      argument. Otherwise, it will run synchronously and return the
-      |cmake_file_api.object| normally.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with the reply
+      |cmake_file_api.object| as the single arugument. Otherwise, it will run
+      synchronously and return the reply |cmake_file_api.object| normally.
+      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
+      throws an assertion.
 
   Returns: ~
 
@@ -910,11 +943,12 @@ documentation for more info.
       and 2. If `nil`, the version is 2.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion with the returned |cmake_file_api.object| as the single
-      argument. Otherwise, it will run synchronously and return the
-      |cmake_file_api.object| normally.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with the reply
+      |cmake_file_api.object| as the single arugument. Otherwise, it will run
+      synchronously and return the reply |cmake_file_api.object| normally.
+      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
+      throws an assertion.
 
   Returns: ~
 
@@ -960,11 +994,12 @@ method. See the "cache" object kind documentation for more info.
       2. If `nil`, the version is 2.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion with the returned |cmake_file_api.object| as the single
-      argument. Otherwise, it will run synchronously and return the
-      |cmake_file_api.object| normally.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with the reply
+      |cmake_file_api.object| as the single arugument. Otherwise, it will run
+      synchronously and return the reply |cmake_file_api.object| normally.
+      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
+      throws an assertion.
 
   Returns: ~
 
@@ -1011,11 +1046,12 @@ kind documentation for more info.
       value. If `nil`, the version is 1.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion with the returned |cmake_file_api.object| as the single
-      argument. Otherwise, it will run synchronously and return the
-      |cmake_file_api.object| normally.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with the reply
+      |cmake_file_api.object| as the single arugument. Otherwise, it will run
+      synchronously and return the reply |cmake_file_api.object| normally.
+      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
+      throws an assertion.
 
   Returns: ~
 
@@ -1062,11 +1098,12 @@ kind documentation for more info.
       value. If `nil`, the version is 1.
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion with the returned |cmake_file_api.object| as the single
-      argument. Otherwise, it will run synchronously and return the
-      |cmake_file_api.object| normally.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with the reply
+      |cmake_file_api.object| as the single arugument. Otherwise, it will run
+      synchronously and return the reply |cmake_file_api.object| normally.
+      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
+      throws an assertion.
 
   Returns: ~
 
@@ -1232,9 +1269,12 @@ asynchronously.
   Parameters: ~
 
     [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function`, a Vim command `string`, or `nil`. If not
-      `nil`, the method will run asynchronously and call the callback upon
-      completion. Otherwise, it will run synchronously.
+      It can be a Lua `function` or `nil`. If not `nil`, the method will run
+      asynchronously and call the callback upon completion with the reply
+      |cmake_file_api.object| as the single arugument. Otherwise, it will run
+      synchronously and return the reply |cmake_file_api.object| normally.
+      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
+      throws an assertion.
 
   Returns: ~
 

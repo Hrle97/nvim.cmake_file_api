@@ -64,10 +64,12 @@ local object = require "nvim.cmake_file_api.object"
 -- parameters and everything wiill be executed synchronously.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
 -- completion with the reply @{object} as the single arugument. Otherwise,
 -- it will run synchronously and return the reply @{object} normally.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 --
 -- @see object
 -- @see lazy
@@ -124,10 +126,12 @@ end
 -- parameters and everything wiill be executed synchronously.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
 -- completion with the reply @{object} as the single arugument. Otherwise,
 -- it will run synchronously and return the reply @{object} normally.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 --
 -- @see object
 -- @see lazy
@@ -180,10 +184,12 @@ end
 -- parameters and everything wiill be executed synchronously.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
 -- completion with the reply @{object} as the single arugument. Otherwise,
 -- it will run synchronously and return the reply @{object} normally.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 --
 -- @see object
 -- @see lazy
@@ -235,10 +241,12 @@ end
 -- parameters and everything wiill be executed synchronously.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
 -- completion with the reply @{object} as the single arugument. Otherwise,
 -- it will run synchronously and return the reply @{object} normally.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 --
 -- @see object
 -- @see lazy
@@ -290,10 +298,12 @@ end
 -- parameters and everything wiill be executed synchronously.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
 -- completion with the reply @{object} as the single arugument. Otherwise,
 -- it will run synchronously and return the reply @{object} normally.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 --
 -- @see object
 -- @see lazy
@@ -345,10 +355,12 @@ end
 -- parameters and everything wiill be executed synchronously.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
 -- completion with the reply @{object} as the single arugument. Otherwise,
 -- it will run synchronously and return the reply @{object} normally.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 --
 -- @see object
 -- @see lazy
@@ -401,9 +413,11 @@ end
 -- The build directory of the to be generated buildsystem.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
--- completion. Otherwise, it will run synchronously.
+-- completion with. Otherwise, it will run synchronously.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 function cmake_file_api.write_all_queries(build, callback)
   return query.write_all_queries(build, callback)
 end
@@ -439,9 +453,11 @@ end
 -- See the CMake File API documentation for more info.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
--- completion. Otherwise, it will run synchronously.
+-- completion with. Otherwise, it will run synchronously.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 --
 -- @see read_reply
 -- @see read_codemodel_reply
@@ -475,9 +491,11 @@ end
 -- 2. If nil, 2 is used.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
--- completion. Otherwise, it will run synchronously.
+-- completion with. Otherwise, it will run synchronously.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 --
 -- @see read_reply
 -- @see read_codemodel_reply
@@ -507,9 +525,11 @@ end
 -- 2. If nil, 2 is used.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
--- completion. Otherwise, it will run synchronously.
+-- completion with. Otherwise, it will run synchronously.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 --
 -- @see read_reply
 -- @see read_codemodel_reply
@@ -540,9 +560,11 @@ end
 -- value. If nil, 1 is used.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
--- completion. Otherwise, it will run synchronously.
+-- completion with. Otherwise, it will run synchronously.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 --
 -- @see read_reply
 -- @see read_cmake_files_reply
@@ -573,9 +595,11 @@ end
 -- value. If nil, 1 is used.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
--- completion. Otherwise, it will run synchronously.
+-- completion with. Otherwise, it will run synchronously.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 --
 -- @see read_reply
 -- @see read_toolchains_reply
@@ -612,9 +636,11 @@ end
 -- See the CMake File API documentation for more info.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
--- completion. Otherwise, it will run synchronously.
+-- completion with. Otherwise, it will run synchronously.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 function cmake_file_api.write_shared_stateless_query(
   build,
   kind,
@@ -653,9 +679,11 @@ end
 -- See the CMake File API documentation for more info.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
--- completion. Otherwise, it will run synchronously.
+-- completion with. Otherwise, it will run synchronously.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 --
 -- @see write_query
 -- @see write_codemodel_query
@@ -693,9 +721,11 @@ end
 -- documentation for more info.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
--- completion. Otherwise, it will run synchronously.
+-- completion with. Otherwise, it will run synchronously.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 function cmake_file_api.write_client_stateful_query(build, _query, callback)
   return query.write_client_stateful_query(build, _query, callback)
 end
@@ -730,10 +760,12 @@ end
 -- existing directory on the filesystem.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
--- completion with the returned @{object} as the single argument. Otherwise,
--- it will run synchronously and return the @{object} normally.
+-- completion with the reply @{object} as the single arugument. Otherwise,
+-- it will run synchronously and return the reply @{object} normally.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 --
 -- @treturn @{object}
 -- Returns a @{object} representing the reply.
@@ -778,10 +810,12 @@ end
 -- See the CMake File API documentation for more info.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
--- completion with the returned @{object} as the single argument. Otherwise,
--- it will run synchronously and return the @{object} normally.
+-- completion with the reply @{object} as the single arugument. Otherwise,
+-- it will run synchronously and return the reply @{object} normally.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 --
 -- @treturn @{object}
 -- Returns a @{object} representing the reply.
@@ -824,10 +858,12 @@ end
 -- 2. If nil, the version is 2.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
--- completion with the returned @{object} as the single argument. Otherwise,
--- it will run synchronously and return the @{object} normally.
+-- completion with the reply @{object} as the single arugument. Otherwise,
+-- it will run synchronously and return the reply @{object} normally.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 --
 -- @treturn @{object}
 -- Returns a @{object} representing the reply.
@@ -866,10 +902,12 @@ end
 -- 2. If nil, the version is 2.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
--- completion with the returned @{object} as the single argument. Otherwise,
--- it will run synchronously and return the @{object} normally.
+-- completion with the reply @{object} as the single arugument. Otherwise,
+-- it will run synchronously and return the reply @{object} normally.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 --
 -- @treturn @{object}
 -- Returns a @{object} representing the reply.
@@ -908,10 +946,12 @@ end
 -- value. If nil, the version is 1.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
--- completion with the returned @{object} as the single argument. Otherwise,
--- it will run synchronously and return the @{object} normally.
+-- completion with the reply @{object} as the single arugument. Otherwise,
+-- it will run synchronously and return the reply @{object} normally.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 --
 -- @treturn @{object}
 -- Returns a @{object} representing the reply.
@@ -950,10 +990,12 @@ end
 -- value. If nil, the version is 1.
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
--- completion with the returned @{object} as the single argument. Otherwise,
--- it will run synchronously and return the @{object} normally.
+-- completion with the reply @{object} as the single arugument. Otherwise,
+-- it will run synchronously and return the reply @{object} normally.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 --
 -- @treturn @{object}
 -- Returns a @{object} representing the reply.
@@ -1046,7 +1088,7 @@ end
 -- method.
 --
 -- @link CMake File API documentation
--- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html
 --
 -- @see object
 cmake_file_api.lazy = {}
@@ -1081,9 +1123,12 @@ end
 -- @function lazy:load
 --
 -- @tparam[opt] function|string|nil callback
--- It can be a Lua function, a Vim command string, or nil.
+-- It can be a Lua function or nil.
 -- If not nil, the method will run asynchronously and call the callback upon
--- completion. Otherwise, it will run synchronously.
+-- completion with the reply @{object} as the single arugument. Otherwise,
+-- it will run synchronously and return the reply @{object} normally.
+-- Note: you can't call Vim functions in this callback, Otherwise, Neovim
+-- throws an assertion.
 --
 -- @treturn @{object}
 -- Loaded @{lazy} as an @{object}.

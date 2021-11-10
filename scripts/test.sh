@@ -18,9 +18,9 @@ function main()
             vim.g.test_root_path" \
       -c "luafile $root_path/test/lua/init.lua" \
       -c ':q' 2>&1; then
-    echo -e "PASS"
+    echo -e "\n\nPASSED!"
   else
-    echo -e "FAIL"
+    echo -e "\n\nFAILED!"
     return 1
   fi
 }

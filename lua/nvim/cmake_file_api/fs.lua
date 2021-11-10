@@ -67,15 +67,17 @@ function fs.mkdir(path, callback)
 
     fs.mkdir(path:match "(.*)/.-$")
     uv.fs_mkdir(path, write_mode)
+    return
   end
 
   fs.exists(path, function(exists)
     if exists then
+      callback()
       return
     end
 
     fs.mkdir(path:match "(.*)/.-$", function()
-      uv.fs_mkdir(path, write_mode)
+      uv.fs_mkdir(path, write_mode, callback)
     end)
   end)
 end

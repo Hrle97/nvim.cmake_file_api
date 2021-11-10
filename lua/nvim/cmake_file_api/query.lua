@@ -29,6 +29,7 @@ function query.write_shared_stateless_query(build, kind, version, callback)
   if not callback then
     fs.mkdir(query_dir)
     fs.touch(query_path)
+    return
   end
 
   fs.mkdir(query_dir, function()
@@ -63,6 +64,7 @@ function query.write_client_stateless_query(build, kind, version, callback)
   if not callback then
     fs.mkdir(query_dir)
     fs.touch(query_path)
+    return
   end
 
   fs.mkdir(query_dir, function()
@@ -88,6 +90,7 @@ function query.write_client_stateful_query(build, _query, callback)
   if not callback then
     fs.mkdir(query_dir)
     fs.write(query_path, _query)
+    return
   end
 
   fs.mkdir(query_dir, function()
@@ -123,6 +126,7 @@ function query.write_all_queries(build, callback)
     query.write_cache_query(build)
     query.write_cmake_files_query(build)
     query.write_toolchains_query(build)
+    return
   end
 
   query.write_codemodel_query(build, nil, function()

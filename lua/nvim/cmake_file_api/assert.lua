@@ -15,7 +15,7 @@ local toolchains_object_kind_link = cmake_manual_link
 local object_kind_assert_message = "See here: " .. object_kind_link .. "."
 
 local callback_assert_message = "A callback should either be a Lua function"
-  .. ", a Vim command string, or nil."
+  .. ", or nil."
 
 local reply_index_assert_message = "Reply index should be present. "
   .. "Check that you wrote a query and configured CMake before running this."
@@ -52,20 +52,13 @@ end
 
 assert = setmetatable(assert, {
   __call = function(_, is_true, message)
-    if vim.g.cmake_file_api_testing then
-      if not is_true then
-        _G.print(assert.wrap_message(message) .. "\n")
-        vim.cmd [[ cq ]]
-      end
-    else
-      _G.assert(is_true, assert.wrap_message(message))
-    end
+    _G.assert(is_true, assert.wrap_message(message))
   end,
 })
 
-function assert.ensure_dir(path, message)
-  assert(vim.fn.isdirectory(path), message)
-
+-- TODO: figure out a way to check for this dir
+-- the problems is that you can't call vim/nvim functions in luv callbacks
+function assert.ensure_dir(path, _)
   return string.gsub(path, "/?$", "/", 1)
 end
 
@@ -101,17 +94,9 @@ end
 
 function assert.ensure_callback_or_nil(callback, message)
   assert(
-    type(callback) == "function"
-      or type(callback) == "nil"
-      or type(callback) == "string",
+    type(callback) == "function" or type(callback) == "nil",
     message .. " " .. callback_assert_message
   )
-
-  if type(callback) == "string" then
-    return function()
-      vim.cmd(callback)
-    end
-  end
 
   return callback
 end

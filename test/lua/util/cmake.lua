@@ -1,7 +1,14 @@
 local cmake = {}
 
 function cmake.configure()
-  vim.fn.system { "cmake", "-S", source, "-B", build }
+  local cmd = 'cmake -S "' .. source .. '" -B "' .. build .. '"'
+
+  local r = ""
+  for line in io.popen(cmd):lines() do
+    r = r .. line .. "\n"
+  end
+
+  return r
 end
 
 return cmake
