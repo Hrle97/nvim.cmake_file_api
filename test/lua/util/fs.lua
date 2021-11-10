@@ -13,6 +13,7 @@ function fs.purge(p)
     if type == "directory" then
       fs.purge(p:match "^(.-)/?$" .. "/" .. name)
     else
+      -- TODO: find a luv way of doing this
       vim.fn.delete(p:match "^(.-)/?$" .. "/" .. name)
     end
     name, type = uv.fs_scandir_next(scan)

@@ -115,11 +115,24 @@ expect.is_userdata = expect.is "userdata"
 expect.is_thread = expect.is "thread"
 
 expect.exists = expect.wrap(function(p)
-  return vim.fn.filereadable(p) == 1
+  return vim.loop.fs_stat(p) ~= nil
 end)
 
 expect.pexists = expect.wrap(function(p)
-  return #vim.fn.glob(p, 0, 1) ~= 0
+  local dir_path, pattern = p:match "^(.*)/(.-)$"
+
+  local dir = vim.loop.fs_opendir(dir_path, nil, 1024)
+  local entries = vim.loop.fs_readdir(dir)
+  vim.loop.fs_closedir(dir)
+
+  pattern = pattern:gsub("%*", ".*")
+  for _, entry in ipairs(entries) do
+    if entry.name:match(pattern) then
+      return true
+    end
+  end
+
+  return false
 end)
 
 expect.is_object = expect.wrap(cmake_file_api.object.is_object)
