@@ -107,6 +107,7 @@ end
 -- @tparam[opt] number|string|nil version
 -- The major object version of the query and reply. Valid values depend on the
 -- query kind. If nil, the latest version for the object kind will be used.
+-- Use the @{latest} field for more readability.
 -- See the CMake File API documentation for more info.
 --
 -- @tparam function configure
@@ -128,6 +129,7 @@ end
 -- @see lazy
 -- @see write_query
 -- @see read_reply
+-- @see latest
 function cmake_file_api.write_configure_read(
   build,
   kind,
@@ -162,6 +164,7 @@ end
 -- @tparam[opt] number|string|nil version
 -- The major object version of the query and reply. Valid values are 1 and 2.
 -- If nil, 2 is used.
+-- Use the @{latest} field for more readability.
 --
 -- @tparam function configure
 -- The method to call after writing the query to generate the buildsystem. If
@@ -182,6 +185,7 @@ end
 -- @see lazy
 -- @see write_codemodel_query
 -- @see read_codemodel_reply
+-- @see latest
 function cmake_file_api.write_configure_read_codemodel(
   build,
   version,
@@ -214,6 +218,7 @@ end
 -- @tparam[opt] number|string|nil version
 -- The major object version of the query and reply. Valid values are 1 and 2.
 -- If nil, 2 is used.
+-- Use the @{latest} field for more readability.
 --
 -- @tparam function configure
 -- The method to call after writing the query to generate the buildsystem. If
@@ -234,6 +239,7 @@ end
 -- @see lazy
 -- @see write_cache_query
 -- @see read_cache_reply
+-- @see latest
 function cmake_file_api.write_configure_read_cache(
   build,
   version,
@@ -266,6 +272,7 @@ end
 -- @tparam[opt] number|string|nil version
 -- The major object version of the query and reply. Valid values are 1 and 2.
 -- If nil, 2 is used.
+-- Use the @{latest} field for more readability.
 --
 -- @tparam function configure
 -- The method to call after writing the query to generate the buildsystem. If
@@ -286,6 +293,7 @@ end
 -- @see lazy
 -- @see write_cmake_files_query
 -- @see read_cmake_files_reply
+-- @see latest
 function cmake_file_api.write_configure_read_cmake_files(
   build,
   version,
@@ -318,6 +326,7 @@ end
 -- @tparam[opt] number|string|nil version
 -- The major object version of the query and reply. Valid values are 1 and 2.
 -- If nil, 2 is used.
+-- Use the @{latest} field for more readability.
 --
 -- @tparam function configure
 -- The method to call after writing the query to generate the buildsystem. If
@@ -338,6 +347,7 @@ end
 -- @see lazy
 -- @see write_toolchains_query
 -- @see read_toolchains_reply
+-- @see latest
 function cmake_file_api.write_configure_read_toolchains(
   build,
   version,
@@ -417,6 +427,7 @@ end
 -- @tparam[opt] number|string|nil version
 -- The major version of the query kind to send. Valid values depend on the query
 -- kind. If nil, the latest version for the query kind will be used.
+-- Use the @{latest} field for more readability.
 -- See the CMake File API documentation for more info.
 --
 -- @tparam[opt] function|string|nil callback
@@ -431,6 +442,7 @@ end
 -- @see read_cache_reply
 -- @see read_cmake_files_reply
 -- @see read_toolchains_reply
+-- @see latest
 function cmake_file_api.write_query(build, kind, version, callback)
   return query.write_query(build, kind, version, callback)
 end
@@ -456,6 +468,7 @@ end
 -- @tparam[opt] number|string|nil version
 -- The major version of the "codemodel" query to send. Valid values are: 1 and
 -- 2. If nil, 2 is used.
+-- Use the @{latest} field for more readability.
 --
 -- @tparam[opt] function|string|nil callback
 -- It can be a Lua function or nil.
@@ -466,6 +479,7 @@ end
 --
 -- @see read_reply
 -- @see read_codemodel_reply
+-- @see latest
 function cmake_file_api.write_codemodel_query(build, version, callback)
   return query.write_codemodel_query(build, version, callback)
 end
@@ -490,6 +504,7 @@ end
 -- @tparam[opt] number|string|nil version
 -- The major version of the "cache" query to send. Valid values are: 1 and
 -- 2. If nil, 2 is used.
+-- Use the @{latest} field for more readability.
 --
 -- @tparam[opt] function|string|nil callback
 -- It can be a Lua function or nil.
@@ -500,6 +515,7 @@ end
 --
 -- @see read_reply
 -- @see read_codemodel_reply
+-- @see latest
 function cmake_file_api.write_cache_query(build, version, callback)
   return query.write_cache_query(build, version, callback)
 end
@@ -525,6 +541,7 @@ end
 -- @tparam[opt] number|string|nil version
 -- The major version of the "cmakeFiles" query to send. 1 is the only valid
 -- value. If nil, 1 is used.
+-- Use the @{latest} field for more readability.
 --
 -- @tparam[opt] function|string|nil callback
 -- It can be a Lua function or nil.
@@ -535,6 +552,7 @@ end
 --
 -- @see read_reply
 -- @see read_cmake_files_reply
+-- @see latest
 function cmake_file_api.write_cmake_files_query(build, version, callback)
   return query.write_cmake_files_query(build, version, callback)
 end
@@ -560,6 +578,7 @@ end
 -- @tparam[opt] number|string|nil version
 -- The major version of the "toolchains" query to send. 1 is the only valid
 -- value. If nil, 1 is used.
+-- Use the @{latest} field for more readability.
 --
 -- @tparam[opt] function|string|nil callback
 -- It can be a Lua function or nil.
@@ -570,6 +589,7 @@ end
 --
 -- @see read_reply
 -- @see read_toolchains_reply
+-- @see latest
 function cmake_file_api.write_toolchains_query(build, version, callback)
   return query.write_toolchains_query(build, version, callback)
 end
@@ -601,6 +621,7 @@ end
 -- The major version of the query kind to send. Valid values depend on the query
 -- kind. If nil, the latest version for the query kind will be used.
 -- See the CMake File API documentation for more info.
+-- Use the @{latest} field for more readability.
 --
 -- @tparam[opt] function|string|nil callback
 -- It can be a Lua function or nil.
@@ -608,6 +629,8 @@ end
 -- completion with. Otherwise, it will run synchronously.
 -- Note: you can't call Vim functions in this callback, Otherwise, Neovim
 -- throws an assertion.
+--
+-- @see latest
 function cmake_file_api.write_shared_stateless_query(
   build,
   kind,
@@ -643,6 +666,7 @@ end
 -- @tparam[opt] number|string|nil version
 -- The major version of the query kind to send. Valid values depend on the query
 -- kind. If nil, the latest version for the query kind will be used.
+-- Use the @{latest} field for more readability.
 -- See the CMake File API documentation for more info.
 --
 -- @tparam[opt] function|string|nil callback
@@ -657,6 +681,7 @@ end
 -- @see write_cache_query
 -- @see write_cmake_files_query
 -- @see write_toolchains_query
+-- @see latest
 function cmake_file_api.write_client_stateless_query(
   build,
   kind,
@@ -775,6 +800,7 @@ end
 -- The major version of the reply kind to read. Valid values depend on the query
 -- kind. If nil, the latest version for the query kind will be used.
 -- See the CMake File API documentation for more info.
+-- Use the @{latest} field for more readability.
 --
 -- @tparam[opt] function|string|nil callback
 -- It can be a Lua function or nil.
@@ -799,6 +825,7 @@ end
 -- @see write_cache_query
 -- @see write_cmake_files_query
 -- @see write_toolchains_query
+-- @see latest
 function cmake_file_api.read_reply(build, kind, version, callback)
   return reply.read_reply(build, kind, version, callback)
 end
@@ -823,6 +850,7 @@ end
 -- @tparam[opt] number|string|nil version
 -- The major version of the "codemodel" reply to read. Valid values are 1 and
 -- 2. If nil, the version is 2.
+-- Use the @{latest} field for more readability.
 --
 -- @tparam[opt] function|string|nil callback
 -- It can be a Lua function or nil.
@@ -843,6 +871,7 @@ end
 -- @see object
 -- @see lazy
 -- @see write_codemodel_query
+-- @see latest
 function cmake_file_api.read_codemodel_reply(build, version, callback)
   return reply.read_codemodel_reply(build, version, callback)
 end
@@ -867,6 +896,7 @@ end
 -- @tparam[opt] number|string|nil version
 -- The major version of the "cache" reply to read. Valid values are 1 and
 -- 2. If nil, the version is 2.
+-- Use the @{latest} field for more readability.
 --
 -- @tparam[opt] function|string|nil callback
 -- It can be a Lua function or nil.
@@ -887,6 +917,7 @@ end
 -- @see object
 -- @see lazy
 -- @see write_cache_query
+-- @see latest
 function cmake_file_api.read_cache_reply(build, version, callback)
   return reply.read_cache_reply(build, version, callback)
 end
@@ -911,6 +942,7 @@ end
 -- @tparam[opt] number|string|nil version
 -- The major version of the "cmakeFile" reply to read. 1 is the only valid
 -- value. If nil, the version is 1.
+-- Use the @{latest} field for more readability.
 --
 -- @tparam[opt] function|string|nil callback
 -- It can be a Lua function or nil.
@@ -931,6 +963,7 @@ end
 -- @see object
 -- @see lazy
 -- @see write_cmake_files_query
+-- @see latest
 function cmake_file_api.read_cmake_files_reply(build, version, callback)
   return reply.read_cmake_files_reply(build, version, callback)
 end
@@ -955,6 +988,7 @@ end
 -- @tparam[opt] number|string|nil version
 -- The major version of the "toolchains" reply to read. 1 is the only valid
 -- value. If nil, the version is 1.
+-- Use the @{latest} field for more readability.
 --
 -- @tparam[opt] function|string|nil callback
 -- It can be a Lua function or nil.
@@ -975,6 +1009,7 @@ end
 -- @see object
 -- @see lazy
 -- @see write_toolchains_query
+-- @see latest
 function cmake_file_api.read_toolchains_reply(build, version, callback)
   return reply.read_toolchains_reply(build, version, callback)
 end
@@ -1104,5 +1139,23 @@ end
 function cmake_file_api.lazy:load(callback)
   return object.lazy.load(self, callback)
 end
+
+--- Utilities.
+--
+-- Miscellaneous utilities and functions that make it easier to use the CMake
+-- file API.
+--
+-- @section utilities
+
+--- Latest version of object kinds
+--
+-- This is just equal to nil, but it makes it makes using latest versions of
+-- object kinds more readable instead of just passing nil.
+--
+-- @link Object kind documentation
+-- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
+--
+-- @field latest
+cmake_file_api.latest = nil
 
 return cmake_file_api

@@ -2,7 +2,6 @@ local all = {}
 
 local query = require "nvim.cmake_file_api.query"
 local reply = require "nvim.cmake_file_api.reply"
-local async = require "nvim.cmake_file_api.async"
 local const = require "nvim.cmake_file_api.const"
 
 function all.write_configure_read_all(build, configure, callback)
@@ -101,5 +100,4 @@ function all.write_configure_read_toolchains(
   )
 end
 
-async.add_scheduled(all)
 return all

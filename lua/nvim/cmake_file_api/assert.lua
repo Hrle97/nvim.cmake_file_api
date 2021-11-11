@@ -1,7 +1,6 @@
 local assert = {}
 
 local fs = require "nvim.cmake_file_api.fs"
-local async = require "nvim.cmake_file_api.async"
 
 local cmake_manual_link = "https://cmake.org/cmake/help/latest/manual/"
 local object_kind_link = cmake_manual_link
@@ -48,7 +47,6 @@ function assert.ensure_dir(path, message, callback)
     callback(path)
   end)
 end
-async.add_scheduled(assert, "ensure_dir")
 
 local object_kind_assert_message = "See here: " .. object_kind_link .. "."
 

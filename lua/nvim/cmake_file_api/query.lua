@@ -3,7 +3,6 @@ local query = {}
 local const = require "nvim.cmake_file_api.const"
 local assert = require "nvim.cmake_file_api.assert"
 local fs = require "nvim.cmake_file_api.fs"
-local async = require "nvim.cmake_file_api.async"
 
 local function write_query(
   make_dir,
@@ -247,5 +246,4 @@ function query.write_all_queries(build, callback)
   )
 end
 
-async.add_scheduled(query)
 return query

@@ -1,7 +1,5 @@
 local fs = {}
 
-local async = require "nvim.cmake_file_api.async"
-
 local uv = vim.loop
 
 local offset = 0
@@ -238,7 +236,5 @@ function fs.read(path, callback)
     end)
   end)
 end
-
-async.add_scheduled(fs)
 
 return fs

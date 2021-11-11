@@ -4,7 +4,6 @@ local const = require "nvim.cmake_file_api.const"
 local assert = require "nvim.cmake_file_api.assert"
 local fs = require "nvim.cmake_file_api.fs"
 local object = require("nvim.cmake_file_api.object").object
-local async = require "nvim.cmake_file_api.async"
 
 function reply.read_reply_index(build, callback)
   build = assert.ensure_dir(
@@ -129,5 +128,4 @@ function reply.read_toolchains_reply(build, version, callback)
   return reply.read_reply(build, const.toolchains, version, callback)
 end
 
-async.add_scheduled(reply)
 return reply
