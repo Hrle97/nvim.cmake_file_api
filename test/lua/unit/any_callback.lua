@@ -75,16 +75,19 @@ local function expect_toolchains_reply(callback)
   end)
 end
 
-fun.order(
-  expect_codemodel_query,
-  expect_cache_query,
-  expect_cmake_files_query,
-  expect_toolchains_query,
+return function(callback)
+  fun.order(
+    expect_codemodel_query,
+    expect_cache_query,
+    expect_cmake_files_query,
+    expect_toolchains_query,
 
-  expect_configured,
+    expect_configured,
 
-  expect_codemodel_reply,
-  expect_cache_reply,
-  expect_cmake_files_reply,
-  expect_toolchains_reply
-)
+    expect_codemodel_reply,
+    expect_cache_reply,
+    expect_cmake_files_reply,
+    expect_toolchains_reply,
+    callback
+  )
+end

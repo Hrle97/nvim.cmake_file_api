@@ -1,51 +1,54 @@
-local unit_test_pattern = vim.g.test_root_path .. "/lua/unit/**/*.lua"
-local unit_test_paths = vim.fn.glob(unit_test_pattern, 0, 1)
-
-local example_pattern = vim.g.example_root_path .. "/**/*.lua"
-local example_paths = vim.fn.glob(example_pattern, 0, 1)
-
-_G.build = vim.g.cmake_build_path
 _G.source = vim.g.cmake_source_path
 _G.cmake_file_api = require "nvim.cmake_file_api"
 _G.expect = require "util.expect"
 _G.fs = require "util.fs"
-_G.fun = require "util.fun"
 _G.cmake = require "util.cmake"
+_G.fun = require "util.fun"
 
-for _, unit_test_path in ipairs(unit_test_paths) do
-  local unit_test_name = vim.fn.fnamemodify(unit_test_path, ":t:r")
+_G.__WAIT = false
+_G.__ERROR = nil
 
-  fs.purge(build)
+local function run_units(kind, pattern)
+  for _, unit_path in ipairs(vim.fn.glob(pattern, 0, 1)) do
+    local unit_name = vim.fn.fnamemodify(unit_path, ":t:r")
+    print("RUNNING " .. kind:upper() .. ": " .. unit_name)
 
-  local ran, res = pcall(dofile, unit_test_path)
-  if not ran then
-    print("UNIT: " .. unit_test_name)
-    vim.cmd [[ echo "\n" ]]
-    print(res)
-    vim.cmd [[ echo "\n" ]]
-    vim.cmd [[cq]]
-  else
-    print("UNIT: " .. unit_test_name .. " PASSED")
-    vim.cmd [[ echo "\n" ]]
+    _G.build = vim.g.cmake_build_path .. "_" .. unit_name
+    fs.purge(build)
+    _G.__ERROR = nil
+
+    if unit_name:match "callback" then
+      local unit = dofile(unit_path)
+      assert(
+        type(unit) == "function",
+        "Callback unit " .. unit_name .. " must return a function!"
+      )
+
+      _G.__WAIT = true
+      unit(function(err)
+        _G.__WAIT = false
+        _G.__ERROR = err
+      end)
+
+      while _G.__WAIT do
+        vim.loop.sleep(10)
+      end
+    else
+      local ran, res = pcall(dofile, unit_path)
+      if not ran then
+        _G.__ERROR = res
+      end
+    end
+
+    if _G.__ERROR then
+      print(kind:upper() .. ": " .. unit_name)
+      print(_G.__ERROR)
+      vim.cmd [[cq]]
+    elseif not unit_name:match "callback$" then
+      print(kind:upper() .. ": " .. unit_name .. " PASSED")
+    end
   end
 end
 
-for _, example_path in ipairs(example_paths) do
-  local example_name = vim.fn.fnamemodify(example_path, ":t:r")
-
-  fs.purge(build)
-
-  local ran, res = pcall(dofile, example_path)
-  if not ran then
-    print("EXAMPLE: " .. example_name)
-    vim.cmd [[ echo "\n" ]]
-    print(res)
-    vim.cmd [[ echo "\n" ]]
-    vim.cmd [[cq]]
-  else
-    print("EXAMPLE: " .. example_name .. " PASSED")
-    vim.cmd [[ echo "\n" ]]
-  end
-end
-
-fs.purge(build)
+run_units("unit test", vim.g.test_root_path .. "/lua/unit/**/*.lua")
+run_units("example", vim.g.example_root_path .. "/**/*.lua")

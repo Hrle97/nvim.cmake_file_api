@@ -22,6 +22,7 @@ local cmake_file_api = {}
 
 local query = require "nvim.cmake_file_api.query"
 local reply = require "nvim.cmake_file_api.reply"
+local all_in_one = require "nvim.cmake_file_api.all_in_one"
 local object = require "nvim.cmake_file_api.object"
 
 -------------------------------------------------------------------------------
@@ -76,17 +77,7 @@ local object = require "nvim.cmake_file_api.object"
 -- @see write_all_queries
 -- @see read_reply_index
 function cmake_file_api.write_configure_read_all(build, configure, callback)
-  if not callback then
-    query.write_all_queries(build)
-    configure()
-    return reply.read_reply_index(build)
-  end
-
-  query.write_all_queries(build, function()
-    configure(function()
-      reply.read_reply_index(build, callback)
-    end)
-  end)
+  return all_in_one.write_configure_read_all(build, configure, callback)
 end
 
 --- Write a query, configure CMake, and read the reply of specified kind and
@@ -144,17 +135,13 @@ function cmake_file_api.write_configure_read(
   configure,
   callback
 )
-  if not callback then
-    query.write_query(build, kind, version)
-    configure()
-    return reply.read_reply(build, kind)
-  end
-
-  query.write_query(build, kind, version, function()
-    configure(function()
-      reply.read_reply(build, kind, version, callback)
-    end)
-  end)
+  return all_in_one.write_configure_read(
+    build,
+    kind,
+    version,
+    configure,
+    callback
+  )
 end
 
 --- Write a query, configure CMake, and read the reply of the "codemodel" kind.
@@ -201,17 +188,12 @@ function cmake_file_api.write_configure_read_codemodel(
   configure,
   callback
 )
-  if not callback then
-    query.write_codemodel_query(build, version)
-    configure()
-    return reply.read_codemodel_reply(build)
-  end
-
-  query.write_codemodel_query(build, version, function()
-    configure(function()
-      reply.read_codemodel_reply(build, version, callback)
-    end)
-  end)
+  return all_in_one.write_configure_read_codemodel(
+    build,
+    version,
+    configure,
+    callback
+  )
 end
 
 --- Write a query, configure CMake, and read the reply of the "cache" kind.
@@ -258,17 +240,12 @@ function cmake_file_api.write_configure_read_cache(
   configure,
   callback
 )
-  if not callback then
-    query.write_cache_query(build, version)
-    configure()
-    return reply.read_cache_reply(build)
-  end
-
-  query.write_cache_query(build, version, function()
-    configure(function()
-      reply.read_cache_reply(build, version, callback)
-    end)
-  end)
+  return all_in_one.write_configure_read_cache(
+    build,
+    version,
+    configure,
+    callback
+  )
 end
 
 --- Write a query, configure CMake, and read the reply of the "cmakeFiles" kind.
@@ -315,17 +292,12 @@ function cmake_file_api.write_configure_read_cmake_files(
   configure,
   callback
 )
-  if not callback then
-    query.write_cmake_files_query(build, version)
-    configure()
-    return reply.read_cmake_files_reply(build)
-  end
-
-  query.write_cmake_files_query(build, version, function()
-    configure(function()
-      reply.read_cmake_files_reply(build, version, callback)
-    end)
-  end)
+  return all_in_one.write_configure_read_cmake_files(
+    build,
+    version,
+    configure,
+    callback
+  )
 end
 
 --- Write a query, configure CMake, and read the reply of the "toolchains" kind.
@@ -372,17 +344,12 @@ function cmake_file_api.write_configure_read_toolchains(
   configure,
   callback
 )
-  if not callback then
-    query.write_toolchains_query(build, version)
-    configure()
-    return reply.read_toolchains_reply(build)
-  end
-
-  query.write_toolchains_query(build, version, function()
-    configure(function()
-      reply.read_toolchains_reply(build, version, callback)
-    end)
-  end)
+  return all_in_one.write_configure_read_toolchains(
+    build,
+    version,
+    configure,
+    callback
+  )
 end
 
 --- Queries

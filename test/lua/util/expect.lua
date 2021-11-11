@@ -39,14 +39,20 @@ function expect.seal(condition)
       local info = debug.getinfo(2)
       local source = info.source:match "^@(.*)"
       local line = info.currentline
-      local content = vim.fn.readfile(source)
+
+      local content = {}
+      for line in io.open(source):lines() do
+        table.insert(content, line)
+      end
 
       print("  source: " .. source)
       print("  line: " .. line)
       print "  snippet:"
       print_snippet(content, line)
 
-      vim.cmd [[ cq ]]
+      vim.schedule(function()
+        vim.cmd [[ cq ]]
+      end)
     end
   end
 end

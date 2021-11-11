@@ -27,7 +27,6 @@ function test()
     echo -e "\nBUILD '$1' FAILED!"
     return 1
   fi
-
 }
 
 function main() 
@@ -36,8 +35,8 @@ function main()
   then
     test "build_plenary" "false" &
   fi
-
   test "build_no_plenary" "true" &
+
   wait $(jobs -p)
 }
 

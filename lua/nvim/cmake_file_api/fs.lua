@@ -1,6 +1,6 @@
 local fs = {}
 
-local assert = require "nvim.cmake_file_api.assert"
+local async = require "nvim.cmake_file_api.async"
 
 local uv = vim.loop
 
@@ -19,25 +19,42 @@ local max_dir_entries = 1024
 function fs.readdir(path, callback)
   if not callback then
     local open_res, open_err = uv.fs_opendir(path, nil, max_dir_entries)
-    assert(open_res, open_err)
+    if open_err then
+      return nil, open_err, "opendir", path
+    end
     local dir = open_res
 
     local read_res, read_err = uv.fs_readdir(dir)
-    assert(read_res, read_err)
+    if read_err then
+      return nil, read_err, "readdir", path
+    end
     local entries = read_res
 
-    local close_res, close_err = uv.fs_closedir(dir)
-    assert(close_res, close_err)
+    local _, close_err = uv.fs_closedir(dir)
+    if close_err then
+      return nil, close_err, "closedir", path
+    end
 
     return entries
   end
 
   uv.fs_opendir(path, function(open_err, dir)
-    assert(not open_err, open_err)
+    if open_err then
+      callback(nil, open_err, "opendir", path)
+      return
+    end
+
     uv.fs_readdir(dir, function(read_err, entries)
-      assert(not read_err, read_err)
+      if read_err then
+        callback(nil, read_err, "readdir", path)
+        return
+      end
+
       uv.fs_closedir(dir, function(close_err, _)
-        assert(not close_err, close_err)
+        if close_err then
+          callback(nil, close_err, "closedir", path)
+          return
+        end
 
         callback(entries)
       end)
@@ -47,107 +64,172 @@ end
 
 function fs.exists(path, callback)
   if not callback then
-    return uv.fs_stat(path)
+    local _, stat_err = uv.fs_stat(path)
+    if stat_err then
+      return nil, stat_err, "stat", path
+    end
+
+    return path
   end
 
-  uv.fs_stat(path, function(err, stat)
-    if err then
-      callback(nil)
-    else
-      callback(stat)
+  uv.fs_stat(path, function(stat_err, _)
+    if stat_err then
+      callback(nil, stat_err, "stat", path)
+      return
     end
+
+    callback(path)
   end)
 end
 
 function fs.mkdir(path, callback)
   if not callback then
     if fs.exists(path) then
-      return
+      return path
     end
 
     fs.mkdir(path:match "(.*)/.-$")
-    uv.fs_mkdir(path, write_mode)
-    return
+
+    local _, mkdir_err = uv.fs_mkdir(path, write_mode)
+    if mkdir_err then
+      return nil, mkdir_err, "mkdir", path
+    end
+
+    return path
   end
 
   fs.exists(path, function(exists)
     if exists then
-      callback()
+      callback(path)
       return
     end
 
     fs.mkdir(path:match "(.*)/.-$", function()
-      uv.fs_mkdir(path, write_mode, callback)
+      uv.fs_mkdir(path, write_mode, function(mkdir_err, _)
+        if mkdir_err then
+          callback(nil, mkdir_err, "mkdir", path)
+          return
+        end
+
+        callback(path)
+      end)
     end)
   end)
 end
 
 function fs.write(path, data, callback)
-  if type(data) == "table" then
-    data = vim.json.encode(data)
-  else
-    data = tostring(data)
-  end
-
   if not callback then
     local open_res, open_err = uv.fs_open(path, write_flags, write_mode)
-    assert(open_res, open_err)
+    if open_err then
+      return nil, open_err, "open", path
+    end
     local file = open_res
 
-    local write_res, write_err = uv.fs_write(file, data, write_offset)
-    assert(write_res, write_err)
+    if type(data) == "table" then
+      data = vim.json.encode(data)
+    else
+      data = tostring(data)
+    end
 
-    local close_res, close_err = uv.fs_close(file)
-    assert(close_res, close_err)
+    local _, write_err = uv.fs_write(file, data, write_offset)
+    if write_err then
+      return nil, write_err, "write", path
+    end
 
-    return
+    local _, close_err = uv.fs_close(file)
+    if close_err then
+      return nil, close_err, "close", path
+    end
+
+    return path
   end
 
   uv.fs_open(path, write_flags, write_mode, function(open_err, file)
-    assert(not open_err, open_err)
+    if open_err then
+      callback(nil, open_err, "open", path)
+      return
+    end
+
+    if type(data) == "table" then
+      data = vim.json.encode(data)
+    else
+      data = tostring(data)
+    end
+
     uv.fs_write(file, data, write_offset, function(write_err, _)
-      assert(not write_err, write_err)
+      if write_err then
+        callback(nil, write_err, "write", path)
+        return
+      end
+
       uv.fs_close(file, function(close_err, _)
-        assert(not close_err, close_err)
-        callback()
+        if close_err then
+          callback(nil, close_err, "close", path)
+          return
+        end
+
+        callback(path)
       end)
     end)
   end)
 end
 
 function fs.touch(path, callback)
-  fs.write(path, "", callback)
+  return fs.write(path, "", callback)
 end
 
 function fs.read(path, callback)
   if not callback then
     local open_res, open_err = uv.fs_open(path, read_flags, read_mode)
-    assert(open_res, open_err)
+    if open_err then
+      return nil, open_err, "open", path
+    end
     local file = open_res
 
     local stat_res, stat_err = uv.fs_fstat(file)
-    assert(stat_res, stat_err)
+    if stat_err then
+      return nil, stat_err, "stat", path
+    end
     local stat = stat_res
 
     local read_res, read_err = uv.fs_read(file, stat.size, read_offset)
-    assert(read_res, read_err)
+    if read_err then
+      return nil, read_err, "read", path
+    end
     local json = read_res
 
-    local close_res, close_err = uv.fs_close(file)
-    assert(close_res, close_err)
+    local _, close_err = uv.fs_close(file)
+    if close_err then
+      return nil, close_err, "close", path
+    end
 
     local data = vim.json.decode(json)
     return data
   end
 
   uv.fs_open(path, read_flags, read_mode, function(open_err, file)
-    assert(not open_err, open_err)
+    if open_err then
+      callback(nil, open_err, "open", path)
+      return
+    end
+
     uv.fs_fstat(file, function(stat_err, stat)
-      assert(not stat_err, stat_err)
+      if stat_err then
+        callback(nil, stat_err, "stat", path)
+        return
+      end
+
       uv.fs_read(file, stat.size, read_offset, function(read_err, json)
-        assert(not read_err, read_err)
+        if read_err then
+          callback(nil, read_err, "read", path)
+          return
+        end
+
         uv.fs_close(file, function(close_err, _)
-          assert(not close_err, close_err)
+          if close_err then
+            callback(nil, close_err, "close", path)
+            return
+          end
 
           local data = vim.json.decode(json)
           callback(data)
@@ -156,5 +238,7 @@ function fs.read(path, callback)
     end)
   end)
 end
+
+async.add_scheduled(fs)
 
 return fs
