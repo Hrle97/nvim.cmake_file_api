@@ -64,13 +64,12 @@ local object = require "nvim.cmake_file_api.object"
 -- If a callback is not provided, this method will be called without
 -- parameters and everything wiill be executed synchronously.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with the reply @{object} as the single arugument. Otherwise,
--- it will run synchronously and return the reply @{object} normally.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 --
 -- @see object
 -- @see lazy
@@ -117,13 +116,12 @@ end
 -- If a callback is not provided, this method will be called without
 -- parameters and everything wiill be executed synchronously.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with the reply @{object} as the single arugument. Otherwise,
--- it will run synchronously and return the reply @{object} normally.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 --
 -- @see object
 -- @see lazy
@@ -173,13 +171,12 @@ end
 -- If a callback is not provided, this method will be called without
 -- parameters and everything wiill be executed synchronously.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with the reply @{object} as the single arugument. Otherwise,
--- it will run synchronously and return the reply @{object} normally.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 --
 -- @see object
 -- @see lazy
@@ -227,13 +224,12 @@ end
 -- If a callback is not provided, this method will be called without
 -- parameters and everything wiill be executed synchronously.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with the reply @{object} as the single arugument. Otherwise,
--- it will run synchronously and return the reply @{object} normally.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 --
 -- @see object
 -- @see lazy
@@ -281,13 +277,12 @@ end
 -- If a callback is not provided, this method will be called without
 -- parameters and everything wiill be executed synchronously.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with the reply @{object} as the single arugument. Otherwise,
--- it will run synchronously and return the reply @{object} normally.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 --
 -- @see object
 -- @see lazy
@@ -335,13 +330,12 @@ end
 -- If a callback is not provided, this method will be called without
 -- parameters and everything wiill be executed synchronously.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with the reply @{object} as the single arugument. Otherwise,
--- it will run synchronously and return the reply @{object} normally.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 --
 -- @see object
 -- @see lazy
@@ -389,12 +383,12 @@ end
 -- @tparam string build
 -- The build directory of the to be generated buildsystem.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with. Otherwise, it will run synchronously.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 function cmake_file_api.write_all_queries(build, callback)
   return query.write_all_queries(build, callback)
 end
@@ -430,12 +424,12 @@ end
 -- Use the @{latest} field for more readability.
 -- See the CMake File API documentation for more info.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with. Otherwise, it will run synchronously.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 --
 -- @see read_reply
 -- @see read_codemodel_reply
@@ -470,12 +464,12 @@ end
 -- 2. If nil, 2 is used.
 -- Use the @{latest} field for more readability.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with. Otherwise, it will run synchronously.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 --
 -- @see read_reply
 -- @see read_codemodel_reply
@@ -506,12 +500,12 @@ end
 -- 2. If nil, 2 is used.
 -- Use the @{latest} field for more readability.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with. Otherwise, it will run synchronously.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 --
 -- @see read_reply
 -- @see read_codemodel_reply
@@ -543,12 +537,12 @@ end
 -- value. If nil, 1 is used.
 -- Use the @{latest} field for more readability.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with. Otherwise, it will run synchronously.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 --
 -- @see read_reply
 -- @see read_cmake_files_reply
@@ -580,12 +574,12 @@ end
 -- value. If nil, 1 is used.
 -- Use the @{latest} field for more readability.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with. Otherwise, it will run synchronously.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 --
 -- @see read_reply
 -- @see read_toolchains_reply
@@ -623,12 +617,12 @@ end
 -- See the CMake File API documentation for more info.
 -- Use the @{latest} field for more readability.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with. Otherwise, it will run synchronously.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 --
 -- @see latest
 function cmake_file_api.write_shared_stateless_query(
@@ -669,12 +663,12 @@ end
 -- Use the @{latest} field for more readability.
 -- See the CMake File API documentation for more info.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with. Otherwise, it will run synchronously.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 --
 -- @see write_query
 -- @see write_codemodel_query
@@ -712,12 +706,12 @@ end
 -- The query to send to the CMake File API. Reqd the client statefull query
 -- documentation for more info.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with. Otherwise, it will run synchronously.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 function cmake_file_api.write_client_stateful_query(build, _query, callback)
   return query.write_client_stateful_query(build, _query, callback)
 end
@@ -751,13 +745,12 @@ end
 -- The build directory of the generated buildsystem. It has to be an already
 -- existing directory on the filesystem.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with the reply @{object} as the single arugument. Otherwise,
--- it will run synchronously and return the reply @{object} normally.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 --
 -- @treturn @{object}
 -- Returns a @{object} representing the reply.
@@ -802,13 +795,12 @@ end
 -- See the CMake File API documentation for more info.
 -- Use the @{latest} field for more readability.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with the reply @{object} as the single arugument. Otherwise,
--- it will run synchronously and return the reply @{object} normally.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 --
 -- @treturn @{object}
 -- Returns a @{object} representing the reply.
@@ -852,13 +844,12 @@ end
 -- 2. If nil, the version is 2.
 -- Use the @{latest} field for more readability.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with the reply @{object} as the single arugument. Otherwise,
--- it will run synchronously and return the reply @{object} normally.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 --
 -- @treturn @{object}
 -- Returns a @{object} representing the reply.
@@ -898,13 +889,12 @@ end
 -- 2. If nil, the version is 2.
 -- Use the @{latest} field for more readability.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with the reply @{object} as the single arugument. Otherwise,
--- it will run synchronously and return the reply @{object} normally.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 --
 -- @treturn @{object}
 -- Returns a @{object} representing the reply.
@@ -944,13 +934,12 @@ end
 -- value. If nil, the version is 1.
 -- Use the @{latest} field for more readability.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with the reply @{object} as the single arugument. Otherwise,
--- it will run synchronously and return the reply @{object} normally.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 --
 -- @treturn @{object}
 -- Returns a @{object} representing the reply.
@@ -990,13 +979,12 @@ end
 -- value. If nil, the version is 1.
 -- Use the @{latest} field for more readability.
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with the reply @{object} as the single arugument. Otherwise,
--- it will run synchronously and return the reply @{object} normally.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 --
 -- @treturn @{object}
 -- Returns a @{object} representing the reply.
@@ -1124,13 +1112,12 @@ end
 --
 -- @function lazy:load
 --
--- @tparam[opt] function|string|nil callback
--- It can be a Lua function or nil.
--- If not nil, the method will run asynchronously and call the callback upon
--- completion with the reply @{object} as the single arugument. Otherwise,
--- it will run synchronously and return the reply @{object} normally.
--- Note: you can't call Vim functions in this callback, Otherwise, Neovim
--- throws an assertion.
+-- @tparam[opt] function|thread|nil callback
+-- If not nil, the method will run asynchronously and call the callback or
+-- resume the thread upon completion with.
+-- Otherwise, it will run synchronously.
+-- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- callback.
 --
 -- @treturn @{object}
 -- Loaded @{lazy} as an @{object}.
