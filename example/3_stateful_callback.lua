@@ -18,9 +18,13 @@ return function(callback) -- use the callback to run something at the very end
   }, function(did_write_query, write_query_error)
     expect(did_write_query) -- here for testing
     assert(did_write_query, write_query_error) -- see the error handling help
-    vim.loop.spawn("cat", {}, function()
-      print "aa"
-    end)
+    vim.loop.spawn(
+      "cmake",
+      { args = { "--help" }, stdio = { 0, 1, 2 } },
+      function()
+        print "ass"
+      end
+    )
     vim.loop.spawn("cmake", {
       args = {
         "-S",
@@ -28,6 +32,9 @@ return function(callback) -- use the callback to run something at the very end
         "-B",
         build, -- your build location here
       },
+      detached = false, -- don't detach child process
+      verbatim = true, -- for Windows
+      hide = true, -- for Windows
     }, function()
       cmake_file_api.read_reply_index(build, function(index, read_index_error)
         expect.is_object(index) -- here for testing
