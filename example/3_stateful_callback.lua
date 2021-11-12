@@ -18,6 +18,9 @@ return function(callback) -- use the callback to run something at the very end
   }, function(did_write_query, write_query_error)
     expect(did_write_query) -- here for testing
     assert(did_write_query, write_query_error) -- see the error handling help
+    vim.loop.spawn("cat", {}, function()
+      print "aa"
+    end)
     vim.loop.spawn("cmake", {
       args = {
         "-S",
