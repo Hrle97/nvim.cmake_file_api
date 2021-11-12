@@ -34,20 +34,19 @@ local function expect_toolchains_query(callback)
 end
 
 local function expect_configured(callback)
-  cmake.configure(function()
-    expect.pexists(preply)
-    callback()
-  end)
+  cmake.configure() -- TODO: fix async
+  expect.pexists(preply)
+  callback()
 end
 
 local function expect_codemodel_reply(callback)
   cmake_file_api.read_reply(build, "codemodel", 2, function(codemodel)
     expect.is_object(codemodel)
 
-    local main = codemodel.data.configurations[1].targets[1].jsonFile
-    expect.is_lazy(main)
+    local main_lazy = codemodel.data.configurations[1].targets[1].lazy
+    expect.is_lazy(main_lazy)
 
-    main = main:load()
+    local main = main_lazy:load()
     expect.is_object(main)
 
     callback()

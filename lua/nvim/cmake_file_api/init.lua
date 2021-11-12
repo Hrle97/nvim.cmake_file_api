@@ -58,11 +58,7 @@ local object = require "nvim.cmake_file_api.object"
 -- The build directory of the to be generated buildsystem.
 --
 -- @tparam function configure
--- The method to call after writing the query to generate the buildsystem. If
--- a callback parameter is provided this method should take a callback
--- parameter, so it can configure CMake asynchronously and call the callback.
--- If a callback is not provided, this method will be called without
--- parameters and everything wiill be executed synchronously.
+-- The method to call after writing the query to generate the buildsystem.
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
@@ -110,11 +106,7 @@ end
 -- See the CMake File API documentation for more info.
 --
 -- @tparam function configure
--- The method to call after writing the query to generate the buildsystem. If
--- a callback parameter is provided this method should take a callback
--- parameter, so it can configure CMake asynchronously and call the callback.
--- If a callback is not provided, this method will be called without
--- parameters and everything wiill be executed synchronously.
+-- The method to call after writing the query to generate the buildsystem.
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
@@ -165,11 +157,7 @@ end
 -- Use the @{latest} field for more readability.
 --
 -- @tparam function configure
--- The method to call after writing the query to generate the buildsystem. If
--- a callback parameter is provided this method should take a callback
--- parameter, so it can configure CMake asynchronously and call the callback.
--- If a callback is not provided, this method will be called without
--- parameters and everything wiill be executed synchronously.
+-- The method to call after writing the query to generate the buildsystem.
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
@@ -218,11 +206,7 @@ end
 -- Use the @{latest} field for more readability.
 --
 -- @tparam function configure
--- The method to call after writing the query to generate the buildsystem. If
--- a callback parameter is provided this method should take a callback
--- parameter, so it can configure CMake asynchronously and call the callback.
--- If a callback is not provided, this method will be called without
--- parameters and everything wiill be executed synchronously.
+-- The method to call after writing the query to generate the buildsystem.
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
@@ -271,11 +255,7 @@ end
 -- Use the @{latest} field for more readability.
 --
 -- @tparam function configure
--- The method to call after writing the query to generate the buildsystem. If
--- a callback parameter is provided this method should take a callback
--- parameter, so it can configure CMake asynchronously and call the callback.
--- If a callback is not provided, this method will be called without
--- parameters and everything wiill be executed synchronously.
+-- The method to call after writing the query to generate the buildsystem.
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
@@ -324,11 +304,7 @@ end
 -- Use the @{latest} field for more readability.
 --
 -- @tparam function configure
--- The method to call after writing the query to generate the buildsystem. If
--- a callback parameter is provided this method should take a callback
--- parameter, so it can configure CMake asynchronously and call the callback.
--- If a callback is not provided, this method will be called without
--- parameters and everything wiill be executed synchronously.
+-- The method to call after writing the query to generate the buildsystem.
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or

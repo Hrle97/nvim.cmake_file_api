@@ -1,4 +1,5 @@
-local const = "nvim.cmake_file_api.const"
+local const = require "nvim.cmake_file_api.const"
+local fs = require "nvim.cmake_file_api.fs"
 
 local object = {}
 object.__index = object

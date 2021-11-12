@@ -23,10 +23,10 @@ expect.pexists(preply)
 local codemodel = cmake_file_api.read_reply(build, "codemodel", 2)
 expect.is_object(codemodel)
 
-local main = codemodel.data.configurations[1].targets[1].jsonFile
-expect.is_lazy(main)
+local main_lazy = codemodel.data.configurations[1].targets[1].lazy
+expect.is_lazy(main_lazy)
 
-main = main:load()
+local main = main_lazy:load()
 expect.is_object(main)
 
 local cache = cmake_file_api.read_reply(build, "cache", 2)

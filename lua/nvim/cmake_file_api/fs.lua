@@ -86,7 +86,8 @@ function fs.mkdir(path, callback)
       return path
     end
 
-    fs.mkdir(path:match "(.*)/.-$")
+    local head = path:match("(.-)/?$"):match "(.*)/.-$"
+    fs.mkdir(head)
 
     local _, mkdir_err = uv.fs_mkdir(path, write_mode)
     if mkdir_err then
@@ -102,7 +103,8 @@ function fs.mkdir(path, callback)
       return
     end
 
-    fs.mkdir(path:match "(.*)/.-$", function()
+    local head = path:match("(.-)/?$"):match "(.*)/.-$"
+    fs.mkdir(head, function()
       uv.fs_mkdir(path, write_mode, function(mkdir_err, _)
         if mkdir_err then
           callback(nil, mkdir_err, "mkdir", path)

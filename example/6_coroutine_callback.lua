@@ -4,7 +4,8 @@ local cmake_file_api = require "nvim.cmake_file_api"
 -- Read the coroutine documentation for more information.
 -- https://www.lua.org/manual/5.1/manual.html#2.11
 local thread = nil
-thread = coroutine.create(function()
+-- callback to run something when everything is done
+thread = coroutine.create(function(callback)
   cmake_file_api.write_cmake_files_query(
     build,
     cmake_file_api.latest,
@@ -32,7 +33,15 @@ thread = coroutine.create(function()
   )
   local reply = coroutine.yield() -- wait until the reply is read
   expect.is_object(reply) -- used for testing - do your error handling here
+
+  callback() -- call callback once everything is done
+
+  -- If you want to accept a thread you could just write:
+  -- co.resume(callback, <args>...)
+  -- to run something in the end.
 end)
 
 -- start the coroutine
-coroutine.resume(thread)
+return function(callback) -- callback to run something when everything is done
+  coroutine.resume(thread, callback)
+end

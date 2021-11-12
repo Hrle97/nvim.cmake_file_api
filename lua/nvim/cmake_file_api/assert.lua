@@ -32,21 +32,13 @@ assert = setmetatable(assert, {
   end,
 })
 
-local ensure_dir_assert_message = "Make sure that the directory exists."
+local ensure_dir_assert_message = "The directory should be a string."
 
 function assert.ensure_dir(path, message, callback)
+  assert(type(path) == "string", ensure_dir_assert_message, message)
+
   path = path:gsub("/?$", "/", 1)
-
-  if not callback then
-    local ex_res, ex_err, _, _ = fs.exists(path)
-    assert(not ex_err and ex_res, ensure_dir_assert_message, ex_err, message)
-    return path
-  end
-
-  fs.schedule.exists(path, function(ex_res, ex_err, _, _)
-    assert(not ex_err and ex_res, ensure_dir_assert_message, ex_err, message)
-    callback(path)
-  end)
+  return fs.mkdir(path, callback)
 end
 
 local object_kind_assert_message = "See here: " .. object_kind_link .. "."
@@ -128,6 +120,20 @@ function assert.ensure_configure_or_nil(configure, message)
     })
   end
 
+  configure = setmetatable({ configure = configure }, {
+    __call = function(self, ...)
+      local sync_args = { ... }
+      local callback = table.remove(sync_args)
+
+      if callback then
+        self.configure(unpack(sync_args))
+        callback()
+      else
+        self.configure(unpack(sync_args), callback)
+      end
+    end,
+  })
+
   return configure
 end
 
@@ -203,7 +209,7 @@ function assert.ensure_client_reply_kind(client_reply, kind, version, message)
   end
 
   assert(
-    reply_kind and reply_kind.jsonFile,
+    reply_kind and reply_kind[const.new_lazy_key],
     client_kind_reply_assert_message[kind],
     message
   )

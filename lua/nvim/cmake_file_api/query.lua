@@ -19,18 +19,23 @@ local function write_query(
   callback
 )
   if not callback then
-    build = assert.ensure_dir(build, build_message)
-    local query_dir = make_dir(build)
+    local ed_res, ed_err, ed_type, ed_path = assert.ensure_dir(
+      build,
+      build_message
+    )
+    if ed_err then
+      return ed_res, ed_err, ed_type, ed_path
+    end
+    build = ed_res
 
+    local query_dir = make_dir(build)
     local query_path
     if not data then
       kind = assert.ensure_object_kind(kind, kind_message)
       version = assert.ensure_object_version(kind, version, version_message)
-
       query_path = make_path(query_dir, kind, version)
     else
       data = assert.ensure_query_data(data, data_message)
-
       query_path = make_path(query_dir)
     end
 
@@ -50,30 +55,38 @@ local function write_query(
     return write_res
   end
 
-  assert.ensure_dir(build, build_message, function(_build)
-    local query_dir = make_dir(_build)
-
-    local query_path
-    if not data then
-      kind = assert.ensure_object_kind(kind, kind_message)
-      version = assert.ensure_object_version(kind, version, version_message)
-
-      query_path = make_path(query_dir, kind, version)
-    else
-      query_path = make_path(query_dir)
-    end
-
-    callback = assert.ensure_callback_or_nil(callback, callback_message)
-
-    fs.mkdir(query_dir, function(mkdir_res, mkdir_err, mkdir_type, mkdir_path)
-      if mkdir_err then
-        callback(mkdir_res, mkdir_err, mkdir_type, mkdir_path)
+  assert.ensure_dir(
+    build,
+    build_message,
+    function(ed_res, ed_err, ed_type, ed_path)
+      if ed_err then
+        callback(ed_res, ed_err, ed_type, ed_path)
         return
       end
+      local _build = ed_res
 
-      fs.write(query_path, data, callback)
-    end)
-  end)
+      local query_dir = make_dir(_build)
+      local query_path
+      if not data then
+        kind = assert.ensure_object_kind(kind, kind_message)
+        version = assert.ensure_object_version(kind, version, version_message)
+        query_path = make_path(query_dir, kind, version)
+      else
+        query_path = make_path(query_dir)
+      end
+
+      callback = assert.ensure_callback_or_nil(callback, callback_message)
+
+      fs.mkdir(query_dir, function(mkdir_res, mkdir_err, mkdir_type, mkdir_path)
+        if mkdir_err then
+          callback(mkdir_res, mkdir_err, mkdir_type, mkdir_path)
+          return
+        end
+
+        fs.write(query_path, data, callback)
+      end)
+    end
+  )
 end
 
 function query.write_shared_stateless_query(build, kind, version, callback)
@@ -151,11 +164,11 @@ function query.write_query(build, kind, version, callback)
     kind,
     version,
     nil,
-    "Query of kind " .. kind .. " query requires a valid build directory.",
-    "Query of kind " .. kind .. " query requires a valid object kind.",
-    "Query of kind " .. kind .. " query requires a valid object version.",
+    'Query of kind "' .. kind .. '" query requires a valid build directory.',
+    'Query of kind "' .. kind .. '" query requires a valid object kind.',
+    'Query of kind "' .. kind .. '" query requires a valid object version.',
     nil,
-    "Query of kind " .. kind .. " query requires a valid callback.",
+    'Query of kind "' .. kind .. '" query requires a valid callback.',
     callback
   )
 end

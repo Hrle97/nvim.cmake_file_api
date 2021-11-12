@@ -6,9 +6,13 @@ function fun.order(head, ...)
   end
 
   local rest = { ... }
-  head(function()
-    fun.order(unpack(rest))
-  end)
+  if #rest == 0 then
+    head()
+  else
+    head(function()
+      fun.order(unpack(rest))
+    end)
+  end
 end
 
 return fun
