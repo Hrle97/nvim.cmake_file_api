@@ -20,9 +20,9 @@
 -- @todo break up docs into smaller files
 local cmake_file_api = {}
 
+local all_in_one = require "nvim.cmake_file_api.all_in_one"
 local query = require "nvim.cmake_file_api.query"
 local reply = require "nvim.cmake_file_api.reply"
-local all_in_one = require "nvim.cmake_file_api.all_in_one"
 local object = require "nvim.cmake_file_api.object"
 
 -------------------------------------------------------------------------------

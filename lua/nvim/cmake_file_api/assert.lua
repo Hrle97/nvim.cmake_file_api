@@ -1,6 +1,7 @@
 local assert = {}
 
 local fs = require "nvim.cmake_file_api.fs"
+local const = require "nvim.cmake_file_api.const"
 
 local cmake_manual_link = "https://cmake.org/cmake/help/latest/manual/"
 local object_kind_link = cmake_manual_link
@@ -52,7 +53,8 @@ local object_kind_assert_message = "See here: " .. object_kind_link .. "."
 
 function assert.ensure_object_kind(kind, message)
   assert(
-    kind == "codemodel"
+    type(kind) == "string"
+      or kind == "codemodel"
       or kind == "cache"
       or kind == "cmakeFiles"
       or kind == "toolchains",
@@ -64,10 +66,10 @@ function assert.ensure_object_kind(kind, message)
 end
 
 assert.object_kind_latest_version = {
-  ["codemodel"] = 2,
-  ["cache"] = 2,
-  ["cmakeFiles"] = 1,
-  ["toolchains"] = 1,
+  [const.codemodel] = 2,
+  [const.cache] = 2,
+  [const.cmake_files] = 1,
+  [const.toolchains] = 1,
 }
 
 -- TODO: better version checks
@@ -83,17 +85,50 @@ function assert.ensure_object_version(kind, version, message)
   return tostring(version or assert.object_kind_latest_version[kind])
 end
 
-local callback_assert_message = "A callback should either be a Lua function"
-  .. ", or nil."
+local callback_assert_message = "A callback should either be a Lua function, "
+  .. "a thread, or nil."
 
 function assert.ensure_callback_or_nil(callback, message)
   assert(
-    type(callback) == "function" or type(callback) == "nil",
+    type(callback) == "function"
+      or type(callback) == "thread"
+      or type(callback) == "nil",
     message,
     callback_assert_message
   )
 
+  if type(callback) == "thread" then
+    callback = setmetatable({ thread = callback }, {
+      __call = function(self, ...)
+        coroutine.resume(self.thread, ...)
+      end,
+    })
+  end
+
   return callback
+end
+
+local configure_assert_message = "A configure callback should either be a Lua "
+  .. "function, a thread, or nil."
+
+function assert.ensure_configure_or_nil(configure, message)
+  assert(
+    type(configure) == "function"
+      or type(configure) == "thread"
+      or type(configure) == "nil",
+    message,
+    configure_assert_message
+  )
+
+  if type(configure) == "thread" then
+    configure = setmetatable({ thread = configure }, {
+      __call = function(self, ...)
+        coroutine.resume(self.thread, ...)
+      end,
+    })
+  end
+
+  return configure
 end
 
 local reply_index_assert_message = "Reply index should be present. "
@@ -124,13 +159,13 @@ function assert.ensure_client_reply(reply_index, message)
       and type(reply_index.data) == "table"
       and reply_index.data.reply
       and type(reply_index.data.reply) == "table"
-      and reply_index.data.reply["client-nvim"]
-      and type(reply_index.data.reply["client-nvim"] == "table"),
+      and reply_index.data.reply[const.client_name]
+      and type(reply_index.data.reply[const.client_name] == "table"),
     client_reply_assert_message,
     message
   )
 
-  return reply_index.data.reply["client-nvim"]
+  return reply_index.data.reply[const.client_name]
 end
 
 local client_kind_reply_assert_message = {
