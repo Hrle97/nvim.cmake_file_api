@@ -64,7 +64,6 @@ assert.object_kind_latest_version = {
   [const.toolchains] = 1,
 }
 
--- TODO: better version checks
 function assert.ensure_object_version(kind, version, message)
   assert(
     type(version) == "number"
@@ -77,14 +76,15 @@ function assert.ensure_object_version(kind, version, message)
   return tostring(version or assert.object_kind_latest_version[kind])
 end
 
-local callback_assert_message = "A callback should either be a Lua function, "
-  .. "a thread, or nil."
+local callback_assert_message = "A callback should either be a "
+  .. "function, a thread, or nil."
 
 function assert.ensure_callback_or_nil(callback, message)
   assert(
     type(callback) == "function"
       or type(callback) == "thread"
-      or type(callback) == "nil",
+      or type(callback) == "nil"
+      or (type(callback) == "table" and getmetatable(callback).__call),
     message,
     callback_assert_message
   )
@@ -100,14 +100,15 @@ function assert.ensure_callback_or_nil(callback, message)
   return callback
 end
 
-local configure_assert_message = "A configure callback should either be a Lua "
+local configure_assert_message = "A configure callback should either be a "
   .. "function, a thread, or nil."
 
 function assert.ensure_configure_or_nil(configure, message)
   assert(
     type(configure) == "function"
       or type(configure) == "thread"
-      or type(configure) == "nil",
+      or type(configure) == "nil"
+      or (type(configure) == "table" and getmetatable(configure).__call),
     message,
     configure_assert_message
   )
@@ -141,6 +142,8 @@ local reply_index_assert_message = "Reply index should be present. "
   .. "Check that you wrote a query and configured CMake before running this."
 
 function assert.ensure_reply_index(entries)
+  assert(entries, reply_index_assert_message)
+
   local reply_index = nil
   for _, entry in ipairs(entries) do
     if entry.name:match "index" then

@@ -17,7 +17,7 @@ function reply.read_reply_index(build, callback)
 
   local reply_dir_path = build .. const.reply_infix
 
-  if type(callback) == "nil" then
+  if not callback then
     local rd_res, rd_err, rd_type, rd_path = fs.readdir(reply_dir_path)
     if rd_err then
       return rd_res, rd_err, rd_type, rd_path

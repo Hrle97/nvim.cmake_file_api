@@ -2,7 +2,7 @@ local cmake_file_api = require "nvim.cmake_file_api"
 
 -- write codemodel query
 local did_write_query, write_query_error = cmake_file_api.write_codemodel_query(
-  build
+  build -- your build location here
 )
 -- check for errors - read error handling help section
 assert(did_write_query, write_query_error)
@@ -18,7 +18,7 @@ vim.fn.system {
 
 -- read codemodel reply
 local codemodel, read_codemodel_error = cmake_file_api.read_codemodel_reply(
-  build
+  build -- your build location here
 )
 assert(codemodel, read_codemodel_error) -- check for errors
 expect.is_object(codemodel) -- expect is not exported - here only for testing

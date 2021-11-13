@@ -41,7 +41,6 @@ thread = coroutine.create(function(callback)
   -- to run something in the end.
 end)
 
--- start the coroutine
 return function(callback) -- callback to run something when everything is done
-  coroutine.resume(thread, callback)
+  coroutine.resume(thread, callback) -- start the coroutine
 end
