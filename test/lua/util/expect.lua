@@ -128,8 +128,19 @@ expect.pexists = expect.wrap(function(p)
   local dir_path, pattern = p:match "^(.*)/(.-)$"
 
   local dir = vim.loop.fs_opendir(dir_path, nil, 1024)
+  if not dir then
+    return false
+  end
+
   local entries = vim.loop.fs_readdir(dir)
-  vim.loop.fs_closedir(dir)
+  if not entries then
+    return false
+  end
+
+  local did_close = vim.loop.fs_closedir(dir)
+  if not did_close then
+    return false
+  end
 
   pattern = pattern:gsub("%*", ".*")
   for _, entry in ipairs(entries) do
