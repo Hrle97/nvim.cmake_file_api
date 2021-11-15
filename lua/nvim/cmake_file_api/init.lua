@@ -1317,9 +1317,9 @@ end
 -- Returned by the read_reply methods. All the fields of this type are
 -- the same as in the reply index file documentation except for special fields
 -- that have the key "jsonFile". These fields are not immediately loaded and
--- are instead initialized as a @{lazy}. Lazy objects have a path field and a
--- load method which can run synchronously and asynchronously to retrieve the
--- desired field as a @{object}.
+-- are instead initialized as a @{lazy} with the "lazy" key. Lazy objects have
+-- a path field and a load method which can run synchronously and
+-- asynchronously to retrieve the desired field as a @{object}.
 --
 -- @type object
 --
@@ -1354,7 +1354,7 @@ end
 --- Create a new @{object}.
 --
 -- Values of fields with the key "jsonFile" are going to be converted to
--- @{lazy} values.
+-- @{lazy} values with the "lazy" key.
 --
 -- @function object.new
 --
@@ -1378,8 +1378,8 @@ end
 --- Lazy object field class.
 --
 -- Values of fields with the key "jsonFiles" of API replies are converted to
--- @{lazy} values that can be loaded synchronously or asynchronously with the
--- @{lazy:load} method into an @{object}.
+-- @{lazy} values with the "lazy" key that can be loaded synchronously or
+-- asynchronously with the @{lazy:load} method into a @{object}.
 --
 -- @type lazy
 --

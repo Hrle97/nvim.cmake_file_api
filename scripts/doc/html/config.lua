@@ -1,6 +1,6 @@
 project = "Neovim CMake File API"
 title = "Neovim CMake File API"
-description = "Library for dealing with the CMake file API used to extract "
+description = "Library using the CMake file API to extract "
   .. "information about generated build systems."
 full_description = "CMake provides a file-based API that clients may use to "
   .. "get semantic information about the buildsystems CMake generates. Clients "

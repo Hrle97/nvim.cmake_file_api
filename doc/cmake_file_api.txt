@@ -2,8 +2,8 @@
                                                            *nvim.cmake_file_api*
                                                                 *cmake_file_api*
 
-Library for dealing with the CMake file API used to extract information about
-generated build systems.
+Library using the CMake file API to extract information about generated build
+systems.
 
     Copyright :    © 2021 Hrle97 <32d9c8c6-8118-45e7-857e-8b45522f395d@anonaddy.me>
     Release   :    0.0.1
@@ -1785,9 +1785,9 @@ Reply object class.
 Returned by the read_reply methods. All the fields of this type are the same
 as in the reply index file documentation except for special fields that have
 the key "jsonFile". These fields are not immediately loaded and are instead
-initialized as a |cmake_file_api.lazy|. Lazy objects have a path field and a
-load method which can run synchronously and asynchronously to retrieve the
-desired field as a |cmake_file_api.object|.
+initialized as a |cmake_file_api.lazy| with the "lazy" key. Lazy objects have
+a path field and a load method which can run synchronously and asynchronously
+to retrieve the desired field as a |cmake_file_api.object|.
 
   Fields: ~
 
@@ -1823,7 +1823,7 @@ object.new({path}, {kind}, {data})
 Create a new |cmake_file_api.object|.
 
 Values of fields with the key "jsonFile" are going to be converted to
-|cmake_file_api.lazy| values.
+|cmake_file_api.lazy| values with the "lazy" key.
 
   Parameters: ~
 
@@ -1856,9 +1856,9 @@ Values of fields with the key "jsonFile" are going to be converted to
 Lazy object field class.
 
 Values of fields with the key "jsonFiles" of API replies are converted to
-|cmake_file_api.lazy| values that can be loaded synchronously or
-asynchronously with the |cmake_file_api.lazy:load| method into an
-|cmake_file_api.object|.
+|cmake_file_api.lazy| values with the "lazy" key that can be loaded
+synchronously or asynchronously with the |cmake_file_api.lazy:load| method
+into a |cmake_file_api.object|.
 
   Fields: ~
 
