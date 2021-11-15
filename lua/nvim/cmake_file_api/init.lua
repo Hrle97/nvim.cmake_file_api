@@ -66,6 +66,10 @@ local object = require "nvim.cmake_file_api.object"
 --       }
 --     end)
 --
+-- if not reply_index then
+--   -- handle errors here
+-- end
+--
 -- @function write_configure_read_all
 --
 -- @tparam string build
@@ -76,11 +80,15 @@ local object = require "nvim.cmake_file_api.object"
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
 --
+-- @treturn @{object}|@{fail}
+-- On success, returns the reply index and on failure, returns a @{fail}.
+--
+-- @see fail
 -- @see object
 -- @see lazy
 -- @see write_all_queries
@@ -103,6 +111,26 @@ end
 -- @link CMake File API documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html
 --
+-- @usage
+-- local codemodel = require("nvim.cmake_file_api")
+--   .write_configure_read(
+--     build, -- your build location here
+--     "codemodel", -- kind of query here
+--     2, -- query version here
+--     function()
+--       vim.fn.system {
+--         "cmake",
+--         "-S",
+--         source, -- your source location here
+--         "-B",
+--         build -- your build location here
+--       }
+--     end)
+--
+-- if not codemodel then
+--   -- handle errors here
+-- end
+--
 -- @function write_configure_read
 --
 -- @tparam string build
@@ -113,7 +141,7 @@ end
 -- "cmakeFiles", and "tkolchains". See the object kind documentation for more
 -- info.
 --
--- @tparam[opt] number|string|nil version
+-- @tparam number|string|nil version
 -- The major object version of the query and reply. Valid values depend on the
 -- query kind. If nil, the latest version for the object kind will be used.
 -- Use the @{latest} field for more readability.
@@ -124,11 +152,16 @@ end
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
 --
+-- @treturn @{object}|@{fail}
+-- On success, returns the reply as a @{object} and on failure, returns a
+-- @{fail}.
+--
+-- @see fail
 -- @see object
 -- @see lazy
 -- @see write_query
@@ -160,12 +193,31 @@ end
 -- @link "codemodel" object kind documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-codemodel
 --
+-- @usage
+-- local codemodel = require("nvim.cmake_file_api")
+--   .write_configure_read_codemodel(
+--     build, -- your build location here
+--     2, -- query version here
+--     function()
+--       vim.fn.system {
+--         "cmake",
+--         "-S",
+--         source, -- your source location here
+--         "-B",
+--         build -- your build location here
+--       }
+--     end)
+--
+-- if not codemodel then
+--   -- handle errors here
+-- end
+--
 -- @function write_configure_read_codemodel
 --
 -- @tparam string build
 -- The build directory of the to be generated buildsystem.
 --
--- @tparam[opt] number|string|nil version
+-- @tparam number|string|nil version
 -- The major object version of the query and reply. Valid values are 1 and 2.
 -- If nil, 2 is used.
 -- Use the @{latest} field for more readability.
@@ -175,11 +227,16 @@ end
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
 --
+-- @treturn @{object}|@{fail}
+-- On success, returns the reply as a @{object} and on failure, returns a
+-- @{fail}.
+--
+-- @see fail
 -- @see object
 -- @see lazy
 -- @see write_codemodel_query
@@ -209,12 +266,31 @@ end
 -- @link "cache" object kind documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cache
 --
+-- @usage
+-- local cache = require("nvim.cmake_file_api")
+--   .write_configure_read_cache(
+--     build, -- your build location here
+--     2, -- query version here
+--     function()
+--       vim.fn.system {
+--         "cmake",
+--         "-S",
+--         source, -- your source location here
+--         "-B",
+--         build -- your build location here
+--       }
+--     end)
+--
+-- if not cache then
+--   -- handle errors here
+-- end
+--
 -- @function write_configure_read_cache
 --
 -- @tparam string build
 -- The build directory of the to be generated buildsystem.
 --
--- @tparam[opt] number|string|nil version
+-- @tparam number|string|nil version
 -- The major object version of the query and reply. Valid values are 1 and 2.
 -- If nil, 2 is used.
 -- Use the @{latest} field for more readability.
@@ -224,11 +300,16 @@ end
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
 --
+-- @treturn @{object}|@{fail}
+-- On success, returns the reply as a @{object} and on failure, returns a
+-- @{fail}.
+--
+-- @see fail
 -- @see object
 -- @see lazy
 -- @see write_cache_query
@@ -258,12 +339,31 @@ end
 -- @link "cmakeFiles" object kind documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cmakeFiles
 --
+-- @usage
+-- local cmake_files = require("nvim.cmake_file_api")
+--   .write_configure_read_cmake_files(
+--     build, -- your build location here
+--     1, -- query version here
+--     function()
+--       vim.fn.system {
+--         "cmake",
+--         "-S",
+--         source, -- your source location here
+--         "-B",
+--         build -- your build location here
+--       }
+--     end)
+--
+-- if not cmake_files then
+--   -- handle errors here
+-- end
+--
 -- @function write_configure_read_cmake_files
 --
 -- @tparam string build
 -- The build directory of the to be generated buildsystem.
 --
--- @tparam[opt] number|string|nil version
+-- @tparam number|string|nil version
 -- The major object version of the query and reply. Valid values are 1 and 2.
 -- If nil, 2 is used.
 -- Use the @{latest} field for more readability.
@@ -273,11 +373,16 @@ end
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
 --
+-- @treturn @{object}|@{fail}
+-- On success, returns the reply as a @{object} and on failure, returns a
+-- @{fail}.
+--
+-- @see fail
 -- @see object
 -- @see lazy
 -- @see write_cmake_files_query
@@ -307,12 +412,31 @@ end
 -- @link "toolchains" object kind documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-toolchains
 --
+-- @usage
+-- local toolchains = require("nvim.cmake_file_api")
+--   .write_configure_read_toolchains(
+--     build, -- your build location here
+--     1, -- query version here
+--     function()
+--       vim.fn.system {
+--         "cmake",
+--         "-S",
+--         source, -- your source location here
+--         "-B",
+--         build -- your build location here
+--       }
+--     end)
+--
+-- if not toolchains then
+--   -- handle errors here
+-- end
+--
 -- @function write_configure_read_toolchains
 --
 -- @tparam string build
 -- The build directory of the to be generated buildsystem.
 --
--- @tparam[opt] number|string|nil version
+-- @tparam number|string|nil version
 -- The major object version of the query and reply. Valid values are 1 and 2.
 -- If nil, 2 is used.
 -- Use the @{latest} field for more readability.
@@ -322,11 +446,16 @@ end
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
 --
+-- @treturn @{object}|@{fail}
+-- On success, returns the reply as a @{object} and on failure, returns a
+-- @{fail}.
+--
+-- @see fail
 -- @see object
 -- @see lazy
 -- @see write_toolchains_query
@@ -368,6 +497,16 @@ end
 -- @link CMake File API documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html
 --
+-- @usage
+-- local did_write = require("nvim.cmake_file_api")
+--   .write_all_queries(
+--     build -- your build location here
+--   )
+--
+-- if not did_write then
+--   -- handle errors here
+-- end
+--
 -- @function write_all_queries
 --
 -- @tparam string build
@@ -375,10 +514,15 @@ end
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
+--
+-- @treturn boolean|@{fail}
+-- On success, returns true and on failure, returns a @{fail}.
+--
+-- @see fail
 function cmake_file_api.write_all_queries(build, callback)
   return query.write_all_queries(build, callback)
 end
@@ -398,6 +542,18 @@ end
 -- @link CMake File API documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html
 --
+-- @usage
+-- local did_write = require("nvim.cmake_file_api")
+--   .write_query(
+--     build -- your build location here
+--     "codemodel", -- your query kind here
+--     2, -- your query version here
+--   )
+--
+-- if not did_write then
+--   -- handle errors here
+-- end
+--
 -- @function write_query
 --
 -- @tparam string build
@@ -408,7 +564,7 @@ end
 -- "cmakeFiles", and "tkolchains". See the object kind documentation for more
 -- info.
 --
--- @tparam[opt] number|string|nil version
+-- @tparam number|string|nil version
 -- The major version of the query kind to send. Valid values depend on the query
 -- kind. If nil, the latest version for the query kind will be used.
 -- Use the @{latest} field for more readability.
@@ -416,11 +572,15 @@ end
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
 --
+-- @treturn boolean|@{fail}
+-- On success, returns true and on failure, returns a @{fail}.
+--
+-- @see fail
 -- @see read_reply
 -- @see read_codemodel_reply
 -- @see read_cache_reply
@@ -444,23 +604,38 @@ end
 -- @link "codemodel" object kind documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-codemodel
 --
+-- @usage
+-- local did_write = require("nvim.cmake_file_api")
+--   .write_codemodel_query(
+--     build -- your build location here
+--     2, -- your query version here
+--   )
+--
+-- if not did_write then
+--   -- handle errors here
+-- end
+--
 -- @function write_codemodel_query
 --
 -- @tparam string build
 -- The build directory of the to be generated buildsystem.
 --
--- @tparam[opt] number|string|nil version
+-- @tparam number|string|nil version
 -- The major version of the "codemodel" query to send. Valid values are: 1 and
 -- 2. If nil, 2 is used.
 -- Use the @{latest} field for more readability.
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
 --
+-- @treturn boolean|@{fail}
+-- On success, returns true and on failure, returns a @{fail}.
+--
+-- @see fail
 -- @see read_reply
 -- @see read_codemodel_reply
 -- @see latest
@@ -480,23 +655,38 @@ end
 -- @link "cache" object kind documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cache
 --
+-- @usage
+-- local did_write = require("nvim.cmake_file_api")
+--   .write_cache_query(
+--     build -- your build location here
+--     2, -- your query version here
+--   )
+--
+-- if not did_write then
+--   -- handle errors here
+-- end
+--
 -- @function write_cache_query
 --
 -- @tparam string build
 -- The build directory of the to be generated buildsystem.
 --
--- @tparam[opt] number|string|nil version
+-- @tparam number|string|nil version
 -- The major version of the "cache" query to send. Valid values are: 1 and
 -- 2. If nil, 2 is used.
 -- Use the @{latest} field for more readability.
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
 --
+-- @treturn boolean|@{fail}
+-- On success, returns true and on failure, returns a @{fail}.
+--
+-- @see fail
 -- @see read_reply
 -- @see read_codemodel_reply
 -- @see latest
@@ -517,23 +707,38 @@ end
 -- @link "cmakeFiles" object kind documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cmakeFiles
 --
+-- @usage
+-- local did_write = require("nvim.cmake_file_api")
+--   .write_cmake_files_query(
+--     build -- your build location here
+--     1, -- your query version here
+--   )
+--
+-- if not did_write then
+--   -- handle errors here
+-- end
+--
 -- @function write_cmake_files_query
 --
 -- @tparam string build
 -- The build directory of the to be generated buildsystem.
 --
--- @tparam[opt] number|string|nil version
+-- @tparam number|string|nil version
 -- The major version of the "cmakeFiles" query to send. 1 is the only valid
 -- value. If nil, 1 is used.
 -- Use the @{latest} field for more readability.
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
 --
+-- @treturn boolean|@{fail}
+-- On success, returns true and on failure, returns a @{fail}.
+--
+-- @see fail
 -- @see read_reply
 -- @see read_cmake_files_reply
 -- @see latest
@@ -554,23 +759,38 @@ end
 -- @link "toolchains" object kind documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-toolchains
 --
+-- @usage
+-- local did_write = require("nvim.cmake_file_api")
+--   .write_toolchains_query(
+--     build -- your build location here
+--     1, -- your query version here
+--   )
+--
+-- if not did_write then
+--   -- handle errors here
+-- end
+--
 -- @function write_toolchains_query
 --
 -- @tparam string build
 -- The build directory of the to be generated buildsystem.
 --
--- @tparam[opt] number|string|nil version
+-- @tparam number|string|nil version
 -- The major version of the "toolchains" query to send. 1 is the only valid
 -- value. If nil, 1 is used.
 -- Use the @{latest} field for more readability.
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
 --
+-- @treturn boolean|@{fail}
+-- On success, returns true and on failure, returns a @{fail}.
+--
+-- @see fail
 -- @see read_reply
 -- @see read_toolchains_reply
 -- @see latest
@@ -591,6 +811,18 @@ end
 -- @link Object kind documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
 --
+-- @usage
+-- local did_write = require("nvim.cmake_file_api")
+--   .write_shared_stateless_query(
+--     build, -- your build location here
+--     "codemodel", -- your query kind here
+--     2 -- your query version here
+--   )
+--
+-- if not did_write then
+--   -- handle errors here
+-- end
+--
 -- @function write_shared_stateless_query
 --
 -- @tparam string build
@@ -601,7 +833,7 @@ end
 -- "cmakeFiles", and "tkolchains". See the object kind documentation for more
 -- info.
 --
--- @tparam[opt] number|string|nil version
+-- @tparam number|string|nil version
 -- The major version of the query kind to send. Valid values depend on the query
 -- kind. If nil, the latest version for the query kind will be used.
 -- See the CMake File API documentation for more info.
@@ -609,11 +841,15 @@ end
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
 --
+-- @treturn boolean|@{fail}
+-- On success, returns true and on failure, returns a @{fail}.
+--
+-- @see fail
 -- @see latest
 function cmake_file_api.write_shared_stateless_query(
   build,
@@ -637,6 +873,18 @@ end
 -- @link Object kind documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
 --
+-- @usage
+-- local did_write = require("nvim.cmake_file_api")
+--   .write_client_stateless_query(
+--     build, -- your build location here
+--     "codemodel", -- your query kind here
+--     2 -- your query version here
+--   )
+--
+-- if not did_write then
+--   -- handle errors here
+-- end
+--
 -- @function write_client_stateless_query
 --
 -- @tparam string build
@@ -647,7 +895,7 @@ end
 -- "cmakeFiles", and "toolchains". See the object kind documentation for more
 -- info.
 --
--- @tparam[opt] number|string|nil version
+-- @tparam number|string|nil version
 -- The major version of the query kind to send. Valid values depend on the query
 -- kind. If nil, the latest version for the query kind will be used.
 -- Use the @{latest} field for more readability.
@@ -655,11 +903,15 @@ end
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
 --
+-- @treturn boolean|@{fail}
+-- On success, returns true and on failure, returns a @{fail}.
+--
+-- @see fail
 -- @see write_query
 -- @see write_codemodel_query
 -- @see write_cache_query
@@ -687,6 +939,22 @@ end
 -- @link Object kind documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
 --
+-- @usage
+-- local did_write = require("nvim.cmake_file_api")
+--   .write_client_stateful_query(
+--     build, -- your build location here
+--     {
+--       requests = { -- your requests here
+--         { kind = "codemodel", version = 2 },
+--       },
+--       client = { } -- other info available in the reply here
+--     }
+--   )
+--
+-- if not did_write then
+--   -- handle errors here
+-- end
+--
 -- @function write_client_stateful_query
 --
 -- @tparam string build
@@ -698,10 +966,15 @@ end
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
+--
+-- @treturn boolean|@{fail}
+-- On success, returns true and on failure, returns a @{fail}.
+--
+-- @see fail
 function cmake_file_api.write_client_stateful_query(build, _query, callback)
   return query.write_client_stateful_query(build, _query, callback)
 end
@@ -729,6 +1002,16 @@ end
 -- @link Reply index file documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-reply-index-file
 --
+-- @usage
+-- local reply_index = require("nvim.cmake_file_api")
+--   .read_reply_index(
+--     build -- your build location here
+--   )
+--
+-- if not reply_index then
+--   -- handle errors here
+-- end
+--
 -- @function read_reply_index
 --
 -- @tparam string build
@@ -737,19 +1020,15 @@ end
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
 --
--- @treturn @{object}
--- Returns a @{object} representing the reply.
--- All the fields of this type are the same as in the reply index file
--- documentation except for special fields that have the key "jsonFile". These
--- fields are not immediately loaded and are instead initialized as a @{lazy}.
--- Lazy objects have a path field and a load method which can run synchronously
--- and asynchronously to retrieve the desired field as an @{object}.
+-- @treturn @{object}|@{fail}
+-- On success, returns the reply index and on failure, returns a @{fail}.
 --
+-- @see fail
 -- @see object
 -- @see lazy
 -- @see write_all_queries
@@ -768,6 +1047,18 @@ end
 -- @link Object kind documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
 --
+-- @usage
+-- local reply = require("nvim.cmake_file_api")
+--   .read_reply(
+--     build, -- your build location here
+--     "codemodel", -- your query kind here
+--     2 -- your query version here
+--   )
+--
+-- if not reply then
+--   -- handle errors here
+-- end
+--
 -- @function read_reply
 --
 -- @tparam string build
@@ -779,7 +1070,7 @@ end
 -- "cmakeFiles", and "toolchains". See the object kind documentation for more
 -- info.
 --
--- @tparam[opt] number|string|nil version
+-- @tparam number|string|nil version
 -- The major version of the reply kind to read. Valid values depend on the query
 -- kind. If nil, the latest version for the query kind will be used.
 -- See the CMake File API documentation for more info.
@@ -787,19 +1078,16 @@ end
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
 --
--- @treturn @{object}
--- Returns a @{object} representing the reply.
--- All the fields of this type are the same as in the reply index file
--- documentation except for special fields that have the key "jsonFile". These
--- fields are not immediately loaded and are instead initialized as a @{lazy}.
--- Lazy objects have a path field and a load method which can run synchronously
--- and asynchronously to retrieve the desired field as an @{object}.
+-- @treturn @{object}|@{fail}
+-- On success, returns the reply as a @{object} and on failure, returns a
+-- @{fail}.
 --
+-- @see fail
 -- @see object
 -- @see lazy
 -- @see write_query
@@ -823,32 +1111,40 @@ end
 -- @link "codemodel" object kind documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-codemodel
 --
+-- @usage
+-- local codemodel = require("nvim.cmake_file_api")
+--   .read_codemodel_reply(
+--     build, -- your build location here
+--     2 -- your query version here
+--   )
+--
+-- if not codemodel then
+--   -- handle errors here
+-- end
+--
 -- @function read_codemodel_reply
 --
 -- @tparam string build
 -- The build directory of the generated buildsystem. It has to be an already
 -- existing directory on the filesystem.
 --
--- @tparam[opt] number|string|nil version
+-- @tparam number|string|nil version
 -- The major version of the "codemodel" reply to read. Valid values are 1 and
 -- 2. If nil, the version is 2.
 -- Use the @{latest} field for more readability.
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
 --
--- @treturn @{object}
--- Returns a @{object} representing the reply.
--- All the fields of this type are the same as in the reply index file
--- documentation except for special fields that have the key "jsonFile". These
--- fields are not immediately loaded and are instead initialized as a @{lazy}.
--- Lazy objects have a path field and a load method which can run synchronously
--- and asynchronously to retrieve the desired field as an @{object}.
+-- @treturn @{object}|@{fail}
+-- On success, returns the reply as a @{object} and on failure, returns a
+-- @{fail}.
 --
+-- @see fail
 -- @see object
 -- @see lazy
 -- @see write_codemodel_query
@@ -868,32 +1164,40 @@ end
 -- @link "cache" object kind documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cache
 --
+-- @usage
+-- local cache = require("nvim.cmake_file_api")
+--   .read_cache_reply(
+--     build, -- your build location here
+--     2 -- your query version here
+--   )
+--
+-- if not cache then
+--   -- handle errors here
+-- end
+--
 -- @function read_cache_reply
 --
 -- @tparam string build
 -- The build directory of the generated buildsystem. It has to be an already
 -- existing directory on the filesystem.
 --
--- @tparam[opt] number|string|nil version
+-- @tparam number|string|nil version
 -- The major version of the "cache" reply to read. Valid values are 1 and
 -- 2. If nil, the version is 2.
 -- Use the @{latest} field for more readability.
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
 --
--- @treturn @{object}
--- Returns a @{object} representing the reply.
--- All the fields of this type are the same as in the reply index file
--- documentation except for special fields that have the key "jsonFile". These
--- fields are not immediately loaded and are instead initialized as a @{lazy}.
--- Lazy objects have a path field and a load method which can run synchronously
--- and asynchronously to retrieve the desired field as an @{object}.
+-- @treturn @{object}|@{fail}
+-- On success, returns the reply as a @{object} and on failure, returns a
+-- @{fail}.
 --
+-- @see fail
 -- @see object
 -- @see lazy
 -- @see write_cache_query
@@ -913,32 +1217,40 @@ end
 -- @link "cmakeFile" object kind documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cmakeFile
 --
+-- @usage
+-- local cmake_files = require("nvim.cmake_file_api")
+--   .read_cmake_files_reply(
+--     build, -- your build location here
+--     1 -- your query version here
+--   )
+--
+-- if not cmake_files then
+--   -- handle errors here
+-- end
+--
 -- @function read_cmake_files_reply
 --
 -- @tparam string build
 -- The build directory of the generated buildsystem. It has to be an already
 -- existing directory on the filesystem.
 --
--- @tparam[opt] number|string|nil version
+-- @tparam number|string|nil version
 -- The major version of the "cmakeFile" reply to read. 1 is the only valid
 -- value. If nil, the version is 1.
 -- Use the @{latest} field for more readability.
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
 --
--- @treturn @{object}
--- Returns a @{object} representing the reply.
--- All the fields of this type are the same as in the reply index file
--- documentation except for special fields that have the key "jsonFile". These
--- fields are not immediately loaded and are instead initialized as a @{lazy}.
--- Lazy objects have a path field and a load method which can run synchronously
--- and asynchronously to retrieve the desired field as an @{object}.
+-- @treturn @{object}|@{fail}
+-- On success, returns the reply as a @{object} and on failure, returns a
+-- @{fail}.
 --
+-- @see fail
 -- @see object
 -- @see lazy
 -- @see write_cmake_files_query
@@ -958,32 +1270,40 @@ end
 -- @link "toolchains" object kind documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-toolchains
 --
+-- @usage
+-- local toolchains = require("nvim.cmake_file_api")
+--   .read_toolchains_reply(
+--     build, -- your build location here
+--     1 -- your query version here
+--   )
+--
+-- if not toolchains then
+--   -- handle errors here
+-- end
+--
 -- @function read_toolchains_reply
 --
 -- @tparam string build
 -- The build directory of the generated buildsystem. It has to be an already
 -- existing directory on the filesystem.
 --
--- @tparam[opt] number|string|nil version
+-- @tparam number|string|nil version
 -- The major version of the "toolchains" reply to read. 1 is the only valid
 -- value. If nil, the version is 1.
 -- Use the @{latest} field for more readability.
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
 --
--- @treturn @{object}
--- Returns a @{object} representing the reply.
--- All the fields of this type are the same as in the reply index file
--- documentation except for special fields that have the key "jsonFile". These
--- fields are not immediately loaded and are instead initialized as a @{lazy}.
--- Lazy objects have a path field and a load method which can run synchronously
--- and asynchronously to retrieve the desired field as an @{object}.
+-- @treturn @{object}|@{fail}
+-- On success, returns the reply as a @{object} and on failure, returns a
+-- @{fail}.
 --
+-- @see fail
 -- @see object
 -- @see lazy
 -- @see write_toolchains_query
@@ -1098,28 +1418,63 @@ end
 
 --- Load a @{lazy}.
 --
--- Load a @{lazy} int an @{object} synchronously or asynchronously.
+-- Load a @{lazy} into an @{object} synchronously or asynchronously.
+--
+-- @usage
+-- local object = lazy -- your lazy object here
+--   :load()
+--
+-- if not object then
+--   -- handle errors here
+-- end
 --
 -- @function lazy:load
 --
 -- @tparam[opt] function|thread|nil callback
 -- If not nil, the method will run asynchronously and call the callback or
--- resume the thread upon completion with.
+-- resume the thread upon completion with the result as its parameters.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
 -- callback.
 --
--- @treturn @{object}
--- Loaded @{lazy} as an @{object}.
+-- @treturn @{object}|@{fail}
+-- On success, returns the lazy loaded as a @{object} and on failure, returns
+-- a @{fail}.
 --
+-- @see fail
 -- @see object
 function cmake_file_api.lazy:load(callback)
   return object.lazy.load(self, callback)
 end
 
+--- Fail result type.
+--
+-- This is not an actual type exported in the CMake File API, but a type that
+-- describes how methods in the API handle errors.
+--
+-- It is returned by all methods when an error occured that is not due to the
+-- developer using the API, such as not having privileges to write files or
+-- make directories. It is very similar to the fail type defined in the luvit
+-- library documentation provided in vim.loop, so check the luvit error
+-- documentation for more information.
+--
+-- In place of the type of result that a method would produce upon success nil
+-- is returned instead and error details are returned in the rest of the reply.
+--
+-- For errors that were caused by developers using the API, such as providing
+-- a non existing query kind or version or trying to read a reply when CMake
+-- was not configured, an assertion is thrown.
+--
+-- @type fail
+--
+-- @link luvit error documentation
+-- https://github.com/luvit/luv/blob/master/docs.md#error-handling
+--
+-- @todo better
+
 --- Utilities.
 --
--- Miscellaneous utilities and functions that make it easier to use the CMake
+-- Miscellaneous utilities and methods that make it easier to use the CMake
 -- file API.
 --
 -- @section utilities

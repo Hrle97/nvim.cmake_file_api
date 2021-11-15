@@ -84,24 +84,24 @@
   the CMake File API.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#write_configure_read">write_configure_read (build, kind[, version], configure[, callback])</a></td>
+	<td class="name" nowrap><a href="#write_configure_read">write_configure_read (build, kind, version, configure[, callback])</a></td>
 	<td class="summary">Write a query, configure CMake, and read the reply of specified kind and
   version.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#write_configure_read_codemodel">write_configure_read_codemodel (build[, version], configure[, callback])</a></td>
+	<td class="name" nowrap><a href="#write_configure_read_codemodel">write_configure_read_codemodel (build, version, configure[, callback])</a></td>
 	<td class="summary">Write a query, configure CMake, and read the reply of the "codemodel" kind.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#write_configure_read_cache">write_configure_read_cache (build[, version], configure[, callback])</a></td>
+	<td class="name" nowrap><a href="#write_configure_read_cache">write_configure_read_cache (build, version, configure[, callback])</a></td>
 	<td class="summary">Write a query, configure CMake, and read the reply of the "cache" kind.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#write_configure_read_cmake_files">write_configure_read_cmake_files (build[, version], configure[, callback])</a></td>
+	<td class="name" nowrap><a href="#write_configure_read_cmake_files">write_configure_read_cmake_files (build, version, configure[, callback])</a></td>
 	<td class="summary">Write a query, configure CMake, and read the reply of the "cmakeFiles" kind.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#write_configure_read_toolchains">write_configure_read_toolchains (build[, version], configure[, callback])</a></td>
+	<td class="name" nowrap><a href="#write_configure_read_toolchains">write_configure_read_toolchains (build, version, configure[, callback])</a></td>
 	<td class="summary">Write a query, configure CMake, and read the reply of the "toolchains" kind.</td>
 	</tr>
 </table>
@@ -112,31 +112,31 @@
 	<td class="summary">Write queries for everything to the CMake File API.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#write_query">write_query (build, kind[, version[, callback]])</a></td>
+	<td class="name" nowrap><a href="#write_query">write_query (build, kind, version[, callback])</a></td>
 	<td class="summary">Write a query for the CMake File API.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#write_codemodel_query">write_codemodel_query (build[, version[, callback]])</a></td>
+	<td class="name" nowrap><a href="#write_codemodel_query">write_codemodel_query (build, version[, callback])</a></td>
 	<td class="summary">Write a "codemodel" query for the CMake File API.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#write_cache_query">write_cache_query (build[, version[, callback]])</a></td>
+	<td class="name" nowrap><a href="#write_cache_query">write_cache_query (build, version[, callback])</a></td>
 	<td class="summary">Write a "cache" query for the CMake File API.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#write_cmake_files_query">write_cmake_files_query (build[, version[, callback]])</a></td>
+	<td class="name" nowrap><a href="#write_cmake_files_query">write_cmake_files_query (build, version[, callback])</a></td>
 	<td class="summary">Write a "cmakeFiles" query for the CMake File API.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#write_toolchains_query">write_toolchains_query (build[, version[, callback]])</a></td>
+	<td class="name" nowrap><a href="#write_toolchains_query">write_toolchains_query (build, version[, callback])</a></td>
 	<td class="summary">Write a "toolchains" query for the CMake File API.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#write_shared_stateless_query">write_shared_stateless_query (build, kind[, version[, callback]])</a></td>
+	<td class="name" nowrap><a href="#write_shared_stateless_query">write_shared_stateless_query (build, kind, version[, callback])</a></td>
 	<td class="summary">Write a shared stateless query for the CMake File API.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#write_client_stateless_query">write_client_stateless_query (build, kind[, version[, callback]])</a></td>
+	<td class="name" nowrap><a href="#write_client_stateless_query">write_client_stateless_query (build, kind, version[, callback])</a></td>
 	<td class="summary">Write a client stateless query for the CMake File API.</td>
 	</tr>
 	<tr>
@@ -151,23 +151,23 @@
 	<td class="summary">Read the reply index from the CMake File API.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#read_reply">read_reply (build, kind[, version[, callback]])</a></td>
+	<td class="name" nowrap><a href="#read_reply">read_reply (build, kind, version[, callback])</a></td>
 	<td class="summary">Read a reply from the CMake File API.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#read_codemodel_reply">read_codemodel_reply (build[, version[, callback]])</a></td>
+	<td class="name" nowrap><a href="#read_codemodel_reply">read_codemodel_reply (build, version[, callback])</a></td>
 	<td class="summary">Read a "codemodel" reply from the CMake File API.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#read_cache_reply">read_cache_reply (build[, version[, callback]])</a></td>
+	<td class="name" nowrap><a href="#read_cache_reply">read_cache_reply (build, version[, callback])</a></td>
 	<td class="summary">Read a "cache" reply from the CMake File API.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#read_cmake_files_reply">read_cmake_files_reply (build[, version[, callback]])</a></td>
+	<td class="name" nowrap><a href="#read_cmake_files_reply">read_cmake_files_reply (build, version[, callback])</a></td>
 	<td class="summary">Read a "cmakeFile" reply from the CMake File API.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#read_toolchains_reply">read_toolchains_reply (build[, version[, callback]])</a></td>
+	<td class="name" nowrap><a href="#read_toolchains_reply">read_toolchains_reply (build, version[, callback])</a></td>
 	<td class="summary">Read a "toolchains" reply from the CMake File API.</td>
 	</tr>
 </table>
@@ -257,18 +257,24 @@
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+         On success, returns the reply index and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
 
 
     <h3>See also:</h3>
     <ul>
+         <li><a href="index.html#fail">fail</a></li>
          <li><a href="index.html#object">object</a></li>
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_all_queries">write_all_queries</a></li>
@@ -288,13 +294,17 @@
 </span>        <span class="string">"-B"</span>,
         build <span class="comment">-- your build location here
 </span>      }
-    <span class="keyword">end</span>)</pre>
+    <span class="keyword">end</span>)
+
+<span class="keyword">if</span> <span class="keyword">not</span> reply_index <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
     </ul>
 
 </dd>
     <dt>
     <a name = "write_configure_read"></a>
-    <strong>write_configure_read (build, kind[, version], configure[, callback])</strong>
+    <strong>write_configure_read (build, kind, version, configure[, callback])</strong>
     </dt>
     <dd>
     Write a query, configure CMake, and read the reply of specified kind and
@@ -334,7 +344,6 @@
  query kind. If nil, the latest version for the object kind will be used.
  Use the <a href="index.html#latest">latest</a> field for more readability.
  See the CMake File API documentation for more info.
-         (<em>optional</em>)
         </li>
         <li><span class="parameter">configure</span>
             <span class="types"><span class="type">function</span></span>
@@ -343,18 +352,25 @@
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+         On success, returns the reply as a <a href="index.html#object">object</a> and on failure, returns a
+ <a href="index.html#fail">fail</a>.
+    </ol>
 
 
     <h3>See also:</h3>
     <ul>
+         <li><a href="index.html#fail">fail</a></li>
          <li><a href="index.html#object">object</a></li>
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_query">write_query</a></li>
@@ -362,11 +378,32 @@
          <li><a href="index.html#latest">latest</a></li>
     </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> codemodel = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_configure_read(
+    build, <span class="comment">-- your build location here
+</span>    <span class="string">"codemodel"</span>, <span class="comment">-- kind of query here
+</span>    <span class="number">2</span>, <span class="comment">-- query version here
+</span>    <span class="keyword">function</span>()
+      vim.fn.system {
+        <span class="string">"cmake"</span>,
+        <span class="string">"-S"</span>,
+        source, <span class="comment">-- your source location here
+</span>        <span class="string">"-B"</span>,
+        build <span class="comment">-- your build location here
+</span>      }
+    <span class="keyword">end</span>)
+
+<span class="keyword">if</span> <span class="keyword">not</span> codemodel <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "write_configure_read_codemodel"></a>
-    <strong>write_configure_read_codemodel (build[, version], configure[, callback])</strong>
+    <strong>write_configure_read_codemodel (build, version, configure[, callback])</strong>
     </dt>
     <dd>
     Write a query, configure CMake, and read the reply of the "codemodel" kind. </p>
@@ -395,7 +432,6 @@
          The major object version of the query and reply. Valid values are 1 and 2.
  If nil, 2 is used.
  Use the <a href="index.html#latest">latest</a> field for more readability.
-         (<em>optional</em>)
         </li>
         <li><span class="parameter">configure</span>
             <span class="types"><span class="type">function</span></span>
@@ -404,18 +440,25 @@
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+         On success, returns the reply as a <a href="index.html#object">object</a> and on failure, returns a
+ <a href="index.html#fail">fail</a>.
+    </ol>
 
 
     <h3>See also:</h3>
     <ul>
+         <li><a href="index.html#fail">fail</a></li>
          <li><a href="index.html#object">object</a></li>
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_codemodel_query">write_codemodel_query</a></li>
@@ -423,11 +466,31 @@
          <li><a href="index.html#latest">latest</a></li>
     </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> codemodel = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_configure_read_codemodel(
+    build, <span class="comment">-- your build location here
+</span>    <span class="number">2</span>, <span class="comment">-- query version here
+</span>    <span class="keyword">function</span>()
+      vim.fn.system {
+        <span class="string">"cmake"</span>,
+        <span class="string">"-S"</span>,
+        source, <span class="comment">-- your source location here
+</span>        <span class="string">"-B"</span>,
+        build <span class="comment">-- your build location here
+</span>      }
+    <span class="keyword">end</span>)
+
+<span class="keyword">if</span> <span class="keyword">not</span> codemodel <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "write_configure_read_cache"></a>
-    <strong>write_configure_read_cache (build[, version], configure[, callback])</strong>
+    <strong>write_configure_read_cache (build, version, configure[, callback])</strong>
     </dt>
     <dd>
     Write a query, configure CMake, and read the reply of the "cache" kind. </p>
@@ -456,7 +519,6 @@
          The major object version of the query and reply. Valid values are 1 and 2.
  If nil, 2 is used.
  Use the <a href="index.html#latest">latest</a> field for more readability.
-         (<em>optional</em>)
         </li>
         <li><span class="parameter">configure</span>
             <span class="types"><span class="type">function</span></span>
@@ -465,18 +527,25 @@
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+         On success, returns the reply as a <a href="index.html#object">object</a> and on failure, returns a
+ <a href="index.html#fail">fail</a>.
+    </ol>
 
 
     <h3>See also:</h3>
     <ul>
+         <li><a href="index.html#fail">fail</a></li>
          <li><a href="index.html#object">object</a></li>
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_cache_query">write_cache_query</a></li>
@@ -484,11 +553,31 @@
          <li><a href="index.html#latest">latest</a></li>
     </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> cache = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_configure_read_cache(
+    build, <span class="comment">-- your build location here
+</span>    <span class="number">2</span>, <span class="comment">-- query version here
+</span>    <span class="keyword">function</span>()
+      vim.fn.system {
+        <span class="string">"cmake"</span>,
+        <span class="string">"-S"</span>,
+        source, <span class="comment">-- your source location here
+</span>        <span class="string">"-B"</span>,
+        build <span class="comment">-- your build location here
+</span>      }
+    <span class="keyword">end</span>)
+
+<span class="keyword">if</span> <span class="keyword">not</span> cache <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "write_configure_read_cmake_files"></a>
-    <strong>write_configure_read_cmake_files (build[, version], configure[, callback])</strong>
+    <strong>write_configure_read_cmake_files (build, version, configure[, callback])</strong>
     </dt>
     <dd>
     Write a query, configure CMake, and read the reply of the "cmakeFiles" kind. </p>
@@ -517,7 +606,6 @@
          The major object version of the query and reply. Valid values are 1 and 2.
  If nil, 2 is used.
  Use the <a href="index.html#latest">latest</a> field for more readability.
-         (<em>optional</em>)
         </li>
         <li><span class="parameter">configure</span>
             <span class="types"><span class="type">function</span></span>
@@ -526,18 +614,25 @@
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+         On success, returns the reply as a <a href="index.html#object">object</a> and on failure, returns a
+ <a href="index.html#fail">fail</a>.
+    </ol>
 
 
     <h3>See also:</h3>
     <ul>
+         <li><a href="index.html#fail">fail</a></li>
          <li><a href="index.html#object">object</a></li>
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_cmake_files_query">write_cmake_files_query</a></li>
@@ -545,11 +640,31 @@
          <li><a href="index.html#latest">latest</a></li>
     </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> cmake_files = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_configure_read_cmake_files(
+    build, <span class="comment">-- your build location here
+</span>    <span class="number">1</span>, <span class="comment">-- query version here
+</span>    <span class="keyword">function</span>()
+      vim.fn.system {
+        <span class="string">"cmake"</span>,
+        <span class="string">"-S"</span>,
+        source, <span class="comment">-- your source location here
+</span>        <span class="string">"-B"</span>,
+        build <span class="comment">-- your build location here
+</span>      }
+    <span class="keyword">end</span>)
+
+<span class="keyword">if</span> <span class="keyword">not</span> cmake_files <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "write_configure_read_toolchains"></a>
-    <strong>write_configure_read_toolchains (build[, version], configure[, callback])</strong>
+    <strong>write_configure_read_toolchains (build, version, configure[, callback])</strong>
     </dt>
     <dd>
     Write a query, configure CMake, and read the reply of the "toolchains" kind. </p>
@@ -578,7 +693,6 @@
          The major object version of the query and reply. Valid values are 1 and 2.
  If nil, 2 is used.
  Use the <a href="index.html#latest">latest</a> field for more readability.
-         (<em>optional</em>)
         </li>
         <li><span class="parameter">configure</span>
             <span class="types"><span class="type">function</span></span>
@@ -587,18 +701,25 @@
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+         On success, returns the reply as a <a href="index.html#object">object</a> and on failure, returns a
+ <a href="index.html#fail">fail</a>.
+    </ol>
 
 
     <h3>See also:</h3>
     <ul>
+         <li><a href="index.html#fail">fail</a></li>
          <li><a href="index.html#object">object</a></li>
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_toolchains_query">write_toolchains_query</a></li>
@@ -606,6 +727,26 @@
          <li><a href="index.html#latest">latest</a></li>
     </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> toolchains = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_configure_read_toolchains(
+    build, <span class="comment">-- your build location here
+</span>    <span class="number">1</span>, <span class="comment">-- query version here
+</span>    <span class="keyword">function</span>()
+      vim.fn.system {
+        <span class="string">"cmake"</span>,
+        <span class="string">"-S"</span>,
+        source, <span class="comment">-- your source location here
+</span>        <span class="string">"-B"</span>,
+        build <span class="comment">-- your build location here
+</span>      }
+    <span class="keyword">end</span>)
+
+<span class="keyword">if</span> <span class="keyword">not</span> toolchains <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
 </dl>
@@ -650,22 +791,43 @@
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span> or <a class="type" href="index.html#fail">@{fail}</a></span>
+         On success, returns true and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
 
 
+    <h3>See also:</h3>
+    <ul>
+         <a href="index.html#fail">fail</a>
+    </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> did_write = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_all_queries(
+    build <span class="comment">-- your build location here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> did_write <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "write_query"></a>
-    <strong>write_query (build, kind[, version[, callback]])</strong>
+    <strong>write_query (build, kind, version[, callback])</strong>
     </dt>
     <dd>
     Write a query for the CMake File API. </p>
@@ -706,23 +868,29 @@
  kind. If nil, the latest version for the query kind will be used.
  Use the <a href="index.html#latest">latest</a> field for more readability.
  See the CMake File API documentation for more info.
-         (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span> or <a class="type" href="index.html#fail">@{fail}</a></span>
+         On success, returns true and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
 
 
     <h3>See also:</h3>
     <ul>
+         <li><a href="index.html#fail">fail</a></li>
          <li><a href="index.html#read_reply">read_reply</a></li>
          <li><a href="index.html#read_codemodel_reply">read_codemodel_reply</a></li>
          <li><a href="index.html#read_cache_reply">read_cache_reply</a></li>
@@ -731,11 +899,24 @@
          <li><a href="index.html#latest">latest</a></li>
     </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> did_write = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_query(
+    build <span class="comment">-- your build location here
+</span>    <span class="string">"codemodel"</span>, <span class="comment">-- your query kind here
+</span>    <span class="number">2</span>, <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> did_write <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "write_codemodel_query"></a>
-    <strong>write_codemodel_query (build[, version[, callback]])</strong>
+    <strong>write_codemodel_query (build, version[, callback])</strong>
     </dt>
     <dd>
     Write a "codemodel" query for the CMake File API. </p>
@@ -767,33 +948,51 @@
          The major version of the "codemodel" query to send. Valid values are: 1 and
  2. If nil, 2 is used.
  Use the <a href="index.html#latest">latest</a> field for more readability.
-         (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span> or <a class="type" href="index.html#fail">@{fail}</a></span>
+         On success, returns true and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
 
 
     <h3>See also:</h3>
     <ul>
+         <li><a href="index.html#fail">fail</a></li>
          <li><a href="index.html#read_reply">read_reply</a></li>
          <li><a href="index.html#read_codemodel_reply">read_codemodel_reply</a></li>
          <li><a href="index.html#latest">latest</a></li>
     </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> did_write = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_codemodel_query(
+    build <span class="comment">-- your build location here
+</span>    <span class="number">2</span>, <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> did_write <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "write_cache_query"></a>
-    <strong>write_cache_query (build[, version[, callback]])</strong>
+    <strong>write_cache_query (build, version[, callback])</strong>
     </dt>
     <dd>
     Write a "cache" query for the CMake File API. </p>
@@ -824,33 +1023,51 @@
          The major version of the "cache" query to send. Valid values are: 1 and
  2. If nil, 2 is used.
  Use the <a href="index.html#latest">latest</a> field for more readability.
-         (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span> or <a class="type" href="index.html#fail">@{fail}</a></span>
+         On success, returns true and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
 
 
     <h3>See also:</h3>
     <ul>
+         <li><a href="index.html#fail">fail</a></li>
          <li><a href="index.html#read_reply">read_reply</a></li>
          <li><a href="index.html#read_codemodel_reply">read_codemodel_reply</a></li>
          <li><a href="index.html#latest">latest</a></li>
     </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> did_write = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_cache_query(
+    build <span class="comment">-- your build location here
+</span>    <span class="number">2</span>, <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> did_write <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "write_cmake_files_query"></a>
-    <strong>write_cmake_files_query (build[, version[, callback]])</strong>
+    <strong>write_cmake_files_query (build, version[, callback])</strong>
     </dt>
     <dd>
     Write a "cmakeFiles" query for the CMake File API. </p>
@@ -882,33 +1099,51 @@
          The major version of the "cmakeFiles" query to send. 1 is the only valid
  value. If nil, 1 is used.
  Use the <a href="index.html#latest">latest</a> field for more readability.
-         (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span> or <a class="type" href="index.html#fail">@{fail}</a></span>
+         On success, returns true and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
 
 
     <h3>See also:</h3>
     <ul>
+         <li><a href="index.html#fail">fail</a></li>
          <li><a href="index.html#read_reply">read_reply</a></li>
          <li><a href="index.html#read_cmake_files_reply">read_cmake_files_reply</a></li>
          <li><a href="index.html#latest">latest</a></li>
     </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> did_write = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_cmake_files_query(
+    build <span class="comment">-- your build location here
+</span>    <span class="number">1</span>, <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> did_write <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "write_toolchains_query"></a>
-    <strong>write_toolchains_query (build[, version[, callback]])</strong>
+    <strong>write_toolchains_query (build, version[, callback])</strong>
     </dt>
     <dd>
     Write a "toolchains" query for the CMake File API. </p>
@@ -940,33 +1175,51 @@
          The major version of the "toolchains" query to send. 1 is the only valid
  value. If nil, 1 is used.
  Use the <a href="index.html#latest">latest</a> field for more readability.
-         (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span> or <a class="type" href="index.html#fail">@{fail}</a></span>
+         On success, returns true and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
 
 
     <h3>See also:</h3>
     <ul>
+         <li><a href="index.html#fail">fail</a></li>
          <li><a href="index.html#read_reply">read_reply</a></li>
          <li><a href="index.html#read_toolchains_reply">read_toolchains_reply</a></li>
          <li><a href="index.html#latest">latest</a></li>
     </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> did_write = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_toolchains_query(
+    build <span class="comment">-- your build location here
+</span>    <span class="number">1</span>, <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> did_write <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "write_shared_stateless_query"></a>
-    <strong>write_shared_stateless_query (build, kind[, version[, callback]])</strong>
+    <strong>write_shared_stateless_query (build, kind, version[, callback])</strong>
     </dt>
     <dd>
     Write a shared stateless query for the CMake File API. </p>
@@ -1005,31 +1258,50 @@
  kind. If nil, the latest version for the query kind will be used.
  See the CMake File API documentation for more info.
  Use the <a href="index.html#latest">latest</a> field for more readability.
-         (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span> or <a class="type" href="index.html#fail">@{fail}</a></span>
+         On success, returns true and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
 
 
     <h3>See also:</h3>
     <ul>
-         <a href="index.html#latest">latest</a>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#latest">latest</a></li>
     </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> did_write = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_shared_stateless_query(
+    build, <span class="comment">-- your build location here
+</span>    <span class="string">"codemodel"</span>, <span class="comment">-- your query kind here
+</span>    <span class="number">2</span> <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> did_write <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "write_client_stateless_query"></a>
-    <strong>write_client_stateless_query (build, kind[, version[, callback]])</strong>
+    <strong>write_client_stateless_query (build, kind, version[, callback])</strong>
     </dt>
     <dd>
     Write a client stateless query for the CMake File API. </p>
@@ -1068,23 +1340,29 @@
  kind. If nil, the latest version for the query kind will be used.
  Use the <a href="index.html#latest">latest</a> field for more readability.
  See the CMake File API documentation for more info.
-         (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span> or <a class="type" href="index.html#fail">@{fail}</a></span>
+         On success, returns true and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
 
 
     <h3>See also:</h3>
     <ul>
+         <li><a href="index.html#fail">fail</a></li>
          <li><a href="index.html#write_query">write_query</a></li>
          <li><a href="index.html#write_codemodel_query">write_codemodel_query</a></li>
          <li><a href="index.html#write_cache_query">write_cache_query</a></li>
@@ -1093,6 +1371,19 @@
          <li><a href="index.html#latest">latest</a></li>
     </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> did_write = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_client_stateless_query(
+    build, <span class="comment">-- your build location here
+</span>    <span class="string">"codemodel"</span>, <span class="comment">-- your query kind here
+</span>    <span class="number">2</span> <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> did_write <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
     <dt>
@@ -1131,17 +1422,44 @@
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span> or <a class="type" href="index.html#fail">@{fail}</a></span>
+         On success, returns true and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
 
 
+    <h3>See also:</h3>
+    <ul>
+         <a href="index.html#fail">fail</a>
+    </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> did_write = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_client_stateful_query(
+    build, <span class="comment">-- your build location here
+</span>    {
+      requests = { <span class="comment">-- your requests here
+</span>        { kind = <span class="string">"codemodel"</span>, version = <span class="number">2</span> },
+      },
+      client = { } <span class="comment">-- other info available in the reply here
+</span>    }
+  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> did_write <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
 </dl>
@@ -1186,9 +1504,9 @@
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
@@ -1197,27 +1515,34 @@
     <h3>Returns:</h3>
     <ol>
 
-         Returns a <a href="index.html#object">object</a> representing the reply.
- All the fields of this type are the same as in the reply index file
- documentation except for special fields that have the key "jsonFile". These
- fields are not immediately loaded and are instead initialized as a <a href="index.html#lazy">lazy</a>.
- Lazy objects have a path field and a load method which can run synchronously
- and asynchronously to retrieve the desired field as an <a href="index.html#object">object</a>.
+         On success, returns the reply index and on failure, returns a <a href="index.html#fail">fail</a>.
     </ol>
 
 
     <h3>See also:</h3>
     <ul>
+         <li><a href="index.html#fail">fail</a></li>
          <li><a href="index.html#object">object</a></li>
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_all_queries">write_all_queries</a></li>
     </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> reply_index = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .read_reply_index(
+    build <span class="comment">-- your build location here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> reply_index <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "read_reply"></a>
-    <strong>read_reply (build, kind[, version[, callback]])</strong>
+    <strong>read_reply (build, kind, version[, callback])</strong>
     </dt>
     <dd>
     Read a reply from the CMake File API. </p>
@@ -1255,14 +1580,13 @@
  kind. If nil, the latest version for the query kind will be used.
  See the CMake File API documentation for more info.
  Use the <a href="index.html#latest">latest</a> field for more readability.
-         (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
@@ -1271,17 +1595,14 @@
     <h3>Returns:</h3>
     <ol>
 
-         Returns a <a href="index.html#object">object</a> representing the reply.
- All the fields of this type are the same as in the reply index file
- documentation except for special fields that have the key "jsonFile". These
- fields are not immediately loaded and are instead initialized as a <a href="index.html#lazy">lazy</a>.
- Lazy objects have a path field and a load method which can run synchronously
- and asynchronously to retrieve the desired field as an <a href="index.html#object">object</a>.
+         On success, returns the reply as a <a href="index.html#object">object</a> and on failure, returns a
+ <a href="index.html#fail">fail</a>.
     </ol>
 
 
     <h3>See also:</h3>
     <ul>
+         <li><a href="index.html#fail">fail</a></li>
          <li><a href="index.html#object">object</a></li>
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_query">write_query</a></li>
@@ -1292,11 +1613,24 @@
          <li><a href="index.html#latest">latest</a></li>
     </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> reply = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .read_reply(
+    build, <span class="comment">-- your build location here
+</span>    <span class="string">"codemodel"</span>, <span class="comment">-- your query kind here
+</span>    <span class="number">2</span> <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> reply <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "read_codemodel_reply"></a>
-    <strong>read_codemodel_reply (build[, version[, callback]])</strong>
+    <strong>read_codemodel_reply (build, version[, callback])</strong>
     </dt>
     <dd>
     Read a "codemodel" reply from the CMake File API. </p>
@@ -1327,14 +1661,13 @@
          The major version of the "codemodel" reply to read. Valid values are 1 and
  2. If nil, the version is 2.
  Use the <a href="index.html#latest">latest</a> field for more readability.
-         (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
@@ -1343,28 +1676,37 @@
     <h3>Returns:</h3>
     <ol>
 
-         Returns a <a href="index.html#object">object</a> representing the reply.
- All the fields of this type are the same as in the reply index file
- documentation except for special fields that have the key "jsonFile". These
- fields are not immediately loaded and are instead initialized as a <a href="index.html#lazy">lazy</a>.
- Lazy objects have a path field and a load method which can run synchronously
- and asynchronously to retrieve the desired field as an <a href="index.html#object">object</a>.
+         On success, returns the reply as a <a href="index.html#object">object</a> and on failure, returns a
+ <a href="index.html#fail">fail</a>.
     </ol>
 
 
     <h3>See also:</h3>
     <ul>
+         <li><a href="index.html#fail">fail</a></li>
          <li><a href="index.html#object">object</a></li>
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_codemodel_query">write_codemodel_query</a></li>
          <li><a href="index.html#latest">latest</a></li>
     </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> codemodel = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .read_codemodel_reply(
+    build, <span class="comment">-- your build location here
+</span>    <span class="number">2</span> <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> codemodel <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "read_cache_reply"></a>
-    <strong>read_cache_reply (build[, version[, callback]])</strong>
+    <strong>read_cache_reply (build, version[, callback])</strong>
     </dt>
     <dd>
     Read a "cache" reply from the CMake File API. </p>
@@ -1395,14 +1737,13 @@
          The major version of the "cache" reply to read. Valid values are 1 and
  2. If nil, the version is 2.
  Use the <a href="index.html#latest">latest</a> field for more readability.
-         (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
@@ -1411,28 +1752,37 @@
     <h3>Returns:</h3>
     <ol>
 
-         Returns a <a href="index.html#object">object</a> representing the reply.
- All the fields of this type are the same as in the reply index file
- documentation except for special fields that have the key "jsonFile". These
- fields are not immediately loaded and are instead initialized as a <a href="index.html#lazy">lazy</a>.
- Lazy objects have a path field and a load method which can run synchronously
- and asynchronously to retrieve the desired field as an <a href="index.html#object">object</a>.
+         On success, returns the reply as a <a href="index.html#object">object</a> and on failure, returns a
+ <a href="index.html#fail">fail</a>.
     </ol>
 
 
     <h3>See also:</h3>
     <ul>
+         <li><a href="index.html#fail">fail</a></li>
          <li><a href="index.html#object">object</a></li>
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_cache_query">write_cache_query</a></li>
          <li><a href="index.html#latest">latest</a></li>
     </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> cache = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .read_cache_reply(
+    build, <span class="comment">-- your build location here
+</span>    <span class="number">2</span> <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> cache <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "read_cmake_files_reply"></a>
-    <strong>read_cmake_files_reply (build[, version[, callback]])</strong>
+    <strong>read_cmake_files_reply (build, version[, callback])</strong>
     </dt>
     <dd>
     Read a "cmakeFile" reply from the CMake File API. </p>
@@ -1463,14 +1813,13 @@
          The major version of the "cmakeFile" reply to read. 1 is the only valid
  value. If nil, the version is 1.
  Use the <a href="index.html#latest">latest</a> field for more readability.
-         (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
@@ -1479,28 +1828,37 @@
     <h3>Returns:</h3>
     <ol>
 
-         Returns a <a href="index.html#object">object</a> representing the reply.
- All the fields of this type are the same as in the reply index file
- documentation except for special fields that have the key "jsonFile". These
- fields are not immediately loaded and are instead initialized as a <a href="index.html#lazy">lazy</a>.
- Lazy objects have a path field and a load method which can run synchronously
- and asynchronously to retrieve the desired field as an <a href="index.html#object">object</a>.
+         On success, returns the reply as a <a href="index.html#object">object</a> and on failure, returns a
+ <a href="index.html#fail">fail</a>.
     </ol>
 
 
     <h3>See also:</h3>
     <ul>
+         <li><a href="index.html#fail">fail</a></li>
          <li><a href="index.html#object">object</a></li>
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_cmake_files_query">write_cmake_files_query</a></li>
          <li><a href="index.html#latest">latest</a></li>
     </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> cmake_files = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .read_cmake_files_reply(
+    build, <span class="comment">-- your build location here
+</span>    <span class="number">1</span> <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> cmake_files <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "read_toolchains_reply"></a>
-    <strong>read_toolchains_reply (build[, version[, callback]])</strong>
+    <strong>read_toolchains_reply (build, version[, callback])</strong>
     </dt>
     <dd>
     Read a "toolchains" reply from the CMake File API. </p>
@@ -1531,14 +1889,13 @@
          The major version of the "toolchains" reply to read. 1 is the only valid
  value. If nil, the version is 1.
  Use the <a href="index.html#latest">latest</a> field for more readability.
-         (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
@@ -1547,23 +1904,32 @@
     <h3>Returns:</h3>
     <ol>
 
-         Returns a <a href="index.html#object">object</a> representing the reply.
- All the fields of this type are the same as in the reply index file
- documentation except for special fields that have the key "jsonFile". These
- fields are not immediately loaded and are instead initialized as a <a href="index.html#lazy">lazy</a>.
- Lazy objects have a path field and a load method which can run synchronously
- and asynchronously to retrieve the desired field as an <a href="index.html#object">object</a>.
+         On success, returns the reply as a <a href="index.html#object">object</a> and on failure, returns a
+ <a href="index.html#fail">fail</a>.
     </ol>
 
 
     <h3>See also:</h3>
     <ul>
+         <li><a href="index.html#fail">fail</a></li>
          <li><a href="index.html#object">object</a></li>
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_toolchains_query">write_toolchains_query</a></li>
          <li><a href="index.html#latest">latest</a></li>
     </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> toolchains = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .read_toolchains_reply(
+    build, <span class="comment">-- your build location here
+</span>    <span class="number">1</span> <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> toolchains <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
 </dl>
@@ -1728,7 +2094,7 @@
     <dd>
     Load a <a href="index.html#lazy">lazy</a>. </p>
 
-<p> Load a <a href="index.html#lazy">lazy</a> int an <a href="index.html#object">object</a> synchronously or asynchronously.
+<p> Load a <a href="index.html#lazy">lazy</a> into an <a href="index.html#object">object</a> synchronously or asynchronously.
 
     </ul>
     </ul>
@@ -1738,9 +2104,9 @@
         <li><span class="parameter">callback</span>
             <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
          If not nil, the method will run asynchronously and call the callback or
- resume the thread upon completion with.
+ resume the thread upon completion with the result as its parameters.
  Otherwise, it will run synchronously.
- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
  callback.
          (<em>optional</em>)
         </li>
@@ -1749,22 +2115,33 @@
     <h3>Returns:</h3>
     <ol>
 
-         Loaded <a href="index.html#lazy">lazy</a> as an <a href="index.html#object">object</a>.
+         On success, returns the lazy loaded as a <a href="index.html#object">object</a> and on failure, returns
+ a <a href="index.html#fail">fail</a>.
     </ol>
 
 
     <h3>See also:</h3>
     <ul>
-         <a href="index.html#object">object</a>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#object">object</a></li>
     </ul>
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> object = lazy <span class="comment">-- your lazy object here
+</span>  :<span class="global">load</span>()
+
+<span class="keyword">if</span> <span class="keyword">not</span> object <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
 
 </dd>
 </dl>
     <h2 class="section-header has-description"><a name="Utilities"></a>Utilities </h2>
 
           <div class="section-description">
-           Miscellaneous utilities and functions that make it easier to use the CMake
+           Miscellaneous utilities and methods that make it easier to use the CMake
  file API.
           </div>
     <dl class="function">
@@ -1804,7 +2181,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2021-11-15 18:16:29 </i>
+<i style="float:right;">Last updated 2021-11-15 20:14:25 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

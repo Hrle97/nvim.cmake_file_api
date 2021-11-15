@@ -293,7 +293,7 @@ $(prefixed_tag("_contents"))
 
 CONTENTS
 
-    1. Intro ........................ |$(help_tag_prefix)_intro|
+    1. Overview ..................... |$(help_tag_prefix)_overview|
     2. Examples ..................... |$(help_tag_prefix)_examples|
 # for kind, mods, type in ldoc.kinds() do
 #   if kind == "Examples" then
@@ -313,7 +313,7 @@ CONTENTS
 #     end
 #   end
 # end
-    3. API .......................... |$(help_tag_prefix)_api|
+    3. Documentation ................ |$(help_tag_prefix)_documentation|
 # local i = 1
 # for kind, items, type in module.kinds() do
 #   if ldoc.allowed_in_contents(type, module) then
@@ -338,9 +338,9 @@ CONTENTS
 
 
 ==============================================================================
-$(prefixed_tag("_intro"))
+$(prefixed_tag("_overview"))
 
-1. Intro
+1. Overview
 
 $(pretty(ldoc.full_description))
 
@@ -373,12 +373,15 @@ $(code(example.body))
 
 
 ==============================================================================
-$(prefixed_tag("_api"))
+$(prefixed_tag("_documentation"))
 
-3. API
+3. Documentation
 
 The API consists of methods that query the CMake File API, methods to read
 the reply of the API and classes that wrap the reply.
+
+At the very end, there are some utilities that make using the CMake File API a
+bit easier to use.
 
 
 # local j = 1
