@@ -21,13 +21,17 @@ CONTENTS
     2. Examples ..................... |cmake_file_api_examples|
       2.1. start..................... |cmake_file_api_start_example|
       2.2. basic..................... |cmake_file_api_basic_example|
-      2.3. advanced.................. |cmake_file_api_advanced_example|
+      2.3. stateful.................. |cmake_file_api_stateful_example|
+      2.4. schedule_wrap_callback.... |cmake_file_api_schedule_wrap_callback_example|
+      2.5. error_handling............ |cmake_file_api_error_handling_example|
+      2.6. coroutine_callback........ |cmake_file_api_coroutine_callback_example|
     3. API .......................... |cmake_file_api_api|
       3.1. All in one................ |cmake_file_api_all_in_one|
       3.2. Queries................... |cmake_file_api_queries|
       3.3. Reply..................... |cmake_file_api_reply|
       3.4. object.................... |cmake_file_api.object|
       3.5. lazy...................... |cmake_file_api.lazy|
+      3.6. Utilities................. |cmake_file_api_utilities|
     4. Changelog .................... |cmake_file_api_changelog|
     5. Bugs ......................... |cmake_file_api_bugs|
     6. Contributing ................. |cmake_file_api_contributing|
@@ -62,11 +66,14 @@ information.
 >
     local cmake_file_api = require "nvim.cmake_file_api"
 
-    local reply = cmake_file_api.write_configure_read_all(build, function()
-      print(vim.fn.system { "cmake", "-S", source, "-B", build })
-    end)
+    local reply_index = cmake_file_api.write_configure_read_all(
+      build, -- your build location here
+      cmake.configure -- use vim.fn.system or vim.loop.spawn or io.popen ...
+    )
 
-    expect.is_object(reply)
+    expect.is_object(reply_index) -- expect is not exported - just here for testing
+
+    -- read data from the reply index here!
 <
 
 
@@ -78,85 +85,241 @@ information.
     local cmake_file_api = require "nvim.cmake_file_api"
 
     -- write codemodel query
-    cmake_file_api.write_codemodel_query(build)
+    local did_write_query, write_query_error = cmake_file_api.write_codemodel_query(
+      build -- your build location here
+    )
+    -- check for errors - read error handling help section
+    assert(did_write_query, write_query_error)
 
     -- configure CMake
-    vim.fn.system { "cmake", "-S", source, "-B", build }
+    cmake.configure() -- use vim.fn.system or vim.loop.spawn or io.popen...
 
     -- read codemodel reply
-    local codemodel = cmake_file_api.read_codemodel_reply(build)
-    expect.is_object(codemodel)
+    local codemodel, read_codemodel_error = cmake_file_api.read_codemodel_reply(
+      build -- your build location here
+    )
+    assert(codemodel, read_codemodel_error) -- check for errors
+    expect.is_object(codemodel) -- expect is not exported - here only for testing
 
-    -- get main target info
+    -- I picked the first configuration because that's what my example project looks
+    -- like but you might have to do a bit more work here.
     local targets = codemodel.data.configurations[1].targets
-    local main_target_lazy = targets[1].jsonFile
-    expect.is_lazy(main_target_lazy)
+    -- Again, first target because my project looks like that.
+    -- You can load more information about the target from this lazy value.
+    -- If you read the CMake File API docs, this will be put in place of the
+    -- "jsonFile" value.
+    local main_target_lazy = targets[1].lazy
+    expect.is_lazy(main_target_lazy) -- expect not exported
 
     -- load main target info
-    local main_target = main_target_lazy:load()
-    expect.is_object(main_target)
+    local main_target, main_target_error = main_target_lazy:load()
+    assert(main_target, main_target_error) -- check for errors
+    expect.is_object(main_target) -- expect not exported
+
+    -- showcase of values you can find here
     expect.eq(main_target.path, main_target_lazy.path)
     expect.eq(main_target.data.name, "main")
     expect.eq(main_target.data.type, "EXECUTABLE")
+    -- you might have to do more work here to find the desired artifact
     expect.eq(main_target.data.artifacts[1].path, "main")
 <
 
 
 ------------------------------------------------------------------------------
-                                               *cmake_file_api_advanced_example*
-  2.3. advanced
+                                               *cmake_file_api_stateful_example*
+  2.3. stateful
 
 >
     local cmake_file_api = require "nvim.cmake_file_api"
 
-    -- NOTE: use this to configure and not vim.fn.system because Vim functions are
-    -- not allowed in (luv) callbacks
-    -- you can use this without the callback to execute CMake configuration
-    -- synchronously
-    local function configure_cmake(source, build, callback)
-      -- variable only used in tests/examples
-      if not vim.g.cmake_file_api_no_plenary then
-        local ran, job = pcall(require, "plenary.job")
-        assert(ran, "Missing plenary!")
-        job
-          :new({
-            command = "cmake",
-            args = { "-S", source, "-B", build },
-            on_exit = callback,
-          })
-          :start()
-      else
-        vim.loop.spawn("cmake", {
-          args = { "-S", source, "-B", build },
-        }, callback)
-      end
-    end
-
-    cmake_file_api.write_client_stateful_query(build, {
-      requests = {
+    local did_write_query, write_query_error =
+      cmake_file_api.write_client_stateful_query(
+        build,
         {
-          kind = "codemodel",
-          version = 2,
-        },
-      },
-      -- put whatever data you need to read from the reply later here
-      client = {
-        specific = true, -- random name - no meaning behind it
-      },
-    }, function()
-      configure_cmake(source, build, function()
-        cmake_file_api.read_reply_index(build, function(index)
-          expect.is_object(index)
-          -- here is our data!
-          expect(index.reply["client-nvim"]["query.json"].client.specific)
-          -- here is the requested codemodel
-          expect.eq(
-            index.reply["client-nvim"]["query.json"].responses[1].kind,
-            "codemodel"
-          )
-        end)
+          -- Put desired requests here.
+          -- See the client stateful query documentation for more information.
+          -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files
+          requests = {
+            {
+              kind = "codemodel",
+              version = 2,
+            },
+          },
+          -- Put whatever data you need to read from the reply later here.
+          client = {
+            specific = true, -- random name - no meaning behind it
+          },
+        }
+      )
+    expect(did_write_query) -- here for testing
+    assert(did_write_query, write_query_error) -- see the error handling help
+
+    cmake.configure() -- use vim.fn.system or vim.loop.spawn or io.popen...
+
+    local index, read_index_error = cmake_file_api.read_reply_index(build)
+    expect.is_object(index) -- here for testing
+    assert(index, read_index_error) -- handle errors
+
+    -- Here is our data.
+    -- Client is always called "client-nvim" and stateful queries are always
+    -- in "query.json" when writing client queries.
+    local client_reply = index.data.reply["client-nvim"]["query.json"]
+
+    -- Here is the meaningless variable we set.
+    expect(client_reply.client.specific)
+
+    -- Here is the requested codemodel.
+    -- Since it is the only request we sent, it is going to be the first one.
+    expect.eq(client_reply.responses[1].kind, "codemodel")
+<
+
+
+------------------------------------------------------------------------------
+                                 *cmake_file_api_schedule_wrap_callback_example*
+  2.4. schedule_wrap_callback
+
+>
+    local cmake_file_api = require "nvim.cmake_file_api"
+
+    return function(callback) -- use the callback to run something at the very end
+      -- Using the cache query as an example.
+      cmake_file_api.write_cache_query(
+        build, -- your build location here
+        -- use latest for readability when you don't care about the version
+        cmake_file_api.latest,
+        -- If you want to use Vim functions in callbacks, you have to use
+        -- vim.schedule_wrap.
+        function(did_write_query, write_query_error)
+          expect(did_write_query) -- here for testing
+          assert(did_write_query, write_query_error) -- handle errors
+
+          -- For example, use vim.loop.spawn to configure CMake
+          cmake.configure(function() -- use vim.fn.system or vim.loop.spawn ...
+            -- Read the reply from the CMake File API.
+            cmake_file_api.read_cache_reply(
+              build, -- your build location here
+              cmake_file_api.latest,
+              function(cache, cache_error)
+                expect.is_object(cache)
+                assert(cache, cache_error)
+
+                expect.nay.is_nil(cache.data.entries) -- cache entries are here
+
+                callback()
+              end
+            )
+          end)
+        end
+      )
+    end
+<
+
+
+------------------------------------------------------------------------------
+                                         *cmake_file_api_error_handling_example*
+  2.5. error_handling
+
+>
+    local cmake_file_api = require "nvim.cmake_file_api"
+
+    -- Every function in the CMake File API returns errors in this way.
+    -- If there is an error, the first returned value is nil and the rest are not
+    -- nil, and the reverse is true when there is no error.
+    local reply_index, error, error_type, error_path =
+      cmake_file_api.write_configure_read_all(
+        build,
+        cmake.configure -- use vim.fn.system or vim.loop.spawn or io.popen...
+      )
+
+    -- The errors shown here are thrown by the luvit filesystem backend and are
+    -- threated as something that should be reported to the end user.
+    -- All other errors like passing in the wrong object kind or version or
+    -- attempting to read replies before a query was written or CMake was
+    -- configured are treated as programmer error and are asserted, so that the
+    -- programmer using this API catches the error and fixes their code.
+    -- See the error handling help section for more information.
+    if error then
+      -- CMake File API uses luvit as a backend for the filesystem.
+      -- All of these error types correspond to the names of luvit filesystem
+      -- methods that throw them. This is not an exhaustive list of error types,
+      -- and you should read the error handling help section for the exhaustive
+      -- list.
+      -- Read the luvit filesystem documentation for more information.
+      -- https://github.com/luvit/luv/blob/master/docs.md#file-system-operations
+      if error_type == "mkdir" then
+        print("Failed to make directory at: '" .. error_path .. "'")
+      elseif error_type == "opendir" then
+        print("Failed to open directory at: '" .. error_path .. "'")
+      elseif error_type == "readdir" then
+        print("Failed to read directory at: '" .. error_path .. "'")
+      elseif error_type == "closedir" then
+        print("Failed to close directory at: '" .. error_path .. "'")
+      elseif error_type == "open" then
+        print("Failed to open file at: '" .. error_path .. "'")
+      elseif error_type == "stat" then
+        print("Failed to get file info at: '" .. error_path .. "'")
+      elseif error_type == "read" then
+        print("Failed to read file at: '" .. error_path .. "'")
+      elseif error_type == "write" then
+        print("Failed to write file at: '" .. error_path .. "'")
+      elseif error_type == "close" then
+        print("Failed to close file at: '" .. error_path .. "'")
+      end
+
+      -- Error thrown by luvit.
+      -- Read the luvit documentation for more information.
+      -- https://github.com/luvit/luv/blob/master/docs.md
+      print("luvit error: '" .. error .. "'")
+    else
+      expect.is_object(reply_index) -- used for testing
+    end
+<
+
+
+------------------------------------------------------------------------------
+                                     *cmake_file_api_coroutine_callback_example*
+  2.6. coroutine_callback
+
+>
+    local cmake_file_api = require "nvim.cmake_file_api"
+
+    -- Sometimes it is easier to work with coroutines to avoid callback hell.
+    -- Read the coroutine documentation for more information.
+    -- https://www.lua.org/manual/5.1/manual.html#2.11
+    local thread = nil
+    -- callback to run something when everything is done
+    thread = coroutine.create(function(callback)
+      cmake_file_api.write_cmake_files_query(
+        build,
+        cmake_file_api.latest,
+        thread -- pass your thread to resume it once the query is written
+      )
+      local did_write = coroutine.yield() -- wait until the query gets written
+      expect(did_write) -- used for testing - do your error handling here
+
+      cmake.configure(function() -- use vim.fn.system or vim.loop.spawn ...
+        coroutine.resume(thread) -- resume thread once CMake is configured
       end)
+      coroutine.yield() -- wait until CMake configures
+
+      cmake_file_api.read_cmake_files_reply( -- read the reply
+        build,
+        cmake_file_api.latest,
+        thread -- pass your thread to resume it once the reply is read
+      )
+      local reply = coroutine.yield() -- wait until the reply is read
+      expect.is_object(reply) -- used for testing - do your error handling here
+
+      callback() -- call callback once everything is done
+
+      -- If you want to accept a thread you could just write:
+      -- co.resume(callback, <args>...)
+      -- to run something in the end.
     end)
+
+    return function(callback) -- callback to run something when everything is done
+      coroutine.resume(thread, callback) -- start the coroutine
+    end
 <
 
 
@@ -201,18 +364,12 @@ API documentation for more info.
 
     {configure} `function`
       The method to call after writing the query to generate the buildsystem.
-      If a callback parameter is provided this method should take a callback
-      parameter, so it can configure CMake asynchronously and call the
-      callback. If a callback is not provided, this method will be called
-      without parameters and everything wiill be executed synchronously.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with the reply
-      |cmake_file_api.object| as the single arugument. Otherwise, it will run
-      synchronously and return the reply |cmake_file_api.object| normally.
-      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
-      throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   See also: ~
 
@@ -251,22 +408,17 @@ info.
     [{version} `number`, `string`, `nil`]
       The major object version of the query and reply. Valid values depend on
       the query kind. If `nil`, the latest version for the object kind will be
-      used. See the CMake File API documentation for more info.
+      used. Use the |cmake_file_api.latest| field for more readability. See
+      the CMake File API documentation for more info.
 
     {configure} `function`
       The method to call after writing the query to generate the buildsystem.
-      If a callback parameter is provided this method should take a callback
-      parameter, so it can configure CMake asynchronously and call the
-      callback. If a callback is not provided, this method will be called
-      without parameters and everything wiill be executed synchronously.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with the reply
-      |cmake_file_api.object| as the single arugument. Otherwise, it will run
-      synchronously and return the reply |cmake_file_api.object| normally.
-      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
-      throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   See also: ~
 
@@ -274,6 +426,7 @@ info.
     |cmake_file_api.lazy|
     |cmake_file_api.write_query|
     |cmake_file_api.read_reply|
+    |cmake_file_api.latest|
 
   Links: ~
 
@@ -301,22 +454,17 @@ info.
 
     [{version} `number`, `string`, `nil`]
       The major object version of the query and reply. Valid values are 1 and
-      2. If `nil`, 2 is used.
+      2. If `nil`, 2 is used. Use the |cmake_file_api.latest| field for more
+      readability.
 
     {configure} `function`
       The method to call after writing the query to generate the buildsystem.
-      If a callback parameter is provided this method should take a callback
-      parameter, so it can configure CMake asynchronously and call the
-      callback. If a callback is not provided, this method will be called
-      without parameters and everything wiill be executed synchronously.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with the reply
-      |cmake_file_api.object| as the single arugument. Otherwise, it will run
-      synchronously and return the reply |cmake_file_api.object| normally.
-      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
-      throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   See also: ~
 
@@ -324,6 +472,7 @@ info.
     |cmake_file_api.lazy|
     |cmake_file_api.write_codemodel_query|
     |cmake_file_api.read_codemodel_reply|
+    |cmake_file_api.latest|
 
   Links: ~
 
@@ -347,22 +496,17 @@ the "cache" kind. See the "cache" object kind documentation for more info.
 
     [{version} `number`, `string`, `nil`]
       The major object version of the query and reply. Valid values are 1 and
-      2. If `nil`, 2 is used.
+      2. If `nil`, 2 is used. Use the |cmake_file_api.latest| field for more
+      readability.
 
     {configure} `function`
       The method to call after writing the query to generate the buildsystem.
-      If a callback parameter is provided this method should take a callback
-      parameter, so it can configure CMake asynchronously and call the
-      callback. If a callback is not provided, this method will be called
-      without parameters and everything wiill be executed synchronously.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with the reply
-      |cmake_file_api.object| as the single arugument. Otherwise, it will run
-      synchronously and return the reply |cmake_file_api.object| normally.
-      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
-      throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   See also: ~
 
@@ -370,6 +514,7 @@ the "cache" kind. See the "cache" object kind documentation for more info.
     |cmake_file_api.lazy|
     |cmake_file_api.write_cache_query|
     |cmake_file_api.read_cache_reply|
+    |cmake_file_api.latest|
 
   Links: ~
 
@@ -394,22 +539,17 @@ info.
 
     [{version} `number`, `string`, `nil`]
       The major object version of the query and reply. Valid values are 1 and
-      2. If `nil`, 2 is used.
+      2. If `nil`, 2 is used. Use the |cmake_file_api.latest| field for more
+      readability.
 
     {configure} `function`
       The method to call after writing the query to generate the buildsystem.
-      If a callback parameter is provided this method should take a callback
-      parameter, so it can configure CMake asynchronously and call the
-      callback. If a callback is not provided, this method will be called
-      without parameters and everything wiill be executed synchronously.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with the reply
-      |cmake_file_api.object| as the single arugument. Otherwise, it will run
-      synchronously and return the reply |cmake_file_api.object| normally.
-      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
-      throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   See also: ~
 
@@ -417,6 +557,7 @@ info.
     |cmake_file_api.lazy|
     |cmake_file_api.write_cmake_files_query|
     |cmake_file_api.read_cmake_files_reply|
+    |cmake_file_api.latest|
 
   Links: ~
 
@@ -441,22 +582,17 @@ info.
 
     [{version} `number`, `string`, `nil`]
       The major object version of the query and reply. Valid values are 1 and
-      2. If `nil`, 2 is used.
+      2. If `nil`, 2 is used. Use the |cmake_file_api.latest| field for more
+      readability.
 
     {configure} `function`
       The method to call after writing the query to generate the buildsystem.
-      If a callback parameter is provided this method should take a callback
-      parameter, so it can configure CMake asynchronously and call the
-      callback. If a callback is not provided, this method will be called
-      without parameters and everything wiill be executed synchronously.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with the reply
-      |cmake_file_api.object| as the single arugument. Otherwise, it will run
-      synchronously and return the reply |cmake_file_api.object| normally.
-      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
-      throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   See also: ~
 
@@ -464,6 +600,7 @@ info.
     |cmake_file_api.lazy|
     |cmake_file_api.write_toolchains_query|
     |cmake_file_api.read_toolchains_reply|
+    |cmake_file_api.latest|
 
   Links: ~
 
@@ -499,11 +636,11 @@ documentation for more info.
     {build} `string`
       The build directory of the to be generated buildsystem.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with. Otherwise, it
-      will run synchronously. Note: you can't call Vim `function`s in this
-      callback, Otherwise, Neovim throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   Links: ~
 
@@ -535,13 +672,14 @@ specified kind and version. See the object kind documentation for more info.
     [{version} `number`, `string`, `nil`]
       The major version of the query kind to send. Valid values depend on the
       query kind. If `nil`, the latest version for the query kind will be
-      used. See the CMake File API documentation for more info.
+      used. Use the |cmake_file_api.latest| field for more readability. See
+      the CMake File API documentation for more info.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with. Otherwise, it
-      will run synchronously. Note: you can't call Vim `function`s in this
-      callback, Otherwise, Neovim throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   See also: ~
 
@@ -550,6 +688,7 @@ specified kind and version. See the object kind documentation for more info.
     |cmake_file_api.read_cache_reply|
     |cmake_file_api.read_cmake_files_reply|
     |cmake_file_api.read_toolchains_reply|
+    |cmake_file_api.latest|
 
   Links: ~
 
@@ -579,18 +718,20 @@ kind documentation for more info.
 
     [{version} `number`, `string`, `nil`]
       The major version of the "codemodel" query to send. Valid values are: 1
-      and 2. If `nil`, 2 is used.
+      and 2. If `nil`, 2 is used. Use the |cmake_file_api.latest| field for
+      more readability.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with. Otherwise, it
-      will run synchronously. Note: you can't call Vim `function`s in this
-      callback, Otherwise, Neovim throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   See also: ~
 
     |cmake_file_api.read_reply|
     |cmake_file_api.read_codemodel_reply|
+    |cmake_file_api.latest|
 
   Links: ~
 
@@ -616,18 +757,20 @@ technically, it writes a stateless client "cache" query of version 2. See the
 
     [{version} `number`, `string`, `nil`]
       The major version of the "cache" query to send. Valid values are: 1 and
-      2. If `nil`, 2 is used.
+      2. If `nil`, 2 is used. Use the |cmake_file_api.latest| field for more
+      readability.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with. Otherwise, it
-      will run synchronously. Note: you can't call Vim `function`s in this
-      callback, Otherwise, Neovim throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   See also: ~
 
     |cmake_file_api.read_reply|
     |cmake_file_api.read_codemodel_reply|
+    |cmake_file_api.latest|
 
   Links: ~
 
@@ -654,18 +797,20 @@ kind documentation for more info.
 
     [{version} `number`, `string`, `nil`]
       The major version of the "cmakeFiles" query to send. 1 is the only valid
-      value. If `nil`, 1 is used.
+      value. If `nil`, 1 is used. Use the |cmake_file_api.latest| field for
+      more readability.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with. Otherwise, it
-      will run synchronously. Note: you can't call Vim `function`s in this
-      callback, Otherwise, Neovim throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   See also: ~
 
     |cmake_file_api.read_reply|
     |cmake_file_api.read_cmake_files_reply|
+    |cmake_file_api.latest|
 
   Links: ~
 
@@ -692,18 +837,20 @@ object kind documentation for more info.
 
     [{version} `number`, `string`, `nil`]
       The major version of the "toolchains" query to send. 1 is the only valid
-      value. If `nil`, 1 is used.
+      value. If `nil`, 1 is used. Use the |cmake_file_api.latest| field for
+      more readability.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with. Otherwise, it
-      will run synchronously. Note: you can't call Vim `function`s in this
-      callback, Otherwise, Neovim throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   See also: ~
 
     |cmake_file_api.read_reply|
     |cmake_file_api.read_toolchains_reply|
+    |cmake_file_api.latest|
 
   Links: ~
 
@@ -735,13 +882,18 @@ info.
     [{version} `number`, `string`, `nil`]
       The major version of the query kind to send. Valid values depend on the
       query kind. If `nil`, the latest version for the query kind will be
-      used. See the CMake File API documentation for more info.
+      used. See the CMake File API documentation for more info. Use the
+      |cmake_file_api.latest| field for more readability.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with. Otherwise, it
-      will run synchronously. Note: you can't call Vim `function`s in this
-      callback, Otherwise, Neovim throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
+
+  See also: ~
+
+    |cmake_file_api.latest|
 
   Links: ~
 
@@ -775,13 +927,14 @@ queries. See the client stateless query documentation for more info.
     [{version} `number`, `string`, `nil`]
       The major version of the query kind to send. Valid values depend on the
       query kind. If `nil`, the latest version for the query kind will be
-      used. See the CMake File API documentation for more info.
+      used. Use the |cmake_file_api.latest| field for more readability. See
+      the CMake File API documentation for more info.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with. Otherwise, it
-      will run synchronously. Note: you can't call Vim `function`s in this
-      callback, Otherwise, Neovim throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   See also: ~
 
@@ -790,6 +943,7 @@ queries. See the client stateless query documentation for more info.
     |cmake_file_api.write_cache_query|
     |cmake_file_api.write_cmake_files_query|
     |cmake_file_api.write_toolchains_query|
+    |cmake_file_api.latest|
 
   Links: ~
 
@@ -819,11 +973,11 @@ documentation for more info.
       The query to send to the CMake File API. Reqd the client statefull query
       documentation for more info.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with. Otherwise, it
-      will run synchronously. Note: you can't call Vim `function`s in this
-      callback, Otherwise, Neovim throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   Links: ~
 
@@ -862,13 +1016,11 @@ documentation for more info.
       The build directory of the generated buildsystem. It has to be an
       already existing directory on the filesystem.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with the reply
-      |cmake_file_api.object| as the single arugument. Otherwise, it will run
-      synchronously and return the reply |cmake_file_api.object| normally.
-      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
-      throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   Returns: ~
 
@@ -918,15 +1070,14 @@ for more info.
     [{version} `number`, `string`, `nil`]
       The major version of the reply kind to read. Valid values depend on the
       query kind. If `nil`, the latest version for the query kind will be
-      used. See the CMake File API documentation for more info.
+      used. See the CMake File API documentation for more info. Use the
+      |cmake_file_api.latest| field for more readability.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with the reply
-      |cmake_file_api.object| as the single arugument. Otherwise, it will run
-      synchronously and return the reply |cmake_file_api.object| normally.
-      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
-      throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   Returns: ~
 
@@ -948,6 +1099,7 @@ for more info.
     |cmake_file_api.write_cache_query|
     |cmake_file_api.write_cmake_files_query|
     |cmake_file_api.write_toolchains_query|
+    |cmake_file_api.latest|
 
   Links: ~
 
@@ -974,15 +1126,14 @@ documentation for more info.
 
     [{version} `number`, `string`, `nil`]
       The major version of the "codemodel" reply to read. Valid values are 1
-      and 2. If `nil`, the version is 2.
+      and 2. If `nil`, the version is 2. Use the |cmake_file_api.latest| field
+      for more readability.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with the reply
-      |cmake_file_api.object| as the single arugument. Otherwise, it will run
-      synchronously and return the reply |cmake_file_api.object| normally.
-      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
-      throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   Returns: ~
 
@@ -1000,6 +1151,7 @@ documentation for more info.
     |cmake_file_api.object|
     |cmake_file_api.lazy|
     |cmake_file_api.write_codemodel_query|
+    |cmake_file_api.latest|
 
   Links: ~
 
@@ -1025,15 +1177,14 @@ method. See the "cache" object kind documentation for more info.
 
     [{version} `number`, `string`, `nil`]
       The major version of the "cache" reply to read. Valid values are 1 and
-      2. If `nil`, the version is 2.
+      2. If `nil`, the version is 2. Use the |cmake_file_api.latest| field for
+      more readability.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with the reply
-      |cmake_file_api.object| as the single arugument. Otherwise, it will run
-      synchronously and return the reply |cmake_file_api.object| normally.
-      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
-      throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   Returns: ~
 
@@ -1051,6 +1202,7 @@ method. See the "cache" object kind documentation for more info.
     |cmake_file_api.object|
     |cmake_file_api.lazy|
     |cmake_file_api.write_cache_query|
+    |cmake_file_api.latest|
 
   Links: ~
 
@@ -1077,15 +1229,14 @@ kind documentation for more info.
 
     [{version} `number`, `string`, `nil`]
       The major version of the "cmakeFile" reply to read. 1 is the only valid
-      value. If `nil`, the version is 1.
+      value. If `nil`, the version is 1. Use the |cmake_file_api.latest| field
+      for more readability.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with the reply
-      |cmake_file_api.object| as the single arugument. Otherwise, it will run
-      synchronously and return the reply |cmake_file_api.object| normally.
-      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
-      throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   Returns: ~
 
@@ -1103,6 +1254,7 @@ kind documentation for more info.
     |cmake_file_api.object|
     |cmake_file_api.lazy|
     |cmake_file_api.write_cmake_files_query|
+    |cmake_file_api.latest|
 
   Links: ~
 
@@ -1129,15 +1281,14 @@ kind documentation for more info.
 
     [{version} `number`, `string`, `nil`]
       The major version of the "toolchains" reply to read. 1 is the only valid
-      value. If `nil`, the version is 1.
+      value. If `nil`, the version is 1. Use the |cmake_file_api.latest| field
+      for more readability.
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with the reply
-      |cmake_file_api.object| as the single arugument. Otherwise, it will run
-      synchronously and return the reply |cmake_file_api.object| normally.
-      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
-      throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   Returns: ~
 
@@ -1155,6 +1306,7 @@ kind documentation for more info.
     |cmake_file_api.object|
     |cmake_file_api.lazy|
     |cmake_file_api.write_toolchains_query|
+    |cmake_file_api.latest|
 
   Links: ~
 
@@ -1302,13 +1454,11 @@ asynchronously.
 
   Parameters: ~
 
-    [{callback} `function`, `string`, `nil`]
-      It can be a Lua `function` or `nil`. If not `nil`, the method will run
-      asynchronously and call the callback upon completion with the reply
-      |cmake_file_api.object| as the single arugument. Otherwise, it will run
-      synchronously and return the reply |cmake_file_api.object| normally.
-      Note: you can't call Vim `function`s in this callback, Otherwise, Neovim
-      throws an assertion.
+    [{callback} `function`, thread, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the thread upon completion with. Otherwise, it will run
+      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
+      `function`s from thie callback.
 
   Returns: ~
 
@@ -1318,6 +1468,35 @@ asynchronously.
   See also: ~
 
     |cmake_file_api.object|
+
+
+------------------------------------------------------------------------------
+                                                      *cmake_file_api_utilities*
+
+3.6. Utilities
+
+Miscellaneous utilities and `function`s that make it easier to use the CMake
+file API.
+
+
+                                                         *cmake_file_api.latest*
+
+latest({latest})
+
+Latest version of object kinds
+
+This is just equal to `nil`, but it makes it makes using latest versions of
+object kinds more readable instead of just passing `nil`.
+
+  Parameters: ~
+
+    {latest}
+
+
+  Links: ~
+
+    Object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds>
 
 
 

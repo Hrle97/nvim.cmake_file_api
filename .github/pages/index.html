@@ -34,6 +34,7 @@
 <li><a href="#Reply">Reply </a></li>
 <li><a href="#Class_object">Class object </a></li>
 <li><a href="#Class_lazy">Class lazy </a></li>
+<li><a href="#Utilities">Utilities </a></li>
 </ul>
 
 
@@ -49,7 +50,10 @@
 <ul class="nowrap">
   <li><a href="examples/1_start.lua.html">1_start.lua</a></li>
   <li><a href="examples/2_basic.lua.html">2_basic.lua</a></li>
-  <li><a href="examples/3_advanced.lua.html">3_advanced.lua</a></li>
+  <li><a href="examples/3_stateful.lua.html">3_stateful.lua</a></li>
+  <li><a href="examples/4_schedule_wrap_callback.lua.html">4_schedule_wrap_callback.lua</a></li>
+  <li><a href="examples/5_error_handling.lua.html">5_error_handling.lua</a></li>
+  <li><a href="examples/6_coroutine_callback.lua.html">6_coroutine_callback.lua</a></li>
 </ul>
 
 </div>
@@ -193,6 +197,13 @@
 	<td class="summary">Load a <a href="index.html#lazy">lazy</a>.</td>
 	</tr>
 </table>
+<h2><a href="#Utilities">Utilities </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#latest">latest</a></td>
+	<td class="summary">Latest version of object kinds</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
@@ -241,20 +252,15 @@
         </li>
         <li><span class="parameter">configure</span>
             <span class="types"><span class="type">function</span></span>
-         The method to call after writing the query to generate the buildsystem. If
- a callback parameter is provided this method should take a callback
- parameter, so it can configure CMake asynchronously and call the callback.
- If a callback is not provided, this method will be called without
- parameters and everything wiill be executed synchronously.
+         The method to call after writing the query to generate the buildsystem.
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with the reply <a href="index.html#object">object</a> as the single arugument. Otherwise,
- it will run synchronously and return the reply <a href="index.html#object">object</a> normally.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -311,25 +317,21 @@
             <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
          The major object version of the query and reply. Valid values depend on the
  query kind. If nil, the latest version for the object kind will be used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
  See the CMake File API documentation for more info.
          (<em>optional</em>)
         </li>
         <li><span class="parameter">configure</span>
             <span class="types"><span class="type">function</span></span>
-         The method to call after writing the query to generate the buildsystem. If
- a callback parameter is provided this method should take a callback
- parameter, so it can configure CMake asynchronously and call the callback.
- If a callback is not provided, this method will be called without
- parameters and everything wiill be executed synchronously.
+         The method to call after writing the query to generate the buildsystem.
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with the reply <a href="index.html#object">object</a> as the single arugument. Otherwise,
- it will run synchronously and return the reply <a href="index.html#object">object</a> normally.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -342,6 +344,7 @@
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_query">write_query</a></li>
          <li><a href="index.html#read_reply">read_reply</a></li>
+         <li><a href="index.html#latest">latest</a></li>
     </ul>
 
 
@@ -376,24 +379,20 @@
             <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
          The major object version of the query and reply. Valid values are 1 and 2.
  If nil, 2 is used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
          (<em>optional</em>)
         </li>
         <li><span class="parameter">configure</span>
             <span class="types"><span class="type">function</span></span>
-         The method to call after writing the query to generate the buildsystem. If
- a callback parameter is provided this method should take a callback
- parameter, so it can configure CMake asynchronously and call the callback.
- If a callback is not provided, this method will be called without
- parameters and everything wiill be executed synchronously.
+         The method to call after writing the query to generate the buildsystem.
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with the reply <a href="index.html#object">object</a> as the single arugument. Otherwise,
- it will run synchronously and return the reply <a href="index.html#object">object</a> normally.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -406,6 +405,7 @@
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_codemodel_query">write_codemodel_query</a></li>
          <li><a href="index.html#read_codemodel_reply">read_codemodel_reply</a></li>
+         <li><a href="index.html#latest">latest</a></li>
     </ul>
 
 
@@ -440,24 +440,20 @@
             <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
          The major object version of the query and reply. Valid values are 1 and 2.
  If nil, 2 is used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
          (<em>optional</em>)
         </li>
         <li><span class="parameter">configure</span>
             <span class="types"><span class="type">function</span></span>
-         The method to call after writing the query to generate the buildsystem. If
- a callback parameter is provided this method should take a callback
- parameter, so it can configure CMake asynchronously and call the callback.
- If a callback is not provided, this method will be called without
- parameters and everything wiill be executed synchronously.
+         The method to call after writing the query to generate the buildsystem.
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with the reply <a href="index.html#object">object</a> as the single arugument. Otherwise,
- it will run synchronously and return the reply <a href="index.html#object">object</a> normally.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -470,6 +466,7 @@
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_cache_query">write_cache_query</a></li>
          <li><a href="index.html#read_cache_reply">read_cache_reply</a></li>
+         <li><a href="index.html#latest">latest</a></li>
     </ul>
 
 
@@ -504,24 +501,20 @@
             <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
          The major object version of the query and reply. Valid values are 1 and 2.
  If nil, 2 is used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
          (<em>optional</em>)
         </li>
         <li><span class="parameter">configure</span>
             <span class="types"><span class="type">function</span></span>
-         The method to call after writing the query to generate the buildsystem. If
- a callback parameter is provided this method should take a callback
- parameter, so it can configure CMake asynchronously and call the callback.
- If a callback is not provided, this method will be called without
- parameters and everything wiill be executed synchronously.
+         The method to call after writing the query to generate the buildsystem.
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with the reply <a href="index.html#object">object</a> as the single arugument. Otherwise,
- it will run synchronously and return the reply <a href="index.html#object">object</a> normally.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -534,6 +527,7 @@
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_cmake_files_query">write_cmake_files_query</a></li>
          <li><a href="index.html#read_cmake_files_reply">read_cmake_files_reply</a></li>
+         <li><a href="index.html#latest">latest</a></li>
     </ul>
 
 
@@ -568,24 +562,20 @@
             <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
          The major object version of the query and reply. Valid values are 1 and 2.
  If nil, 2 is used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
          (<em>optional</em>)
         </li>
         <li><span class="parameter">configure</span>
             <span class="types"><span class="type">function</span></span>
-         The method to call after writing the query to generate the buildsystem. If
- a callback parameter is provided this method should take a callback
- parameter, so it can configure CMake asynchronously and call the callback.
- If a callback is not provided, this method will be called without
- parameters and everything wiill be executed synchronously.
+         The method to call after writing the query to generate the buildsystem.
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with the reply <a href="index.html#object">object</a> as the single arugument. Otherwise,
- it will run synchronously and return the reply <a href="index.html#object">object</a> normally.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -598,6 +588,7 @@
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_toolchains_query">write_toolchains_query</a></li>
          <li><a href="index.html#read_toolchains_reply">read_toolchains_reply</a></li>
+         <li><a href="index.html#latest">latest</a></li>
     </ul>
 
 
@@ -642,12 +633,12 @@
          The build directory of the to be generated buildsystem.
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with. Otherwise, it will run synchronously.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -698,16 +689,17 @@
             <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
          The major version of the query kind to send. Valid values depend on the query
  kind. If nil, the latest version for the query kind will be used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
  See the CMake File API documentation for more info.
          (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with. Otherwise, it will run synchronously.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -721,6 +713,7 @@
          <li><a href="index.html#read_cache_reply">read_cache_reply</a></li>
          <li><a href="index.html#read_cmake_files_reply">read_cmake_files_reply</a></li>
          <li><a href="index.html#read_toolchains_reply">read_toolchains_reply</a></li>
+         <li><a href="index.html#latest">latest</a></li>
     </ul>
 
 
@@ -758,15 +751,16 @@
             <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
          The major version of the "codemodel" query to send. Valid values are: 1 and
  2. If nil, 2 is used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
          (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with. Otherwise, it will run synchronously.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -777,6 +771,7 @@
     <ul>
          <li><a href="index.html#read_reply">read_reply</a></li>
          <li><a href="index.html#read_codemodel_reply">read_codemodel_reply</a></li>
+         <li><a href="index.html#latest">latest</a></li>
     </ul>
 
 
@@ -813,15 +808,16 @@
             <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
          The major version of the "cache" query to send. Valid values are: 1 and
  2. If nil, 2 is used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
          (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with. Otherwise, it will run synchronously.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -832,6 +828,7 @@
     <ul>
          <li><a href="index.html#read_reply">read_reply</a></li>
          <li><a href="index.html#read_codemodel_reply">read_codemodel_reply</a></li>
+         <li><a href="index.html#latest">latest</a></li>
     </ul>
 
 
@@ -869,15 +866,16 @@
             <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
          The major version of the "cmakeFiles" query to send. 1 is the only valid
  value. If nil, 1 is used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
          (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with. Otherwise, it will run synchronously.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -888,6 +886,7 @@
     <ul>
          <li><a href="index.html#read_reply">read_reply</a></li>
          <li><a href="index.html#read_cmake_files_reply">read_cmake_files_reply</a></li>
+         <li><a href="index.html#latest">latest</a></li>
     </ul>
 
 
@@ -925,15 +924,16 @@
             <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
          The major version of the "toolchains" query to send. 1 is the only valid
  value. If nil, 1 is used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
          (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with. Otherwise, it will run synchronously.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -944,6 +944,7 @@
     <ul>
          <li><a href="index.html#read_reply">read_reply</a></li>
          <li><a href="index.html#read_toolchains_reply">read_toolchains_reply</a></li>
+         <li><a href="index.html#latest">latest</a></li>
     </ul>
 
 
@@ -988,21 +989,26 @@
          The major version of the query kind to send. Valid values depend on the query
  kind. If nil, the latest version for the query kind will be used.
  See the CMake File API documentation for more info.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
          (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with. Otherwise, it will run synchronously.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
 
 
 
+    <h3>See also:</h3>
+    <ul>
+         <a href="index.html#latest">latest</a>
+    </ul>
 
 
 </dd>
@@ -1045,16 +1051,17 @@
             <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
          The major version of the query kind to send. Valid values depend on the query
  kind. If nil, the latest version for the query kind will be used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
  See the CMake File API documentation for more info.
          (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with. Otherwise, it will run synchronously.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -1068,6 +1075,7 @@
          <li><a href="index.html#write_cache_query">write_cache_query</a></li>
          <li><a href="index.html#write_cmake_files_query">write_cmake_files_query</a></li>
          <li><a href="index.html#write_toolchains_query">write_toolchains_query</a></li>
+         <li><a href="index.html#latest">latest</a></li>
     </ul>
 
 
@@ -1106,12 +1114,12 @@
  documentation for more info.
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with. Otherwise, it will run synchronously.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -1161,13 +1169,12 @@
  existing directory on the filesystem.
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with the reply <a href="index.html#object">object</a> as the single arugument. Otherwise,
- it will run synchronously and return the reply <a href="index.html#object">object</a> normally.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -1232,16 +1239,16 @@
          The major version of the reply kind to read. Valid values depend on the query
  kind. If nil, the latest version for the query kind will be used.
  See the CMake File API documentation for more info.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
          (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with the reply <a href="index.html#object">object</a> as the single arugument. Otherwise,
- it will run synchronously and return the reply <a href="index.html#object">object</a> normally.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -1267,6 +1274,7 @@
          <li><a href="index.html#write_cache_query">write_cache_query</a></li>
          <li><a href="index.html#write_cmake_files_query">write_cmake_files_query</a></li>
          <li><a href="index.html#write_toolchains_query">write_toolchains_query</a></li>
+         <li><a href="index.html#latest">latest</a></li>
     </ul>
 
 
@@ -1303,16 +1311,16 @@
             <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
          The major version of the "codemodel" reply to read. Valid values are 1 and
  2. If nil, the version is 2.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
          (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with the reply <a href="index.html#object">object</a> as the single arugument. Otherwise,
- it will run synchronously and return the reply <a href="index.html#object">object</a> normally.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -1334,6 +1342,7 @@
          <li><a href="index.html#object">object</a></li>
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_codemodel_query">write_codemodel_query</a></li>
+         <li><a href="index.html#latest">latest</a></li>
     </ul>
 
 
@@ -1370,16 +1379,16 @@
             <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
          The major version of the "cache" reply to read. Valid values are 1 and
  2. If nil, the version is 2.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
          (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with the reply <a href="index.html#object">object</a> as the single arugument. Otherwise,
- it will run synchronously and return the reply <a href="index.html#object">object</a> normally.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -1401,6 +1410,7 @@
          <li><a href="index.html#object">object</a></li>
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_cache_query">write_cache_query</a></li>
+         <li><a href="index.html#latest">latest</a></li>
     </ul>
 
 
@@ -1437,16 +1447,16 @@
             <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
          The major version of the "cmakeFile" reply to read. 1 is the only valid
  value. If nil, the version is 1.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
          (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with the reply <a href="index.html#object">object</a> as the single arugument. Otherwise,
- it will run synchronously and return the reply <a href="index.html#object">object</a> normally.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -1468,6 +1478,7 @@
          <li><a href="index.html#object">object</a></li>
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_cmake_files_query">write_cmake_files_query</a></li>
+         <li><a href="index.html#latest">latest</a></li>
     </ul>
 
 
@@ -1504,16 +1515,16 @@
             <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
          The major version of the "toolchains" reply to read. 1 is the only valid
  value. If nil, the version is 1.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
          (<em>optional</em>)
         </li>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with the reply <a href="index.html#object">object</a> as the single arugument. Otherwise,
- it will run synchronously and return the reply <a href="index.html#object">object</a> normally.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -1535,6 +1546,7 @@
          <li><a href="index.html#object">object</a></li>
          <li><a href="index.html#lazy">lazy</a></li>
          <li><a href="index.html#write_toolchains_query">write_toolchains_query</a></li>
+         <li><a href="index.html#latest">latest</a></li>
     </ul>
 
 
@@ -1709,13 +1721,12 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">callback</span>
-            <span class="types"><span class="type">function</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
-         It can be a Lua function or nil.
- If not nil, the method will run asynchronously and call the callback upon
- completion with the reply <a href="index.html#object">object</a> as the single arugument. Otherwise,
- it will run synchronously and return the reply <a href="index.html#object">object</a> normally.
- Note: you can't call Vim functions in this callback, Otherwise, Neovim
- throws an assertion.
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+ callback.
          (<em>optional</em>)
         </li>
     </ul>
@@ -1735,13 +1746,50 @@
 
 </dd>
 </dl>
+    <h2 class="section-header has-description"><a name="Utilities"></a>Utilities </h2>
+
+          <div class="section-description">
+           Miscellaneous utilities and functions that make it easier to use the CMake
+ file API.
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "latest"></a>
+    <strong>latest</strong>
+    </dt>
+    <dd>
+    Latest version of object kinds  This is just equal to nil, but it makes it makes using latest versions of
+ object kinds more readable instead of just passing nil.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
+">Object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <ul>
+        <li><span class="parameter">latest</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2021-11-10 20:40:46 </i>
+<i style="float:right;">Last updated 2021-11-15 15:58:14 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

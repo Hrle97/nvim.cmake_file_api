@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Neovim CMake File API</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Neovim CMake File API</h1>
+
+
+
+
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/1_start.lua.html">1_start.lua</a></li>
+  <li><a href="../examples/2_basic.lua.html">2_basic.lua</a></li>
+  <li><a href="../examples/3_stateful.lua.html">3_stateful.lua</a></li>
+  <li><a href="../examples/4_schedule_wrap_callback.lua.html">4_schedule_wrap_callback.lua</a></li>
+  <li><strong>5_error_handling.lua</strong></li>
+  <li><a href="../examples/6_coroutine_callback.lua.html">6_coroutine_callback.lua</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../index.html">nvim.cmake_file_api</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/README.md.html">README</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>5_error_handling.lua</h2>
+<pre>
+<span class="keyword">local</span> cmake_file_api = <span class="global">require</span> <span class="string">"nvim.cmake_file_api"</span>
+
+<span class="comment">-- Every function in the CMake File API returns errors in this way.
+</span><span class="comment">-- If there is an error, the first returned value is nil and the rest are not
+</span><span class="comment">-- nil, and the reverse is true when there is no error.
+</span><span class="keyword">local</span> reply_index, <span class="global">error</span>, error_type, error_path =
+  cmake_file_api.write_configure_read_all(
+    build,
+    cmake.configure <span class="comment">-- use vim.fn.system or vim.loop.spawn or io.popen...
+</span>  )
+
+<span class="comment">-- The errors shown here are thrown by the luvit filesystem backend and are
+</span><span class="comment">-- threated as something that should be reported to the end user.
+</span><span class="comment">-- All other errors like passing in the wrong object kind or version or
+</span><span class="comment">-- attempting to read replies before a query was written or CMake was
+</span><span class="comment">-- configured are treated as programmer error and are asserted, so that the
+</span><span class="comment">-- programmer using this API catches the error and fixes their code.
+</span><span class="comment">-- See the error handling help section for more information.
+</span><span class="keyword">if</span> <span class="global">error</span> <span class="keyword">then</span>
+  <span class="comment">-- CMake File API uses luvit as a backend for the filesystem.
+</span>  <span class="comment">-- All of these error types correspond to the names of luvit filesystem
+</span>  <span class="comment">-- methods that throw them. This is not an exhaustive list of error types,
+</span>  <span class="comment">-- and you should read the error handling help section for the exhaustive
+</span>  <span class="comment">-- list.
+</span>  <span class="comment">-- Read the luvit filesystem documentation for more information.
+</span>  <span class="comment">-- https://github.com/luvit/luv/blob/master/docs.md#file-system-operations
+</span>  <span class="keyword">if</span> error_type == <span class="string">"mkdir"</span> <span class="keyword">then</span>
+    <span class="global">print</span>(<span class="string">"Failed to make directory at: '"</span> .. error_path .. <span class="string">"'"</span>)
+  <span class="keyword">elseif</span> error_type == <span class="string">"opendir"</span> <span class="keyword">then</span>
+    <span class="global">print</span>(<span class="string">"Failed to open directory at: '"</span> .. error_path .. <span class="string">"'"</span>)
+  <span class="keyword">elseif</span> error_type == <span class="string">"readdir"</span> <span class="keyword">then</span>
+    <span class="global">print</span>(<span class="string">"Failed to read directory at: '"</span> .. error_path .. <span class="string">"'"</span>)
+  <span class="keyword">elseif</span> error_type == <span class="string">"closedir"</span> <span class="keyword">then</span>
+    <span class="global">print</span>(<span class="string">"Failed to close directory at: '"</span> .. error_path .. <span class="string">"'"</span>)
+  <span class="keyword">elseif</span> error_type == <span class="string">"open"</span> <span class="keyword">then</span>
+    <span class="global">print</span>(<span class="string">"Failed to open file at: '"</span> .. error_path .. <span class="string">"'"</span>)
+  <span class="keyword">elseif</span> error_type == <span class="string">"stat"</span> <span class="keyword">then</span>
+    <span class="global">print</span>(<span class="string">"Failed to get file info at: '"</span> .. error_path .. <span class="string">"'"</span>)
+  <span class="keyword">elseif</span> error_type == <span class="string">"read"</span> <span class="keyword">then</span>
+    <span class="global">print</span>(<span class="string">"Failed to read file at: '"</span> .. error_path .. <span class="string">"'"</span>)
+  <span class="keyword">elseif</span> error_type == <span class="string">"write"</span> <span class="keyword">then</span>
+    <span class="global">print</span>(<span class="string">"Failed to write file at: '"</span> .. error_path .. <span class="string">"'"</span>)
+  <span class="keyword">elseif</span> error_type == <span class="string">"close"</span> <span class="keyword">then</span>
+    <span class="global">print</span>(<span class="string">"Failed to close file at: '"</span> .. error_path .. <span class="string">"'"</span>)
+  <span class="keyword">end</span>
+
+  <span class="comment">-- Error thrown by luvit.
+</span>  <span class="comment">-- Read the luvit documentation for more information.
+</span>  <span class="comment">-- https://github.com/luvit/luv/blob/master/docs.md
+</span>  <span class="global">print</span>(<span class="string">"luvit error: '"</span> .. <span class="global">error</span> .. <span class="string">"'"</span>)
+<span class="keyword">else</span>
+  expect.is_object(reply_index) <span class="comment">-- used for testing
+</span><span class="keyword">end</span></pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2021-11-15 15:58:14 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
