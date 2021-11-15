@@ -31,7 +31,8 @@ CONTENTS
       3.3. Reply..................... |cmake_file_api_reply|
       3.4. object.................... |cmake_file_api.object|
       3.5. lazy...................... |cmake_file_api.lazy|
-      3.6. Utilities................. |cmake_file_api_utilities|
+      3.6. fail...................... |cmake_file_api.fail|
+      3.7. Utilities................. |cmake_file_api_utilities|
     4. Changelog .................... |cmake_file_api_changelog|
     5. Bugs ......................... |cmake_file_api_bugs|
     6. Contributing ................. |cmake_file_api_contributing|
@@ -1945,9 +1946,57 @@ asynchronously.
 
 
 ------------------------------------------------------------------------------
+                                                           *cmake_file_api.fail*
+
+3.6. fail
+
+Fail result type.
+
+This is not an actual class exported in the CMake File API, but a type that
+describes how methods in the API handle errors. It is returned by all methods
+when an error occurs that is not due to the developer using the API, such as
+not having privileges to write files or make directories. It is very similar
+to the fail type defined in the luvit library documentation provided in
+`vim.loop`, so check the luvit error documentation for more information. In
+place of the type of result that a method would produce upon success `nil` is
+returned instead and error details are returned in the rest of the reply. For
+errors that were caused by developers using the API, such as providing a non
+existing query kind or version or trying to read a reply when CMake was not
+configured, an assertion is thrown.
+
+
+                                               *cmake_file_api.fail.did_succeed*
+
+fail.did_succeed()
+
+Check whether or not a methods execution ended in success.
+
+  Parameters: ~
+
+  Returns: ~
+
+    `boolean`
+      Whether or not a methods execution ended in a failure.
+
+
+                                                  *cmake_file_api.fail.did_fail*
+
+fail.did_fail()
+
+Check whether or not a methods execution ended in failure.
+
+  Parameters: ~
+
+  Returns: ~
+
+    `boolean`
+      Whether or not a methods execution ended in a failure.
+
+
+------------------------------------------------------------------------------
                                                       *cmake_file_api_utilities*
 
-3.6. Utilities
+3.7. Utilities
 
 Miscellaneous utilities and methods that make it easier to use the CMake file
 API.
@@ -2000,6 +2049,7 @@ object kinds more readable instead of just passing `nil`.
                                                         *cmake_file_api_license*
 
 7. License
+
 >
   MIT License
   Copyright © 2021 Hrle97 <32d9c8c6-8118-45e7-857e-8b45522f395d@anonaddy.me>

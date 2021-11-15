@@ -210,7 +210,7 @@
 # end
 #
 # local function builtin(x)
-#   x = x:gsub("(vim%.%S+)", "`%1`")
+#   x = x:gsub("(vim%.[^,%s]+)", "`%1`")
 #   return x
 # end
 #
@@ -445,6 +445,7 @@ $(pretty(item.summary))
 
 $(pretty(item.description))
 #       end
+#
 #       if show_params and item.params then
 
   Parameters: ~
@@ -560,6 +561,7 @@ $(prefixed_tag("_contributing"))
 $(prefixed_tag("_license"))
 
 7. License
+
 >
   MIT License
   Copyright $(module.tags.copyright)

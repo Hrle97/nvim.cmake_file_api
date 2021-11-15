@@ -1449,10 +1449,10 @@ end
 
 --- Fail result type.
 --
--- This is not an actual type exported in the CMake File API, but a type that
+-- This is not an actual class exported in the CMake File API, but a type that
 -- describes how methods in the API handle errors.
 --
--- It is returned by all methods when an error occured that is not due to the
+-- It is returned by all methods when an error occurs that is not due to the
 -- developer using the API, such as not having privileges to write files or
 -- make directories. It is very similar to the fail type defined in the luvit
 -- library documentation provided in vim.loop, so check the luvit error
@@ -1471,6 +1471,25 @@ end
 -- https://github.com/luvit/luv/blob/master/docs.md#error-handling
 --
 -- @todo better
+cmake_file_api.fail = {}
+
+--- Check whether or not a methods execution ended in success.
+--
+-- @function fail.did_succeed
+--
+-- @treturn boolean Whether or not a methods execution ended in a failure.
+function cmake_file_api.fail.did_succeed(result)
+  return result ~= nil
+end
+
+--- Check whether or not a methods execution ended in failure.
+--
+-- @function fail.did_fail
+--
+-- @treturn boolean Whether or not a methods execution ended in a failure.
+function cmake_file_api.fail.did_fail(result)
+  return result == nil
+end
 
 --- Utilities.
 --
