@@ -32,6 +32,7 @@
 <li><a href="#Installation">Installation </a></li>
 <li><a href="#Examples">Examples </a></li>
 <li><a href="#Documentation">Documentation </a></li>
+<li><a href="#Callbacks">Callbacks </a></li>
 <li><a href="#Error_handling">Error handling </a></li>
 </ul>
 
@@ -95,7 +96,7 @@ will read the query files and write reply files for the client to read.</p>
    cmake.configure -- use vim.fn.system or vim.loop.spawn or io.popen ...
  )
 
- -- read data from the reply index here!
+  -- read data from the reply index here
 </code></pre>
 
 
@@ -112,6 +113,22 @@ beginners.</p>
 
 <h4>Usage</h4>
 
+<pre><code> local cmake_file_api = require "nvim.cmake_file_api"
+
+ local codemodel = cmake_file_api.write_configure_read_codemodel(
+   build, -- your build location here
+   cmake_file_api.latest, -- your query version here
+   cmake.configure -- use vim.fn.system or vim.loop.spawn or io.popen ...
+ )
+
+ if not codemodel then
+    -- handle errors here
+ end
+
+  -- read data from the codemodel here
+</code></pre>
+
+
 <h3>Query Methods</h3>
 
 <p>Methods to call before configuring CMake in order to instruct it what data to
@@ -119,12 +136,42 @@ generate using the API.</p>
 
 <h4>Usage</h4>
 
+<pre><code> local cmake_file_api = require "nvim.cmake_file_api"
+
+ local did_write = cmake_file_api.write_codemodel_query(
+   build, -- your build location here
+   cmake_file_api.latest -- latest for code readability (equal to nil)
+ )
+
+ if not did_write then
+    -- handle errors here
+ end
+
+  -- configure CMake and read the reply here
+</code></pre>
+
+
 <h3>Reply Methods</h3>
 
-<p>Functions and classes to use after configuring CMake in order to read the
-reply of the API.</p>
+<p>Methods to use after configuring CMake in order to read the reply of the API.</p>
 
 <h4>Usage</h4>
+
+<pre><code> local cmake_file_api = require "nvim.cmake_file_api"
+
+  -- with a previously wrriten codemodel query and configured CMake
+ local codemodel = cmake_file_api.read_codemodel_reply(
+   build, -- your build location here
+   cmake_file_api.latest -- latest for code readability (equal to nil)
+ )
+
+ if not codemodel then
+    -- handle errors here
+ end
+
+  -- do stuff with the codemodel here
+</code></pre>
+
 
 <h3>Object Class</h3>
 
@@ -137,6 +184,22 @@ retrieve the desired field as an object.</p>
 
 <h4>Usage</h4>
 
+<pre><code> local cmake_file_api = require "nvim.cmake_file_api"
+
+  -- with a previously wrriten codemodel query and configured CMake
+ local codemodel = cmake_file_api.read_codemodel_reply(
+   build, -- your build location here
+   cmake_file_api.latest -- latest for code readability (equal to nil)
+ )
+
+ if not codemodel then
+    -- handle errors here
+ end
+
+  -- do stuff with the codemodel here
+</code></pre>
+
+
 <h3>Lazy Class</h3>
 
 <p>Values of fields with the key "jsonFiles" of API replies are converted to lazy
@@ -144,6 +207,17 @@ values with the "lazy" key that can be loaded synchronously or asynchronously
 with the load method into an object.</p>
 
 <h4>Usage</h4>
+
+<pre><code>  -- object with a lazy field
+ local my_loaded_object = my_object.lazy:load()
+
+ if not my_loaded_object then
+    -- handle errors here
+ end
+
+  -- do stuff with the loaded object here
+</code></pre>
+
 
 <h3>Fail Type</h3>
 
@@ -153,10 +227,11 @@ describes how methods in the API handle errors.</p>
 <p>It is returned by all methods when an error occurs that is not due to the
 developer using the API, such as not having privileges to write files or make
 directories. It is very similar to the fail type defined in the luvit library
-documentation provided in vim.loop, so check the luvit error documentation for
-more information.</p>
+documentation provided in <code>vim.loop</code>, so check the
+<a href="https://github.com/luvit/luv/blob/master/docs.md#error-handling">luvit error documentation</a>
+for more information.</p>
 
-<p>In place of the type of result that a method would produce upon success nil is
+<p>In place of the result that a method would produce upon success nil is
 returned instead and error details are returned in the rest of the reply.</p>
 
 <p>For errors that were caused by developers using the API, such as providing a
@@ -167,17 +242,86 @@ not configured, an assertion is thrown.</p>
 
 <p>Miscellaneous utilities and methods that make it easier to use the API.</p>
 
+<p><a name="Callbacks"></a></p>
+<h2>Callbacks</h2>
+
+<p>Most methods in the API accept a callback as a last parameter and if a
+callback is provided, the method will run asynchronously and call the callback
+with the result of the method passed as parameters to the callback.</p>
+
+<p>Callbacks are executed on the luvit event loop and Vim methods are disallowed
+there, so if you want to use Vim methods in callbacks you have to wrap
+callbacks with <code>vim.schedule_wrap</code>.</p>
+
+<p>Read the <a href="https://github.com/luvit/luv/blob/master/docs.md">luvit documentation</a>
+for more information.</p>
+
 <p><a name="Error_handling"></a></p>
 <h2>Error handling</h2>
 
+<p>Most methods in the CMake File API return errors.</p>
+
+<p>The fail type is returned all methods when an error occurs that is not due to
+the developer using the API, such as not having privileges to write files or
+make directories. It is very similar to the fail type defined in the luvit library
+documentation provided in <code>vim.loop</code>, so check the
+<a href="https://github.com/luvit/luv/blob/master/docs.md#error-handling">luvit error documentation</a>
+more information.</p>
+
+<p>In place of the result that a method would produce upon success nil is
+returned instead and error details are returned in the rest of the reply.</p>
+
+<p>For errors that were caused by developers using the API, such as providing a
+non existing query kind or version or trying to read a reply when CMake was
+not configured, an assertion is thrown.</p>
+
 <h4>Example</h4>
+
+<pre><code> local cmake_file_api = require "nvim.cmake_file_api"
+
+ local reply_index, error, error_type, error_path =
+   cmake_file_api.write_configure_read_all(
+     build, -- your build location here
+     cmake.configure -- use vim.fn.system or vim.loop.spawn or io.popen...
+   )
+
+  -- handle errors
+ if error then
+    -- handle different error types
+   if error_type == "mkdir" then
+     print("Failed to make directory at: '" .. error_path .. "'")
+   elseif error_type == "opendir" then
+     print("Failed to open directory at: '" .. error_path .. "'")
+   elseif error_type == "readdir" then
+     print("Failed to read directory at: '" .. error_path .. "'")
+   elseif error_type == "closedir" then
+     print("Failed to close directory at: '" .. error_path .. "'")
+   elseif error_type == "open" then
+     print("Failed to open file at: '" .. error_path .. "'")
+   elseif error_type == "stat" then
+     print("Failed to get file info at: '" .. error_path .. "'")
+   elseif error_type == "read" then
+     print("Failed to read file at: '" .. error_path .. "'")
+   elseif error_type == "write" then
+     print("Failed to write file at: '" .. error_path .. "'")
+   elseif error_type == "close" then
+     print("Failed to close file at: '" .. error_path .. "'")
+   end
+
+    -- handle luvit error
+   print("luvit error: '" .. error .. "'")
+ end
+
+  -- do stuff with the reply_index here
+</code></pre>
+
 
 
 </div> <!-- id="content" -->
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2021-11-15 23:39:05 </i>
+<i style="float:right;">Last updated 2021-11-16 00:29:48 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

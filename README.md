@@ -33,7 +33,7 @@ local reply_index = cmake_file_api.write_configure_read_all(
   cmake.configure -- use vim.fn.system or vim.loop.spawn or io.popen ...
 )
 
--- read data from the reply index here!
+ -- read data from the reply index here
 ```
 
 ## Documentation
@@ -48,6 +48,22 @@ beginners.
 
 #### Usage
 
+```
+local cmake_file_api = require "nvim.cmake_file_api"
+
+local codemodel = cmake_file_api.write_configure_read_codemodel(
+  build, -- your build location here
+  cmake_file_api.latest, -- your query version here
+  cmake.configure -- use vim.fn.system or vim.loop.spawn or io.popen ...
+)
+
+if not codemodel then
+   -- handle errors here
+end
+
+ -- read data from the codemodel here
+```
+
 ### Query Methods
 
 Methods to call before configuring CMake in order to instruct it what data to
@@ -55,12 +71,42 @@ generate using the API.
 
 #### Usage
 
+```
+local cmake_file_api = require "nvim.cmake_file_api"
+
+local did_write = cmake_file_api.write_codemodel_query(
+  build, -- your build location here
+  cmake_file_api.latest -- latest for code readability (equal to nil)
+)
+
+if not did_write then
+   -- handle errors here
+end
+
+ -- configure CMake and read the reply here
+```
+
 ### Reply Methods
 
-Functions and classes to use after configuring CMake in order to read the
-reply of the API.
+Methods to use after configuring CMake in order to read the reply of the API.
 
 #### Usage
+
+```
+local cmake_file_api = require "nvim.cmake_file_api"
+
+ -- with a previously wrriten codemodel query and configured CMake
+local codemodel = cmake_file_api.read_codemodel_reply(
+  build, -- your build location here
+  cmake_file_api.latest -- latest for code readability (equal to nil)
+)
+
+if not codemodel then
+   -- handle errors here
+end
+
+ -- do stuff with the codemodel here
+```
 
 ### Object Class
 
@@ -73,6 +119,22 @@ retrieve the desired field as an object.
 
 #### Usage
 
+```
+local cmake_file_api = require "nvim.cmake_file_api"
+
+ -- with a previously wrriten codemodel query and configured CMake
+local codemodel = cmake_file_api.read_codemodel_reply(
+  build, -- your build location here
+  cmake_file_api.latest -- latest for code readability (equal to nil)
+)
+
+if not codemodel then
+   -- handle errors here
+end
+
+ -- do stuff with the codemodel here
+```
+
 ### Lazy Class
 
 Values of fields with the key "jsonFiles" of API replies are converted to lazy
@@ -80,6 +142,17 @@ values with the "lazy" key that can be loaded synchronously or asynchronously
 with the load method into an object.
 
 #### Usage
+
+```
+ -- object with a lazy field
+local my_loaded_object = my_object.lazy:load()
+
+if not my_loaded_object then
+   -- handle errors here
+end
+
+ -- do stuff with the loaded object here
+```
 
 ### Fail Type
 
@@ -89,10 +162,11 @@ describes how methods in the API handle errors.
 It is returned by all methods when an error occurs that is not due to the
 developer using the API, such as not having privileges to write files or make
 directories. It is very similar to the fail type defined in the luvit library
-documentation provided in vim.loop, so check the luvit error documentation for
-more information.
+documentation provided in `vim.loop`, so check the
+[luvit error documentation](https://github.com/luvit/luv/blob/master/docs.md#error-handling)
+for more information.
 
-In place of the type of result that a method would produce upon success nil is
+In place of the result that a method would produce upon success nil is
 returned instead and error details are returned in the rest of the reply.
 
 For errors that were caused by developers using the API, such as providing a
@@ -103,6 +177,74 @@ not configured, an assertion is thrown.
 
 Miscellaneous utilities and methods that make it easier to use the API.
 
+## Callbacks
+
+Most methods in the API accept a callback as a last parameter and if a
+callback is provided, the method will run asynchronously and call the callback
+with the result of the method passed as parameters to the callback.
+
+Callbacks are executed on the luvit event loop and Vim methods are disallowed
+there, so if you want to use Vim methods in callbacks you have to wrap
+callbacks with `vim.schedule_wrap`.
+
+Read the [luvit documentation](https://github.com/luvit/luv/blob/master/docs.md)
+for more information.
+
 ## Error handling
 
+Most methods in the CMake File API return errors.
+
+The fail type is returned all methods when an error occurs that is not due to
+the developer using the API, such as not having privileges to write files or
+make directories. It is very similar to the fail type defined in the luvit library
+documentation provided in `vim.loop`, so check the
+[luvit error documentation](https://github.com/luvit/luv/blob/master/docs.md#error-handling)
+more information.
+
+In place of the result that a method would produce upon success nil is
+returned instead and error details are returned in the rest of the reply.
+
+For errors that were caused by developers using the API, such as providing a
+non existing query kind or version or trying to read a reply when CMake was
+not configured, an assertion is thrown.
+
 #### Example
+
+```
+local cmake_file_api = require "nvim.cmake_file_api"
+
+local reply_index, error, error_type, error_path =
+  cmake_file_api.write_configure_read_all(
+    build, -- your build location here
+    cmake.configure -- use vim.fn.system or vim.loop.spawn or io.popen...
+  )
+
+ -- handle errors
+if error then
+   -- handle different error types
+  if error_type == "mkdir" then
+    print("Failed to make directory at: '" .. error_path .. "'")
+  elseif error_type == "opendir" then
+    print("Failed to open directory at: '" .. error_path .. "'")
+  elseif error_type == "readdir" then
+    print("Failed to read directory at: '" .. error_path .. "'")
+  elseif error_type == "closedir" then
+    print("Failed to close directory at: '" .. error_path .. "'")
+  elseif error_type == "open" then
+    print("Failed to open file at: '" .. error_path .. "'")
+  elseif error_type == "stat" then
+    print("Failed to get file info at: '" .. error_path .. "'")
+  elseif error_type == "read" then
+    print("Failed to read file at: '" .. error_path .. "'")
+  elseif error_type == "write" then
+    print("Failed to write file at: '" .. error_path .. "'")
+  elseif error_type == "close" then
+    print("Failed to close file at: '" .. error_path .. "'")
+  end
+
+   -- handle luvit error
+  print("luvit error: '" .. error .. "'")
+end
+
+ -- do stuff with the reply_index here
+```

@@ -1,11 +1,11 @@
 local cmake_file_api = require "nvim.cmake_file_api"
 
--- Every function in the CMake File API returns errors in this way.
+-- Most methods in the CMake File API return errors in this way.
 -- If there is an error, the first returned value is nil and the rest are not
 -- nil, and the reverse is true when there is no error.
 local reply_index, error, error_type, error_path =
   cmake_file_api.write_configure_read_all(
-    build,
+    build, -- your build location here
     cmake.configure -- use vim.fn.system or vim.loop.spawn or io.popen...
   )
 
