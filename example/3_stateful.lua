@@ -22,13 +22,7 @@ local did_write_query, write_query_error =
 expect(did_write_query) -- here for testing
 assert(did_write_query, write_query_error) -- see the error handling help
 
-vim.fn.system {
-  "cmake",
-  "-S",
-  source, -- your source location here
-  "-B",
-  build, -- your build location here
-}
+cmake.configure() -- use vim.fn.system or vim.loop.spawn or io.popen...
 
 local index, read_index_error = cmake_file_api.read_reply_index(build)
 expect.is_object(index) -- here for testing

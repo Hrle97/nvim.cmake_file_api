@@ -34,9 +34,10 @@ local function expect_toolchains_query(callback)
 end
 
 local function expect_configured(callback)
-  cmake.configure() -- TODO: fix async
-  expect.pexists(preply)
-  callback()
+  cmake.configure(function()
+    expect.pexists(preply)
+    callback()
+  end)
 end
 
 local function expect_codemodel_reply(callback)

@@ -6,15 +6,7 @@ local cmake_file_api = require "nvim.cmake_file_api"
 local reply_index, error, error_type, error_path =
   cmake_file_api.write_configure_read_all(
     build,
-    function()
-      vim.fn.system {
-        "cmake",
-        "-S",
-        source, -- your source location here
-        "-B",
-        build, -- your build location here
-      }
-    end
+    cmake.configure -- use vim.fn.system or vim.loop.spawn or io.popen...
   )
 
 -- The errors shown here are thrown by the luvit filesystem backend and are

@@ -14,14 +14,7 @@ thread = coroutine.create(function(callback)
   local did_write = coroutine.yield() -- wait until the query gets written
   expect(did_write) -- used for testing - do your error handling here
 
-  vim.loop.spawn("cmake", {
-    args = {
-      "-S",
-      source, -- source location here
-      "-B",
-      build, -- build location here
-    },
-  }, function()
+  cmake.configure(function() -- use vim.fn.system or vim.loop.spawn ...
     coroutine.resume(thread) -- resume thread once CMake is configured
   end)
   coroutine.yield() -- wait until CMake configures

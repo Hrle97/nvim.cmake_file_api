@@ -9,7 +9,7 @@ example_root_path="$root_path/example"
 function test()
 {
   echo -e "\nTESTING BUILD: '$1'\n"
-  if nvim --headless --noplugin \
+  if nvim --headless --clean \
       -c "lua vim.g.root_path = '$root_path'" \
       -c "lua vim.g.test_root_path = '$test_root_path'" \
       -c "lua vim.g.example_root_path = '$example_root_path'" \
@@ -19,8 +19,7 @@ function test()
             vim.o.runtimepath .. ',' .. 
             vim.g.root_path .. ',' .. 
             vim.g.test_root_path" \
-      -c "luafile $root_path/test/lua/init.lua" \
-      -c ':q' 2>&1; then
+      -c "luafile $root_path/test/lua/init.lua" 2>&1; then
     echo -e "\nBUILD '$1' PASSED!"
   else
     echo -e "\nBUILD '$1' FAILED!"

@@ -8,13 +8,7 @@ local did_write_query, write_query_error = cmake_file_api.write_codemodel_query(
 assert(did_write_query, write_query_error)
 
 -- configure CMake
-vim.fn.system {
-  "cmake",
-  "-S",
-  source, -- your source location here
-  "-B",
-  build, -- your build location here
-}
+cmake.configure() -- use vim.fn.system or vim.loop.spawn or io.popen...
 
 -- read codemodel reply
 local codemodel, read_codemodel_error = cmake_file_api.read_codemodel_reply(
