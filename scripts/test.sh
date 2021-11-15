@@ -14,7 +14,7 @@ function test()
       -c "lua vim.g.test_root_path = '$test_root_path'" \
       -c "lua vim.g.example_root_path = '$example_root_path'" \
       -c "lua vim.g.cmake_source_path = '$test_root_path/cmake/'" \
-      -c "lua vim.g.cmake_build_path = '$test_root_path/cmake/$1'" \
+      -c "lua vim.g.cmake_build_path = '$1'" \
       -c "lua vim.o.runtimepath = 
             vim.o.runtimepath .. ',' .. 
             vim.g.root_path .. ',' .. 
@@ -29,7 +29,14 @@ function test()
 
 function main() 
 {
-  test "build" &
+  if [ $# == 0 ] 
+  then
+    build_path="$test_root_path/cmake/build"
+  else
+    build_path="$1"
+  fi
+
+  test $build_path &
 
   wait $(jobs -p)
 }

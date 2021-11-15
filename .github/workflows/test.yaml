@@ -22,4 +22,4 @@ jobs:
           cmake-version: "3.21.x"
       - name: Run tests
         shell: bash
-        run: ./scripts/test.sh
+        run: ./scripts/test.sh "$RUNNER_TEMP/build"
