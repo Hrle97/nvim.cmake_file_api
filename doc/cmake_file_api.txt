@@ -365,11 +365,28 @@ API documentation for more info.
     {configure} `function`
       The method to call after writing the query to generate the buildsystem.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
+
+  Usage: ~
+
+>
+    local reply_index = require("nvim.cmake_file_api")
+      .write_configure_read_all(
+        build, -- your build location here
+        function()
+          vim.fn.system {
+            "cmake",
+            "-S",
+            source, -- your source location here
+            "-B",
+            build -- your build location here
+          }
+        end)
+<
 
   See also: ~
 
@@ -414,11 +431,11 @@ info.
     {configure} `function`
       The method to call after writing the query to generate the buildsystem.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   See also: ~
 
@@ -460,11 +477,11 @@ info.
     {configure} `function`
       The method to call after writing the query to generate the buildsystem.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   See also: ~
 
@@ -502,11 +519,11 @@ the "cache" kind. See the "cache" object kind documentation for more info.
     {configure} `function`
       The method to call after writing the query to generate the buildsystem.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   See also: ~
 
@@ -545,11 +562,11 @@ info.
     {configure} `function`
       The method to call after writing the query to generate the buildsystem.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   See also: ~
 
@@ -588,11 +605,11 @@ info.
     {configure} `function`
       The method to call after writing the query to generate the buildsystem.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   See also: ~
 
@@ -636,11 +653,11 @@ documentation for more info.
     {build} `string`
       The build directory of the to be generated buildsystem.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   Links: ~
 
@@ -675,11 +692,11 @@ specified kind and version. See the object kind documentation for more info.
       used. Use the |cmake_file_api.latest| field for more readability. See
       the CMake File API documentation for more info.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   See also: ~
 
@@ -721,11 +738,11 @@ kind documentation for more info.
       and 2. If `nil`, 2 is used. Use the |cmake_file_api.latest| field for
       more readability.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   See also: ~
 
@@ -760,11 +777,11 @@ technically, it writes a stateless client "cache" query of version 2. See the
       2. If `nil`, 2 is used. Use the |cmake_file_api.latest| field for more
       readability.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   See also: ~
 
@@ -800,11 +817,11 @@ kind documentation for more info.
       value. If `nil`, 1 is used. Use the |cmake_file_api.latest| field for
       more readability.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   See also: ~
 
@@ -840,11 +857,11 @@ object kind documentation for more info.
       value. If `nil`, 1 is used. Use the |cmake_file_api.latest| field for
       more readability.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   See also: ~
 
@@ -885,11 +902,11 @@ info.
       used. See the CMake File API documentation for more info. Use the
       |cmake_file_api.latest| field for more readability.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   See also: ~
 
@@ -930,11 +947,11 @@ queries. See the client stateless query documentation for more info.
       used. Use the |cmake_file_api.latest| field for more readability. See
       the CMake File API documentation for more info.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   See also: ~
 
@@ -973,11 +990,11 @@ documentation for more info.
       The query to send to the CMake File API. Reqd the client statefull query
       documentation for more info.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   Links: ~
 
@@ -1016,11 +1033,11 @@ documentation for more info.
       The build directory of the generated buildsystem. It has to be an
       already existing directory on the filesystem.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   Returns: ~
 
@@ -1073,11 +1090,11 @@ for more info.
       used. See the CMake File API documentation for more info. Use the
       |cmake_file_api.latest| field for more readability.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   Returns: ~
 
@@ -1129,11 +1146,11 @@ documentation for more info.
       and 2. If `nil`, the version is 2. Use the |cmake_file_api.latest| field
       for more readability.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   Returns: ~
 
@@ -1180,11 +1197,11 @@ method. See the "cache" object kind documentation for more info.
       2. If `nil`, the version is 2. Use the |cmake_file_api.latest| field for
       more readability.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   Returns: ~
 
@@ -1232,11 +1249,11 @@ kind documentation for more info.
       value. If `nil`, the version is 1. Use the |cmake_file_api.latest| field
       for more readability.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   Returns: ~
 
@@ -1284,11 +1301,11 @@ kind documentation for more info.
       value. If `nil`, the version is 1. Use the |cmake_file_api.latest| field
       for more readability.
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   Returns: ~
 
@@ -1454,11 +1471,11 @@ asynchronously.
 
   Parameters: ~
 
-    [{callback} `function`, thread, `nil`]
+    [{callback} `function`, `thread`, `nil`]
       If not `nil`, the method will run asynchronously and call the callback
-      or resume the thread upon completion with. Otherwise, it will run
-      synchronously. Note: Use vim.schedule or vim.schedule_wrap to run vim
-      `function`s from thie callback.
+      or resume the `thread` upon completion with. Otherwise, it will run
+      synchronously. Note: Use `vim.schedule` or `vim.schedule_wrap` to run
+      Vim methods from thie callback.
 
   Returns: ~
 

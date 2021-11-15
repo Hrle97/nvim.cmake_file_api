@@ -52,6 +52,20 @@ local object = require "nvim.cmake_file_api.object"
 -- @link CMake File API documentation
 -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html
 --
+-- @usage
+-- local reply_index = require("nvim.cmake_file_api")
+--   .write_configure_read_all(
+--     build, -- your build location here
+--     function()
+--       vim.fn.system {
+--         "cmake",
+--         "-S",
+--         source, -- your source location here
+--         "-B",
+--         build -- your build location here
+--       }
+--     end)
+--
 -- @function write_configure_read_all
 --
 -- @tparam string build
@@ -64,7 +78,7 @@ local object = require "nvim.cmake_file_api.object"
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 --
 -- @see object
@@ -112,7 +126,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 --
 -- @see object
@@ -163,7 +177,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 --
 -- @see object
@@ -212,7 +226,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 --
 -- @see object
@@ -261,7 +275,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 --
 -- @see object
@@ -310,7 +324,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 --
 -- @see object
@@ -363,7 +377,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 function cmake_file_api.write_all_queries(build, callback)
   return query.write_all_queries(build, callback)
@@ -404,7 +418,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 --
 -- @see read_reply
@@ -444,7 +458,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 --
 -- @see read_reply
@@ -480,7 +494,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 --
 -- @see read_reply
@@ -517,7 +531,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 --
 -- @see read_reply
@@ -554,7 +568,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 --
 -- @see read_reply
@@ -597,7 +611,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 --
 -- @see latest
@@ -643,7 +657,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 --
 -- @see write_query
@@ -686,7 +700,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 function cmake_file_api.write_client_stateful_query(build, _query, callback)
   return query.write_client_stateful_query(build, _query, callback)
@@ -725,7 +739,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 --
 -- @treturn @{object}
@@ -775,7 +789,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 --
 -- @treturn @{object}
@@ -824,7 +838,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 --
 -- @treturn @{object}
@@ -869,7 +883,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 --
 -- @treturn @{object}
@@ -914,7 +928,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 --
 -- @treturn @{object}
@@ -959,7 +973,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 --
 -- @treturn @{object}
@@ -1092,7 +1106,7 @@ end
 -- If not nil, the method will run asynchronously and call the callback or
 -- resume the thread upon completion with.
 -- Otherwise, it will run synchronously.
--- Note: Use vim.schedule or vim.schedule_wrap to run vim functions from thie
+-- Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from thie
 -- callback.
 --
 -- @treturn @{object}

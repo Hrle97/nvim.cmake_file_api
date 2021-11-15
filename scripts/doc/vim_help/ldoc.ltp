@@ -204,8 +204,14 @@
 #   x = x:gsub("(string)", "`%1`")
 #   x = x:gsub("(function)", "`%1`")
 #   x = x:gsub("(table)", "`%1`")
+#   x = x:gsub("(thread)", "`%1`")
 #   x = x:gsub("(userdata)", "`%1`")
 #   return link_help(x)
+# end
+#
+# local function builtin(x)
+#   x = x:gsub("(vim%.%S+)", "`%1`")
+#   return x
 # end
 #
 # local function trim(x)
@@ -234,10 +240,6 @@
 #   return indent .. x:gsub("%s+()(%S+)()", sub)
 # end
 #
-# local function pretty(x, indent, limit)
-#   return wrap(join(trim(types(x))), indent, limit)
-# end
-#
 # local function split(x, s)
 #   s = s or "%s"
 #   return x:gmatch("([^" .. s .. "]*)")
@@ -255,6 +257,14 @@
 #     f = false
 #   end
 #   return r
+# end
+#
+# local function pretty(x, indent, limit)
+#   return wrap(join(trim(builtin(types(x)))), indent, limit)
+# end
+#
+# local function code(x)
+#   return indent(trim(x), (" "):rep(4))
 # end
 #
 #
@@ -354,7 +364,7 @@ $(prefixed_tag("_" .. example_name:lower() .. "_example"))
 $(pretty("2." .. i .. ". " .. example_name, 2))
 
 >
-$(indent(trim(example.body), (" "):rep(4)))
+$(code(example.body))
 <
 #       i = i + 1
 #     end
@@ -478,6 +488,17 @@ $(pretty(ret.text, 6))
     $(item.raise)
 #       end -- if item.raise
 #
+#       if item.usage then
+
+  Usage: ~
+#         for usage in iter(item.usage) do
+
+>
+$(code(usage))
+<
+#         end
+#       end -- if item.usage
+#
 #       if item.see then
 
   See also: ~
@@ -486,15 +507,6 @@ $(pretty(ret.text, 6))
     |$(help_tag_prefix .. "." .. see.label)|
 #         end
 #       end -- if item.see
-#
-#       if item.usage then
-
-  Usage: ~
-#         for usage in iter(item.usage) do
-
-$(pretty(usage, 4))
-#         end
-#       end -- if item.usage
 #
 #       if custom_tags then
 #         for tag in iter(custom_tags) do
