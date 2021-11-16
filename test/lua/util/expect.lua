@@ -38,7 +38,7 @@ function expect.seal(condition)
       -- 2 user
       local info = debug.getinfo(2)
       local source = info.source:match "^@(.*)"
-      local line = info.currentline
+      local linen = info.currentline
 
       local content = {}
       for line in io.open(source):lines() do
@@ -46,9 +46,9 @@ function expect.seal(condition)
       end
 
       print("  source: " .. source)
-      print("  line: " .. line)
+      print("  line number: " .. linen)
       print "  snippet:"
-      print_snippet(content, line)
+      print_snippet(content, linen)
 
       vim.schedule(function()
         vim.cmd [[ cq ]]

@@ -18,7 +18,9 @@ local function run_units(kind, pattern)
     vim.fn.mkdir(build, "p")
     local did_chmod, chmod_err = vim.loop.fs_chmod(build, 511) -- a=rwx
     assert(did_chmod, chmod_err)
+    vim.cmd("!ls -la --color=never '" .. build .. "'")
 
+    -- TODO: better error handling
     local error = nil
 
     if unit_name:match "callback" then
@@ -28,11 +30,10 @@ local function run_units(kind, pattern)
         "Callback unit " .. unit_name .. " must return a function!"
       )
 
-      -- TODO: errors here
-      unit(vim.schedule_wrap(function()
-        co.resume(thread)
+      unit(vim.schedule_wrap(function(err)
+        co.resume(thread, err)
       end))
-      co.yield()
+      error = co.yield()
     else
       local ran, res = pcall(dofile, unit_path)
       if not ran then
