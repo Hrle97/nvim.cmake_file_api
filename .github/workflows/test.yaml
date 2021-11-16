@@ -20,12 +20,6 @@ jobs:
         uses: jwlawson/actions-setup-cmake@v1.9
         with:
           cmake-version: "3.21.x"
-      - name: Check privileges
-        shell: bash
-        run: |
-          ls -la .
-          ls -la "$RUNNER_TEMP"
-          id
       - name: Run tests
         shell: bash
         run: ./scripts/test.sh "$RUNNER_TEMP/build"
