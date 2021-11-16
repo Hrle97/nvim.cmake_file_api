@@ -16,8 +16,8 @@ local function run_units(kind, pattern)
 
     vim.fn.delete(build, "rf")
     vim.fn.mkdir(build, "p")
-    local did_chmod, chmod_err = vim.loop.fs_chmod(build, 511) -- a=rwx
-    assert(did_chmod, chmod_err)
+    -- local did_chmod, chmod_err = vim.loop.fs_chmod(build, 511) -- a=rwx
+    -- assert(did_chmod, chmod_err)
     vim.cmd("!ls -la --color=never '" .. build .. "'")
 
     -- TODO: better error handling
