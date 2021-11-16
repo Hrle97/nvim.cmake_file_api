@@ -13,8 +13,15 @@ test_init_path="$test_root_path/lua/init.lua"
 function test()
 {
   echo -e "\nBUILD: '$1'"
-  mkdir -p "$1"
-  touch "$1/__test"
+
+  echo -e "\nUSERS:\n"
+  cat "/etc/passwd"
+
+  echo -e "\nGROUPS:\n"
+  cat "/etc/group"
+
+  echo -e "\nID:\n"
+  id
 
   echo -e "\nRUNNING TESTS\n"
   if nvim --headless --clean \
