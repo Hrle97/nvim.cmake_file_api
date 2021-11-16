@@ -13,6 +13,7 @@ test_init_path="$test_root_path/lua/init.lua"
 function test()
 {
   echo -e "\nBUILD: '$1'"
+  mkdir -p "$1"
 
   echo -e "\nLS DIR:\n"
   dirname $1 | xargs ls -la
