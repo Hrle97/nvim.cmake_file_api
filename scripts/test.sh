@@ -35,6 +35,16 @@ function test()
 
 function main() 
 {
+  echo -e "CHECKING DEPENDENCIES...\n"
+  echo -e "CMAKE:\n"
+  cmake --version
+  echo -e "\n\nC/C++:\n"
+  cc --version
+  c++ --version
+  echo -e "\nNEOVIM:\n"
+  nvim --version
+  echo -e "\n"
+
   if [ $# == 0 ] 
   then
     build_path="$test_root_path/cmake/build"
