@@ -14,9 +14,7 @@ local function run_units(kind, pattern)
     local unit_name = vim.fn.fnamemodify(unit_path, ":t:r")
     print("RUNNING " .. kind:upper() .. ": " .. unit_name .. " ...\n")
 
-    -- needed for github workflow...
     vim.fn.delete(build, "rf")
-    vim.fn.mkdir(build, "p")
 
     -- TODO: better error handling
     local error = nil
