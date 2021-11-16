@@ -6,7 +6,7 @@ function cmake.configure(callback)
 
     local handle = io.popen(cmd)
     for line in handle:lines() do
-      -- print(line)
+      print(line)
       local unused = function(_) end
       unused(line) -- stop unused warning
     end
@@ -17,7 +17,7 @@ function cmake.configure(callback)
 
   vim.loop.spawn("cmake", {
     args = { "-S", source, "-B", build },
-    -- stdio = { nil, 1, 2 },
+    stdio = { nil, 1, 2 },
     detached = false,
     hide = true,
     verbatim = false,
