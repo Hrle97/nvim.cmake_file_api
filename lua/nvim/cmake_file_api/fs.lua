@@ -5,11 +5,11 @@ local uv = vim.loop
 local offset = 0
 
 local write_flags = "w"
-local write_mode = 438 -- rwxrwxrw
+local write_mode = 511 -- rwxrwxrwx
 local write_offset = offset
 
 local read_flags = "r"
-local read_mode = 292 -- rwxrwxrw
+local read_mode = 365 -- r-xr-xr-x
 local read_offset = offset
 
 local max_dir_entries = 1024
