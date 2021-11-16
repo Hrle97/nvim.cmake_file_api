@@ -1,3 +1,6 @@
+permissions:
+  actions: "write"
+
 name: test
 on:
   push:
