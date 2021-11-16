@@ -11,6 +11,11 @@ will read the query files and write reply files for the client to read.
 
 Read the [CMake File API documentation](https://cmake.org/cmake/help/v3.21/manual/cmake-file-api.7.html) for more information.
 
+## Dependencies
+
+- Neovim 0.6.x (with cjson)
+- CMake 3.14.x (with cmake-file-api)
+
 ## Installation
 
 With [Packer](https://github.com/wbthomason/packer.nvim):
