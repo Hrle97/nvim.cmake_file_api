@@ -1,12 +1,6 @@
 local cmake_file_api = require "nvim.cmake_file_api"
 
-local did_write_query, write_err, err_type, err_path =
-  cmake_file_api.write_all_queries(
-    build
-  )
-if not did_write_query then
-  print(write_err, err_type, err_path)
-end
+local did_write_query = cmake_file_api.write_all_queries(build)
 expect(did_write_query)
 
 cmake.configure()

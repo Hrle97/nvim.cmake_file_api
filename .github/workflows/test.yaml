@@ -16,6 +16,7 @@ jobs:
         uses: rhysd/action-setup-vim@v1
         with:
           neovim: true
+          version: nightly
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v1.9
         with:
