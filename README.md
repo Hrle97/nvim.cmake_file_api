@@ -45,6 +45,8 @@ local reply_index = cmake_file_api.write_configure_read_all(
 
 This is an overview of the documentation for the Neovim CMake File API.
 
+See the full documentation [here](https://hrle97.github.io/nvim.cmake_file_api/).
+
 ### All-in-one Methods
 
 Methods that write a CMake File API query, run a method that generates
