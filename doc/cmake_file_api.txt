@@ -1,0 +1,2071 @@
+*cmake_file_api.txt*
+                                                           *nvim.cmake_file_api*
+                                                                *cmake_file_api*
+
+Library using the CMake file API to extract information about generated build
+systems.
+
+    Copyright :    © 2021 Hrle97 <32d9c8c6-8118-45e7-857e-8b45522f395d@anonaddy.me>
+    Release   :    0.0.1
+    License   :    MIT License
+    Author    :    Hrle97 <https://github.com/Hrle97>
+    Homepage  :    <https://github.com/Hrle97/nvim.cmake_file_api>
+
+
+==============================================================================
+                                                       *cmake_file_api_contents*
+
+CONTENTS
+
+    1. Overview ..................... |cmake_file_api_overview|
+    2. Examples ..................... |cmake_file_api_examples|
+      2.1. start..................... |cmake_file_api_start_example|
+      2.2. basic..................... |cmake_file_api_basic_example|
+      2.3. stateful.................. |cmake_file_api_stateful_example|
+      2.4. schedule_wrap_callback.... |cmake_file_api_schedule_wrap_callback_example|
+      2.5. error_handling............ |cmake_file_api_error_handling_example|
+      2.6. coroutine_callback........ |cmake_file_api_coroutine_callback_example|
+    3. Documentation ................ |cmake_file_api_documentation|
+      3.1. All in one................ |cmake_file_api_all_in_one|
+      3.2. Queries................... |cmake_file_api_queries|
+      3.3. Reply..................... |cmake_file_api_reply|
+      3.4. object.................... |cmake_file_api.object|
+      3.5. lazy...................... |cmake_file_api.lazy|
+      3.6. fail...................... |cmake_file_api.fail|
+      3.7. Utilities................. |cmake_file_api_utilities|
+    4. Changelog .................... |cmake_file_api_changelog|
+    5. Bugs ......................... |cmake_file_api_bugs|
+    6. Contributing ................. |cmake_file_api_contributing|
+    7. License ...................... |cmake_file_api_license|
+
+
+==============================================================================
+                                                       *cmake_file_api_overview*
+
+1. Overview
+
+CMake provides a file-based API that clients may use to get semantic
+information about the buildsystems CMake generates. Clients may use the API by
+writing query files to a specific location in a build tree to request zero or
+more Object Kinds. When CMake generates the buildsystem in that build tree it
+will read the query files and write reply files for the client to read.
+
+
+==============================================================================
+                                                       *cmake_file_api_examples*
+
+2. Examples
+
+Here are some examples of how to use the API to extract valueable buildsystem
+information.
+
+
+------------------------------------------------------------------------------
+                                                  *cmake_file_api_start_example*
+  2.1. start
+
+>
+    local cmake_file_api = require "nvim.cmake_file_api"
+
+    local reply_index = cmake_file_api.write_configure_read_all(
+      build, -- your build location here
+      cmake.configure -- use vim.fn.system or vim.loop.spawn or io.popen ...
+    )
+
+    expect.is_object(reply_index) -- expect is not exported - just here for testing
+
+    -- read data from the reply index here!
+<
+
+
+------------------------------------------------------------------------------
+                                                  *cmake_file_api_basic_example*
+  2.2. basic
+
+>
+    local cmake_file_api = require "nvim.cmake_file_api"
+
+    -- write codemodel query
+    local did_write_query, write_query_error = cmake_file_api.write_codemodel_query(
+      build -- your build location here
+    )
+    -- check for errors - read error handling help section
+    assert(did_write_query, write_query_error)
+
+    -- configure CMake
+    cmake.configure() -- use vim.fn.system or vim.loop.spawn or io.popen...
+
+    -- read codemodel reply
+    local codemodel, read_codemodel_error = cmake_file_api.read_codemodel_reply(
+      build -- your build location here
+    )
+    assert(codemodel, read_codemodel_error) -- check for errors
+    expect.is_object(codemodel) -- expect is not exported - here only for testing
+
+    -- I picked the first configuration because that's what my example project looks
+    -- like but you might have to do a bit more work here.
+    local targets = codemodel.data.configurations[1].targets
+    -- Again, first target because my project looks like that.
+    -- You can load more information about the target from this lazy value.
+    -- If you read the CMake File API docs, this will be put in place of the
+    -- "jsonFile" value.
+    local main_target_lazy = targets[1].lazy
+    expect.is_lazy(main_target_lazy) -- expect not exported
+
+    -- load main target info
+    local main_target, main_target_error = main_target_lazy:load()
+    assert(main_target, main_target_error) -- check for errors
+    expect.is_object(main_target) -- expect not exported
+
+    -- showcase of values you can find here
+    expect.eq(main_target.path, main_target_lazy.path)
+    expect.eq(main_target.data.name, "main")
+    expect.eq(main_target.data.type, "EXECUTABLE")
+    -- you might have to do more work here to find the desired artifact
+    expect.eq(main_target.data.artifacts[1].path, "main")
+<
+
+
+------------------------------------------------------------------------------
+                                               *cmake_file_api_stateful_example*
+  2.3. stateful
+
+>
+    local cmake_file_api = require "nvim.cmake_file_api"
+
+    local did_write_query, write_query_error =
+      cmake_file_api.write_client_stateful_query(
+        build,
+        {
+          -- Put desired requests here.
+          -- See the client stateful query documentation for more information.
+          -- https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files
+          requests = {
+            {
+              kind = "codemodel",
+              version = 2,
+            },
+          },
+          -- Put whatever data you need to read from the reply later here.
+          client = {
+            specific = true, -- random name - no meaning behind it
+          },
+        }
+      )
+    expect(did_write_query) -- here for testing
+    assert(did_write_query, write_query_error) -- see the error handling help
+
+    cmake.configure() -- use vim.fn.system or vim.loop.spawn or io.popen...
+
+    local index, read_index_error = cmake_file_api.read_reply_index(build)
+    expect.is_object(index) -- here for testing
+    assert(index, read_index_error) -- handle errors
+
+    -- Here is our data.
+    -- Client is always called "client-nvim" and stateful queries are always
+    -- in "query.json" when writing client queries.
+    local client_reply = index.data.reply["client-nvim"]["query.json"]
+
+    -- Here is the meaningless variable we set.
+    expect(client_reply.client.specific)
+
+    -- Here is the requested codemodel.
+    -- Since it is the only request we sent, it is going to be the first one.
+    expect.eq(client_reply.responses[1].kind, "codemodel")
+<
+
+
+------------------------------------------------------------------------------
+                                 *cmake_file_api_schedule_wrap_callback_example*
+  2.4. schedule_wrap_callback
+
+>
+    local cmake_file_api = require "nvim.cmake_file_api"
+
+    return function(callback) -- use the callback to run something at the very end
+      -- Using the cache query as an example.
+      cmake_file_api.write_cache_query(
+        build, -- your build location here
+        -- use latest for readability when you don't care about the version
+        cmake_file_api.latest,
+        -- If you want to use Vim functions in callbacks, you have to use
+        -- vim.schedule_wrap.
+        function(did_write_query, write_query_error)
+          expect(did_write_query) -- here for testing
+          assert(did_write_query, write_query_error) -- handle errors
+
+          -- For example, use vim.loop.spawn to configure CMake
+          cmake.configure(function() -- use vim.fn.system or vim.loop.spawn ...
+            -- Read the reply from the CMake File API.
+            cmake_file_api.read_cache_reply(
+              build, -- your build location here
+              cmake_file_api.latest,
+              function(cache, cache_error)
+                expect.is_object(cache)
+                assert(cache, cache_error)
+
+                expect.nay.is_nil(cache.data.entries) -- cache entries are here
+
+                callback()
+              end
+            )
+          end)
+        end
+      )
+    end
+<
+
+
+------------------------------------------------------------------------------
+                                         *cmake_file_api_error_handling_example*
+  2.5. error_handling
+
+>
+    local cmake_file_api = require "nvim.cmake_file_api"
+
+    -- Most methods in the CMake File API return errors in this way.
+    -- If there is an error, the first returned value is nil and the rest are not
+    -- nil, and the reverse is true when there is no error.
+    local reply_index, error, error_type, error_path =
+      cmake_file_api.write_configure_read_all(
+        build, -- your build location here
+        cmake.configure -- use vim.fn.system or vim.loop.spawn or io.popen...
+      )
+
+    -- The errors shown here are thrown by the luvit filesystem backend and are
+    -- threated as something that should be reported to the end user.
+    -- All other errors like passing in the wrong object kind or version or
+    -- attempting to read replies before a query was written or CMake was
+    -- configured are treated as programmer error and are asserted, so that the
+    -- programmer using this API catches the error and fixes their code.
+    -- See the error handling help section for more information.
+    if error then
+      -- CMake File API uses luvit as a backend for the filesystem.
+      -- All of these error types correspond to the names of luvit filesystem
+      -- methods that throw them. This is not an exhaustive list of error types,
+      -- and you should read the error handling help section for the exhaustive
+      -- list.
+      -- Read the luvit filesystem documentation for more information.
+      -- https://github.com/luvit/luv/blob/master/docs.md#file-system-operations
+      if error_type == "mkdir" then
+        print("Failed to make directory at: '" .. error_path .. "'")
+      elseif error_type == "opendir" then
+        print("Failed to open directory at: '" .. error_path .. "'")
+      elseif error_type == "readdir" then
+        print("Failed to read directory at: '" .. error_path .. "'")
+      elseif error_type == "closedir" then
+        print("Failed to close directory at: '" .. error_path .. "'")
+      elseif error_type == "open" then
+        print("Failed to open file at: '" .. error_path .. "'")
+      elseif error_type == "stat" then
+        print("Failed to get file info at: '" .. error_path .. "'")
+      elseif error_type == "read" then
+        print("Failed to read file at: '" .. error_path .. "'")
+      elseif error_type == "write" then
+        print("Failed to write file at: '" .. error_path .. "'")
+      elseif error_type == "close" then
+        print("Failed to close file at: '" .. error_path .. "'")
+      end
+
+      -- Error thrown by luvit.
+      -- Read the luvit documentation for more information.
+      -- https://github.com/luvit/luv/blob/master/docs.md
+      print("luvit error: '" .. error .. "'")
+    else
+      expect.is_object(reply_index) -- used for testing
+    end
+<
+
+
+------------------------------------------------------------------------------
+                                     *cmake_file_api_coroutine_callback_example*
+  2.6. coroutine_callback
+
+>
+    local cmake_file_api = require "nvim.cmake_file_api"
+
+    -- Sometimes it is easier to work with coroutines to avoid callback hell.
+    -- Read the coroutine documentation for more information.
+    -- https://www.lua.org/manual/5.1/manual.html#2.11
+    local thread = nil
+    -- callback to run something when everything is done
+    thread = coroutine.create(function(callback)
+      cmake_file_api.write_cmake_files_query(
+        build,
+        cmake_file_api.latest,
+        thread -- pass your thread to resume it once the query is written
+      )
+      local did_write = coroutine.yield() -- wait until the query gets written
+      expect(did_write) -- used for testing - do your error handling here
+
+      cmake.configure(function() -- use vim.fn.system or vim.loop.spawn ...
+        coroutine.resume(thread) -- resume thread once CMake is configured
+      end)
+      coroutine.yield() -- wait until CMake configures
+
+      cmake_file_api.read_cmake_files_reply( -- read the reply
+        build,
+        cmake_file_api.latest,
+        thread -- pass your thread to resume it once the reply is read
+      )
+      local reply = coroutine.yield() -- wait until the reply is read
+      expect.is_object(reply) -- used for testing - do your error handling here
+
+      callback() -- call callback once everything is done
+
+      -- If you want to accept a thread you could just write:
+      -- co.resume(callback, <args>...)
+      -- to run something in the end.
+    end)
+
+    return function(callback) -- callback to run something when everything is done
+      coroutine.resume(thread, callback) -- start the coroutine
+    end
+<
+
+
+==============================================================================
+                                                  *cmake_file_api_documentation*
+
+3. Documentation
+
+The API consists of methods that query the CMake File API, methods to read
+the reply of the API and classes that wrap the reply.
+
+At the very end, there are some utilities that make using the CMake File API a
+bit easier to use.
+
+
+------------------------------------------------------------------------------
+                                                     *cmake_file_api_all_in_one*
+
+3.1. All in one
+
+Methods that write a CMake File API query, run a method that generates a
+buildsystem and read the reply of the CMake File API - easiest to use for
+beginners.
+
+
+                                       *cmake_file_api.write_configure_read_all*
+
+write_configure_read_all({build}, {configure}[, {callback}])
+
+Write a query for everything, configure CMake, and read the reply index of the
+CMake File API.
+
+This is the best way to start using the CMake File API if you want to get
+started quickly because it enables you to extract all information the CMake
+File API can give you. If you already know how the CMake File API works then
+this writes "codemodel" , "cache", "cmakeFiles", and "tooolchains" stateless
+client queries and reads the reply index after the configure step is done. The
+versions of these queries are 2, 2, 1, and 1 respectively. See the CMake File
+API documentation for more info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    {configure} `function`
+      The method to call after writing the query to generate the buildsystem.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    |cmake_file_api.object|, |cmake_file_api.fail|
+      On success, returns the reply index and on failure, returns a
+      |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local reply_index = require("nvim.cmake_file_api")
+      .write_configure_read_all(
+        build, -- your build location here
+        function()
+          vim.fn.system {
+            "cmake",
+            "-S",
+            source, -- your source location here
+            "-B",
+            build -- your build location here
+          }
+        end)
+
+    if not reply_index then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+    |cmake_file_api.object|
+    |cmake_file_api.lazy|
+    |cmake_file_api.write_all_queries|
+    |cmake_file_api.read_reply_index|
+
+  Links: ~
+
+    CMake File API documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html>
+
+
+                                           *cmake_file_api.write_configure_read*
+
+write_configure_read({build}, {kind}, {version}, {configure}[, {callback}])
+
+Write a query, configure CMake, and read the reply of specified kind and
+version.
+
+More technically, this writes a client stateless query and reads the reply of
+the specified kind and version. See the object kind documentation for more
+info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    {kind} `string`
+      The object kind of query and reply. Valid values are: "codemodel",
+      "cache", "cmakeFiles", and "tkolchains". See the object kind
+      documentation for more info.
+
+    {version} `number`, `string`, `nil`
+      The major object version of the query and reply. Valid values depend on
+      the query kind. If `nil`, the latest version for the object kind will be
+      used. Use the |cmake_file_api.latest| field for more readability. See
+      the CMake File API documentation for more info.
+
+    {configure} `function`
+      The method to call after writing the query to generate the buildsystem.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    |cmake_file_api.object|, |cmake_file_api.fail|
+      On success, returns the reply as a |cmake_file_api.object| and on
+      failure, returns a |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local codemodel = require("nvim.cmake_file_api")
+      .write_configure_read(
+        build, -- your build location here
+        "codemodel", -- kind of query here
+        2, -- query version here
+        function()
+          vim.fn.system {
+            "cmake",
+            "-S",
+            source, -- your source location here
+            "-B",
+            build -- your build location here
+          }
+        end)
+
+    if not codemodel then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+    |cmake_file_api.object|
+    |cmake_file_api.lazy|
+    |cmake_file_api.write_query|
+    |cmake_file_api.read_reply|
+    |cmake_file_api.latest|
+
+  Links: ~
+
+    Object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds>
+
+    CMake File API documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html>
+
+
+                                 *cmake_file_api.write_configure_read_codemodel*
+
+write_configure_read_codemodel({build}, {version}, {configure}[, {callback}])
+
+Write a query, configure CMake, and read the reply of the "codemodel" kind.
+
+More technically, this writes a client stateless query and reads the reply of
+the "codemodel" kind. See the "codemodel" object kind documentation for more
+info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    {version} `number`, `string`, `nil`
+      The major object version of the query and reply. Valid values are 1 and
+      2. If `nil`, 2 is used. Use the |cmake_file_api.latest| field for more
+      readability.
+
+    {configure} `function`
+      The method to call after writing the query to generate the buildsystem.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    |cmake_file_api.object|, |cmake_file_api.fail|
+      On success, returns the reply as a |cmake_file_api.object| and on
+      failure, returns a |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local codemodel = require("nvim.cmake_file_api")
+      .write_configure_read_codemodel(
+        build, -- your build location here
+        2, -- query version here
+        function()
+          vim.fn.system {
+            "cmake",
+            "-S",
+            source, -- your source location here
+            "-B",
+            build -- your build location here
+          }
+        end)
+
+    if not codemodel then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+    |cmake_file_api.object|
+    |cmake_file_api.lazy|
+    |cmake_file_api.write_codemodel_query|
+    |cmake_file_api.read_codemodel_reply|
+    |cmake_file_api.latest|
+
+  Links: ~
+
+    "codemodel" object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-codemodel>
+
+
+                                     *cmake_file_api.write_configure_read_cache*
+
+write_configure_read_cache({build}, {version}, {configure}[, {callback}])
+
+Write a query, configure CMake, and read the reply of the "cache" kind.
+
+More technically, this writes a client stateless query and reads the reply of
+the "cache" kind. See the "cache" object kind documentation for more info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    {version} `number`, `string`, `nil`
+      The major object version of the query and reply. Valid values are 1 and
+      2. If `nil`, 2 is used. Use the |cmake_file_api.latest| field for more
+      readability.
+
+    {configure} `function`
+      The method to call after writing the query to generate the buildsystem.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    |cmake_file_api.object|, |cmake_file_api.fail|
+      On success, returns the reply as a |cmake_file_api.object| and on
+      failure, returns a |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local cache = require("nvim.cmake_file_api")
+      .write_configure_read_cache(
+        build, -- your build location here
+        2, -- query version here
+        function()
+          vim.fn.system {
+            "cmake",
+            "-S",
+            source, -- your source location here
+            "-B",
+            build -- your build location here
+          }
+        end)
+
+    if not cache then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+    |cmake_file_api.object|
+    |cmake_file_api.lazy|
+    |cmake_file_api.write_cache_query|
+    |cmake_file_api.read_cache_reply|
+    |cmake_file_api.latest|
+
+  Links: ~
+
+    "cache" object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cache>
+
+
+                               *cmake_file_api.write_configure_read_cmake_files*
+
+write_configure_read_cmake_files({build}, {version}, {configure}[, {callback}])
+
+Write a query, configure CMake, and read the reply of the "cmakeFiles" kind.
+
+More technically, this writes a client stateless query and reads the reply of
+the "cmakeFiles" kind. See the "cmakeFiles" object kind documentation for more
+info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    {version} `number`, `string`, `nil`
+      The major object version of the query and reply. Valid values are 1 and
+      2. If `nil`, 2 is used. Use the |cmake_file_api.latest| field for more
+      readability.
+
+    {configure} `function`
+      The method to call after writing the query to generate the buildsystem.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    |cmake_file_api.object|, |cmake_file_api.fail|
+      On success, returns the reply as a |cmake_file_api.object| and on
+      failure, returns a |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local cmake_files = require("nvim.cmake_file_api")
+      .write_configure_read_cmake_files(
+        build, -- your build location here
+        1, -- query version here
+        function()
+          vim.fn.system {
+            "cmake",
+            "-S",
+            source, -- your source location here
+            "-B",
+            build -- your build location here
+          }
+        end)
+
+    if not cmake_files then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+    |cmake_file_api.object|
+    |cmake_file_api.lazy|
+    |cmake_file_api.write_cmake_files_query|
+    |cmake_file_api.read_cmake_files_reply|
+    |cmake_file_api.latest|
+
+  Links: ~
+
+    "cmakeFiles" object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cmakeFiles>
+
+
+                                *cmake_file_api.write_configure_read_toolchains*
+
+write_configure_read_toolchains({build}, {version}, {configure}[, {callback}])
+
+Write a query, configure CMake, and read the reply of the "toolchains" kind.
+
+More technically, this writes a client stateless query and reads the reply of
+the "toolchains" kind. See the "toolchains" object kind documentation for more
+info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    {version} `number`, `string`, `nil`
+      The major object version of the query and reply. Valid values are 1 and
+      2. If `nil`, 2 is used. Use the |cmake_file_api.latest| field for more
+      readability.
+
+    {configure} `function`
+      The method to call after writing the query to generate the buildsystem.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    |cmake_file_api.object|, |cmake_file_api.fail|
+      On success, returns the reply as a |cmake_file_api.object| and on
+      failure, returns a |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local toolchains = require("nvim.cmake_file_api")
+      .write_configure_read_toolchains(
+        build, -- your build location here
+        1, -- query version here
+        function()
+          vim.fn.system {
+            "cmake",
+            "-S",
+            source, -- your source location here
+            "-B",
+            build -- your build location here
+          }
+        end)
+
+    if not toolchains then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+    |cmake_file_api.object|
+    |cmake_file_api.lazy|
+    |cmake_file_api.write_toolchains_query|
+    |cmake_file_api.read_toolchains_reply|
+    |cmake_file_api.latest|
+
+  Links: ~
+
+    "toolchains" object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-toolchains>
+
+
+------------------------------------------------------------------------------
+                                                        *cmake_file_api_queries*
+
+3.2. Queries
+
+Methods to call before configuring CMake in order to instruct it what data to
+generate using the API.
+
+
+                                              *cmake_file_api.write_all_queries*
+
+write_all_queries({build}[, {callback}])
+
+Write queries for everything to the CMake File API.
+
+This is the best way to start using the CMake File API if you want to get
+started quickly and you don't want to use the "all-in-one" methods. Use
+alongside the |cmake_file_api.read_reply_index| method. If you already know
+how the CMake File API works then this writes "codemodel" , "cache",
+"cmakeFiles", and "tooolchains" stateless client queries. The versions of
+these queries are 2, 2, 1, and 1 respectively. See the CMake File API
+documentation for more info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    `boolean`, |cmake_file_api.fail|
+      On success, returns true and on failure, returns a
+      |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local did_write = require("nvim.cmake_file_api")
+      .write_all_queries(
+        build -- your build location here
+      )
+
+    if not did_write then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+
+  Links: ~
+
+    CMake File API documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html>
+
+
+                                                    *cmake_file_api.write_query*
+
+write_query({build}, {kind}, {version}[, {callback}])
+
+Write a query for the CMake File API.
+
+Write a query of the specified kind and version to the CMake File API. Use
+this alongside the |cmake_file_api.read_reply| and read_<object_kind>_reply
+methods. More technically, this writes a client stateless query of the
+specified kind and version. See the object kind documentation for more info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    {kind} `string`
+      The kind of query to send. Valid values are: "codemodel", "cache",
+      "cmakeFiles", and "tkolchains". See the object kind documentation for
+      more info.
+
+    {version} `number`, `string`, `nil`
+      The major version of the query kind to send. Valid values depend on the
+      query kind. If `nil`, the latest version for the query kind will be
+      used. Use the |cmake_file_api.latest| field for more readability. See
+      the CMake File API documentation for more info.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    `boolean`, |cmake_file_api.fail|
+      On success, returns true and on failure, returns a
+      |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local did_write = require("nvim.cmake_file_api")
+      .write_query(
+        build -- your build location here
+        "codemodel", -- your query kind here
+        2, -- your query version here
+      )
+
+    if not did_write then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+    |cmake_file_api.read_reply|
+    |cmake_file_api.read_codemodel_reply|
+    |cmake_file_api.read_cache_reply|
+    |cmake_file_api.read_cmake_files_reply|
+    |cmake_file_api.read_toolchains_reply|
+    |cmake_file_api.latest|
+
+  Links: ~
+
+    Object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds>
+
+    CMake File API documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html>
+
+
+                                          *cmake_file_api.write_codemodel_query*
+
+write_codemodel_query({build}, {version}[, {callback}])
+
+Write a "codemodel" query for the CMake File API.
+
+The "codemodel" query can be used to extract information about directories,
+configurations and targets of the generated build system. Use this alongside
+the |cmake_file_api.read_codemodel_reply| method. More technically, it writes
+a stateless client "codemodel" query of version 2. See the "codemodel" object
+kind documentation for more info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    {version} `number`, `string`, `nil`
+      The major version of the "codemodel" query to send. Valid values are: 1
+      and 2. If `nil`, 2 is used. Use the |cmake_file_api.latest| field for
+      more readability.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    `boolean`, |cmake_file_api.fail|
+      On success, returns true and on failure, returns a
+      |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local did_write = require("nvim.cmake_file_api")
+      .write_codemodel_query(
+        build -- your build location here
+        2, -- your query version here
+      )
+
+    if not did_write then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+    |cmake_file_api.read_reply|
+    |cmake_file_api.read_codemodel_reply|
+    |cmake_file_api.latest|
+
+  Links: ~
+
+    "codemodel" object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-codemodel>
+
+
+                                              *cmake_file_api.write_cache_query*
+
+write_cache_query({build}, {version}[, {callback}])
+
+Write a "cache" query for the CMake File API.
+
+The "cache" query can be used to extract information about the CMake cache.
+Use this alongside the |cmake_file_api.read_cache_reply| method. More
+technically, it writes a stateless client "cache" query of version 2. See the
+"cache" object kind documentation for more info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    {version} `number`, `string`, `nil`
+      The major version of the "cache" query to send. Valid values are: 1 and
+      2. If `nil`, 2 is used. Use the |cmake_file_api.latest| field for more
+      readability.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    `boolean`, |cmake_file_api.fail|
+      On success, returns true and on failure, returns a
+      |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local did_write = require("nvim.cmake_file_api")
+      .write_cache_query(
+        build -- your build location here
+        2, -- your query version here
+      )
+
+    if not did_write then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+    |cmake_file_api.read_reply|
+    |cmake_file_api.read_codemodel_reply|
+    |cmake_file_api.latest|
+
+  Links: ~
+
+    "cache" object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cache>
+
+
+                                        *cmake_file_api.write_cmake_files_query*
+
+write_cmake_files_query({build}, {version}[, {callback}])
+
+Write a "cmakeFiles" query for the CMake File API.
+
+The "cmakeFiles" query can be used to extract information about the generated
+CMake build system files. Use this alongside the
+|cmake_file_api.read_cmake_files_reply| method. More technically, it writes a
+stateless client "cmakeFiles" query of version 1. See the "cmakeFiles" object
+kind documentation for more info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    {version} `number`, `string`, `nil`
+      The major version of the "cmakeFiles" query to send. 1 is the only valid
+      value. If `nil`, 1 is used. Use the |cmake_file_api.latest| field for
+      more readability.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    `boolean`, |cmake_file_api.fail|
+      On success, returns true and on failure, returns a
+      |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local did_write = require("nvim.cmake_file_api")
+      .write_cmake_files_query(
+        build -- your build location here
+        1, -- your query version here
+      )
+
+    if not did_write then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+    |cmake_file_api.read_reply|
+    |cmake_file_api.read_cmake_files_reply|
+    |cmake_file_api.latest|
+
+  Links: ~
+
+    "cmakeFiles" object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cmakeFiles>
+
+
+                                         *cmake_file_api.write_toolchains_query*
+
+write_toolchains_query({build}, {version}[, {callback}])
+
+Write a "toolchains" query for the CMake File API.
+
+The "toolchains" query can be used to extract information about directories,
+configurations and targets of the generated build system. Use this alongside
+the |cmake_file_api.read_toolchains_reply| method. More technically, it writes
+a stateless client "toolchains" query of version 2. See the "toolchains"
+object kind documentation for more info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    {version} `number`, `string`, `nil`
+      The major version of the "toolchains" query to send. 1 is the only valid
+      value. If `nil`, 1 is used. Use the |cmake_file_api.latest| field for
+      more readability.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    `boolean`, |cmake_file_api.fail|
+      On success, returns true and on failure, returns a
+      |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local did_write = require("nvim.cmake_file_api")
+      .write_toolchains_query(
+        build -- your build location here
+        1, -- your query version here
+      )
+
+    if not did_write then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+    |cmake_file_api.read_reply|
+    |cmake_file_api.read_toolchains_reply|
+    |cmake_file_api.latest|
+
+  Links: ~
+
+    "toolchains" object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-toolchains>
+
+
+                                   *cmake_file_api.write_shared_stateless_query*
+
+write_shared_stateless_query({build}, {kind}, {version}[, {callback}])
+
+Write a shared stateless query for the CMake File API.
+
+The query will be shared with other clients such as IDE's and editors and is
+therefore not recommended for use, but is implemented for the sake of
+completion of the API. See the shared stateless query documentation for more
+info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    {kind} `string`
+      The kind of query to send. Valid values are: "codemodel", "cache",
+      "cmakeFiles", and "tkolchains". See the object kind documentation for
+      more info.
+
+    {version} `number`, `string`, `nil`
+      The major version of the query kind to send. Valid values depend on the
+      query kind. If `nil`, the latest version for the query kind will be
+      used. See the CMake File API documentation for more info. Use the
+      |cmake_file_api.latest| field for more readability.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    `boolean`, |cmake_file_api.fail|
+      On success, returns true and on failure, returns a
+      |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local did_write = require("nvim.cmake_file_api")
+      .write_shared_stateless_query(
+        build, -- your build location here
+        "codemodel", -- your query kind here
+        2 -- your query version here
+      )
+
+    if not did_write then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+    |cmake_file_api.latest|
+
+  Links: ~
+
+    Shared stateless query documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-shared-stateless-query-files>
+
+    Object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds>
+
+
+                                   *cmake_file_api.write_client_stateless_query*
+
+write_client_stateless_query({build}, {kind}, {version}[, {callback}])
+
+Write a client stateless query for the CMake File API.
+
+The query won't be shared with other clients such as IDE's and editors.
+Methods with the name write_<object_kind>_query use this method to write their
+queries. See the client stateless query documentation for more info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    {kind} `string`
+      The kind of query to send. Valid values are: "codemodel", "cache",
+      "cmakeFiles", and "toolchains". See the object kind documentation for
+      more info.
+
+    {version} `number`, `string`, `nil`
+      The major version of the query kind to send. Valid values depend on the
+      query kind. If `nil`, the latest version for the query kind will be
+      used. Use the |cmake_file_api.latest| field for more readability. See
+      the CMake File API documentation for more info.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    `boolean`, |cmake_file_api.fail|
+      On success, returns true and on failure, returns a
+      |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local did_write = require("nvim.cmake_file_api")
+      .write_client_stateless_query(
+        build, -- your build location here
+        "codemodel", -- your query kind here
+        2 -- your query version here
+      )
+
+    if not did_write then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+    |cmake_file_api.write_query|
+    |cmake_file_api.write_codemodel_query|
+    |cmake_file_api.write_cache_query|
+    |cmake_file_api.write_cmake_files_query|
+    |cmake_file_api.write_toolchains_query|
+    |cmake_file_api.latest|
+
+  Links: ~
+
+    Client stateless query documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateless-query-files>
+
+    Object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds>
+
+
+                                    *cmake_file_api.write_client_stateful_query*
+
+write_client_stateful_query({build}, {query}[, {callback}])
+
+Write a client stateful query for the CMake File API.
+
+The query won't be shared with other clients such as IDE's and editors. Use
+only if you know exactly what you are doing. See the shared stateless query
+documentation for more info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the to be generated buildsystem.
+
+    {query} `table`
+      The query to send to the CMake File API. Reqd the client statefull query
+      documentation for more info.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    `boolean`, |cmake_file_api.fail|
+      On success, returns true and on failure, returns a
+      |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local did_write = require("nvim.cmake_file_api")
+      .write_client_stateful_query(
+        build, -- your build location here
+        {
+          requests = { -- your requests here
+            { kind = "codemodel", version = 2 },
+          },
+          client = { } -- other info available in the reply here
+        }
+      )
+
+    if not did_write then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+
+  Links: ~
+
+    Client stateful query documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files>
+
+    Object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds>
+
+
+------------------------------------------------------------------------------
+                                                          *cmake_file_api_reply*
+
+3.3. Reply
+
+Functions and classes to use after configuring CMake in order to read the
+reply of the API.
+
+
+                                               *cmake_file_api.read_reply_index*
+
+read_reply_index({build}[, {callback}])
+
+Read the reply index from the CMake File API.
+
+After configuration, CMake will generate the reply index with links to the
+desired replies if a query was written. This is the best way to start using
+the CMake File API if you want to get started quickly and you don't want to
+use the "all-in-one" methods. Use this alongside the
+|cmake_file_api.write_all_queries| method. See the reply index file
+documentation for more info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the generated buildsystem. It has to be an
+      already existing directory on the filesystem.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    |cmake_file_api.object|, |cmake_file_api.fail|
+      On success, returns the reply index and on failure, returns a
+      |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local reply_index = require("nvim.cmake_file_api")
+      .read_reply_index(
+        build -- your build location here
+      )
+
+    if not reply_index then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+    |cmake_file_api.object|
+    |cmake_file_api.lazy|
+    |cmake_file_api.write_all_queries|
+
+  Links: ~
+
+    Reply index file documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-reply-index-file>
+
+
+                                                     *cmake_file_api.read_reply*
+
+read_reply({build}, {kind}, {version}[, {callback}])
+
+Read a reply from the CMake File API.
+
+Reads the reply index and reads the desired reply kind from the file
+specifiend in the index. Use this alongside the write_<object_kind>_query and
+the |cmake_file_api.write_query| methods. See the object kind documentation
+for more info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the generated buildsystem. It has to be an
+      already existing directory on the filesystem.
+
+    {kind} `string`
+      The kind of reply to read. Valid values are: "codemodel", "cache",
+      "cmakeFiles", and "toolchains". See the object kind documentation for
+      more info.
+
+    {version} `number`, `string`, `nil`
+      The major version of the reply kind to read. Valid values depend on the
+      query kind. If `nil`, the latest version for the query kind will be
+      used. See the CMake File API documentation for more info. Use the
+      |cmake_file_api.latest| field for more readability.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    |cmake_file_api.object|, |cmake_file_api.fail|
+      On success, returns the reply as a |cmake_file_api.object| and on
+      failure, returns a |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local reply = require("nvim.cmake_file_api")
+      .read_reply(
+        build, -- your build location here
+        "codemodel", -- your query kind here
+        2 -- your query version here
+      )
+
+    if not reply then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+    |cmake_file_api.object|
+    |cmake_file_api.lazy|
+    |cmake_file_api.write_query|
+    |cmake_file_api.write_codemodel_query|
+    |cmake_file_api.write_cache_query|
+    |cmake_file_api.write_cmake_files_query|
+    |cmake_file_api.write_toolchains_query|
+    |cmake_file_api.latest|
+
+  Links: ~
+
+    Object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds>
+
+
+                                           *cmake_file_api.read_codemodel_reply*
+
+read_codemodel_reply({build}, {version}[, {callback}])
+
+Read a "codemodel" reply from the CMake File API.
+
+Reads the reply index and reads the "codemodel" reply from the file specifiend
+in the index. Use this alongside the and the
+|cmake_file_api.write_codemodel_query| method. See the "codemodel" object kind
+documentation for more info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the generated buildsystem. It has to be an
+      already existing directory on the filesystem.
+
+    {version} `number`, `string`, `nil`
+      The major version of the "codemodel" reply to read. Valid values are 1
+      and 2. If `nil`, the version is 2. Use the |cmake_file_api.latest| field
+      for more readability.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    |cmake_file_api.object|, |cmake_file_api.fail|
+      On success, returns the reply as a |cmake_file_api.object| and on
+      failure, returns a |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local codemodel = require("nvim.cmake_file_api")
+      .read_codemodel_reply(
+        build, -- your build location here
+        2 -- your query version here
+      )
+
+    if not codemodel then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+    |cmake_file_api.object|
+    |cmake_file_api.lazy|
+    |cmake_file_api.write_codemodel_query|
+    |cmake_file_api.latest|
+
+  Links: ~
+
+    "codemodel" object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-codemodel>
+
+
+                                               *cmake_file_api.read_cache_reply*
+
+read_cache_reply({build}, {version}[, {callback}])
+
+Read a "cache" reply from the CMake File API.
+
+Reads the reply index and reads the "cache" reply from the file specifiend in
+the index. Use this alongside the and the |cmake_file_api.write_cache_query|
+method. See the "cache" object kind documentation for more info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the generated buildsystem. It has to be an
+      already existing directory on the filesystem.
+
+    {version} `number`, `string`, `nil`
+      The major version of the "cache" reply to read. Valid values are 1 and
+      2. If `nil`, the version is 2. Use the |cmake_file_api.latest| field for
+      more readability.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    |cmake_file_api.object|, |cmake_file_api.fail|
+      On success, returns the reply as a |cmake_file_api.object| and on
+      failure, returns a |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local cache = require("nvim.cmake_file_api")
+      .read_cache_reply(
+        build, -- your build location here
+        2 -- your query version here
+      )
+
+    if not cache then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+    |cmake_file_api.object|
+    |cmake_file_api.lazy|
+    |cmake_file_api.write_cache_query|
+    |cmake_file_api.latest|
+
+  Links: ~
+
+    "cache" object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cache>
+
+
+                                         *cmake_file_api.read_cmake_files_reply*
+
+read_cmake_files_reply({build}, {version}[, {callback}])
+
+Read a "cmakeFile" reply from the CMake File API.
+
+Reads the reply index and reads the "cmakeFile" reply from the file specifiend
+in the index. Use this alongside the and the
+|cmake_file_api.write_cmake_files_query| method. See the "cmakeFile" object
+kind documentation for more info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the generated buildsystem. It has to be an
+      already existing directory on the filesystem.
+
+    {version} `number`, `string`, `nil`
+      The major version of the "cmakeFile" reply to read. 1 is the only valid
+      value. If `nil`, the version is 1. Use the |cmake_file_api.latest| field
+      for more readability.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    |cmake_file_api.object|, |cmake_file_api.fail|
+      On success, returns the reply as a |cmake_file_api.object| and on
+      failure, returns a |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local cmake_files = require("nvim.cmake_file_api")
+      .read_cmake_files_reply(
+        build, -- your build location here
+        1 -- your query version here
+      )
+
+    if not cmake_files then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+    |cmake_file_api.object|
+    |cmake_file_api.lazy|
+    |cmake_file_api.write_cmake_files_query|
+    |cmake_file_api.latest|
+
+  Links: ~
+
+    "cmakeFile" object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cmakeFile>
+
+
+                                          *cmake_file_api.read_toolchains_reply*
+
+read_toolchains_reply({build}, {version}[, {callback}])
+
+Read a "toolchains" reply from the CMake File API.
+
+Reads the reply index and reads the "toolchains" reply from the file
+specifiend in the index. Use this alongside the and the
+|cmake_file_api.write_toolchains_query| method. See the "toolchains" object
+kind documentation for more info.
+
+  Parameters: ~
+
+    {build} `string`
+      The build directory of the generated buildsystem. It has to be an
+      already existing directory on the filesystem.
+
+    {version} `number`, `string`, `nil`
+      The major version of the "toolchains" reply to read. 1 is the only valid
+      value. If `nil`, the version is 1. Use the |cmake_file_api.latest| field
+      for more readability.
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    |cmake_file_api.object|, |cmake_file_api.fail|
+      On success, returns the reply as a |cmake_file_api.object| and on
+      failure, returns a |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local toolchains = require("nvim.cmake_file_api")
+      .read_toolchains_reply(
+        build, -- your build location here
+        1 -- your query version here
+      )
+
+    if not toolchains then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+    |cmake_file_api.object|
+    |cmake_file_api.lazy|
+    |cmake_file_api.write_toolchains_query|
+    |cmake_file_api.latest|
+
+  Links: ~
+
+    "toolchains" object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-toolchains>
+
+
+------------------------------------------------------------------------------
+                                                         *cmake_file_api.object*
+
+3.4. object
+
+Reply object class.
+
+Returned by the read_reply methods. All the fields of this type are the same
+as in the reply index file documentation except for special fields that have
+the key "jsonFile". These fields are not immediately loaded and are instead
+initialized as a |cmake_file_api.lazy| with the "lazy" key. Lazy objects have
+a path field and a load method which can run synchronously and asynchronously
+to retrieve the desired field as a |cmake_file_api.object|.
+
+  Fields: ~
+
+    {path} `string`
+      Path to the JSON file from which this will be read with the
+      |cmake_file_api.lazy:load| method.
+
+    {data}
+      Data that was read from the JSON file that this was loaded from.
+
+
+                                               *cmake_file_api.object.is_object*
+
+object.is_object({value})
+
+Check if a value is a |cmake_file_api.object|.
+
+  Parameters: ~
+
+    {value}
+      Value to check against.
+
+  Returns: ~
+
+    `boolean`
+      Whether the value is an |cmake_file_api.object|.
+
+
+                                                     *cmake_file_api.object.new*
+
+object.new({path}, {kind}, {data})
+
+Create a new |cmake_file_api.object|.
+
+Values of fields with the key "jsonFile" are going to be converted to
+|cmake_file_api.lazy| values with the "lazy" key.
+
+  Parameters: ~
+
+    {path} `string`
+      Path to the JSON file from which this was read.
+
+    {kind} `string`
+      The kind of query to send. Valid values are: "codemodel", "cache",
+      "cmakeFiles", and "toolchains". See the object kind documentation for
+      more info.
+
+    {data} `table`
+      Data representing some values of the reply.
+
+  Returns: ~
+
+    |cmake_file_api.object|
+      Constructed |cmake_file_api.object|.
+
+  See also: ~
+
+    |cmake_file_api.lazy|
+
+
+------------------------------------------------------------------------------
+                                                           *cmake_file_api.lazy*
+
+3.5. lazy
+
+Lazy object field class.
+
+Values of fields with the key "jsonFiles" of API replies are converted to
+|cmake_file_api.lazy| values with the "lazy" key that can be loaded
+synchronously or asynchronously with the |cmake_file_api.lazy:load| method
+into a |cmake_file_api.object|.
+
+  Fields: ~
+
+    {path} `string`
+      Path to the JSON file from which this will be read with the
+      |cmake_file_api.lazy:load| method.
+
+
+                                                   *cmake_file_api.lazy.is_lazy*
+
+lazy.is_lazy({value})
+
+Check if a value is a |cmake_file_api.lazy|.
+
+  Parameters: ~
+
+    {value}
+      Value to check against.
+
+  Returns: ~
+
+    `boolean`
+      Whether the value is a |cmake_file_api.lazy|.
+
+
+                                                       *cmake_file_api.lazy.new*
+
+lazy.new({path})
+
+Create a new |cmake_file_api.lazy|
+
+The |cmake_file_api.lazy| can be loaded later into an |cmake_file_api.object|
+with the |cmake_file_api.lazy:load| method.
+
+  Parameters: ~
+
+    {path} `string`
+      Path to the JSON file from which this will be read.
+
+  Returns: ~
+
+    |cmake_file_api.lazy|
+      Constructed |cmake_file_api.lazy|.
+
+
+                                                      *cmake_file_api.lazy:load*
+
+lazy:load([{callback}])
+
+Load a |cmake_file_api.lazy|.
+
+Load a |cmake_file_api.lazy| into an |cmake_file_api.object| synchronously or
+asynchronously.
+
+  Parameters: ~
+
+    [{callback} `function`, `thread`, `nil`]
+      If not `nil`, the method will run asynchronously and call the callback
+      or resume the `thread` upon completion with the result as its
+      parameters. Otherwise, it will run synchronously. Note: Use
+      `vim.schedule` or `vim.schedule_wrap` to run Vim methods from this
+      callback.
+
+  Returns: ~
+
+    |cmake_file_api.object|, |cmake_file_api.fail|
+      On success, returns the lazy loaded as a |cmake_file_api.object| and on
+      failure, returns a |cmake_file_api.fail|.
+
+  Usage: ~
+
+>
+    local object = lazy -- your lazy object here
+      :load()
+
+    if not object then
+      -- handle errors here
+    end
+<
+
+  See also: ~
+
+    |cmake_file_api.fail|
+    |cmake_file_api.object|
+
+
+------------------------------------------------------------------------------
+                                                           *cmake_file_api.fail*
+
+3.6. fail
+
+Fail result type.
+
+This is not an actual class exported in the CMake File API, but a type that
+describes how methods in the API handle errors. It is returned by all methods
+when an error occurs that is not due to the developer using the API, such as
+not having privileges to write files or make directories. It is very similar
+to the fail type defined in the luvit library documentation provided in
+`vim.loop`, so check the luvit error documentation for more information. In
+place of the type of result that a method would produce upon success `nil` is
+returned instead and error details are returned in the rest of the reply. For
+errors that were caused by developers using the API, such as providing a non
+existing query kind or version or trying to read a reply when CMake was not
+configured, an assertion is thrown.
+
+
+                                               *cmake_file_api.fail.did_succeed*
+
+fail.did_succeed()
+
+Check whether or not a methods execution ended in success.
+
+  Parameters: ~
+
+  Returns: ~
+
+    `boolean`
+      Whether or not a methods execution ended in a failure.
+
+
+                                                  *cmake_file_api.fail.did_fail*
+
+fail.did_fail()
+
+Check whether or not a methods execution ended in failure.
+
+  Parameters: ~
+
+  Returns: ~
+
+    `boolean`
+      Whether or not a methods execution ended in a failure.
+
+
+------------------------------------------------------------------------------
+                                                      *cmake_file_api_utilities*
+
+3.7. Utilities
+
+Miscellaneous utilities and methods that make it easier to use the CMake file
+API.
+
+
+                                                         *cmake_file_api.latest*
+
+latest({latest})
+
+Latest version of object kinds
+
+This is just equal to `nil`, but it makes it makes using latest versions of
+object kinds more readable instead of just passing `nil`.
+
+  Parameters: ~
+
+    {latest}
+
+
+  Links: ~
+
+    Object kind documentation:
+    <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds>
+
+
+
+
+==============================================================================
+                                                       *cmake_file_api_examples*
+
+4. Changelog
+
+16 Nov 2021                                                             v0.0.1
+  Initial Release
+
+
+==============================================================================
+                                                           *cmake_file_api_bugs*
+
+5. Bugs
+
+
+==============================================================================
+                                                   *cmake_file_api_contributing*
+
+6. Contributing
+
+
+==============================================================================
+                                                        *cmake_file_api_license*
+
+7. License
+
+>
+  MIT License
+  Copyright © 2021 Hrle97 <32d9c8c6-8118-45e7-857e-8b45522f395d@anonaddy.me>
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the “Software”), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
+<

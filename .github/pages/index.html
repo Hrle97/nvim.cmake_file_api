@@ -1,0 +1,2267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Neovim CMake File API</title>
+    <link rel="stylesheet" href="ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Neovim CMake File API</h1>
+
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#All_in_one">All in one </a></li>
+<li><a href="#Queries">Queries </a></li>
+<li><a href="#Reply">Reply </a></li>
+<li><a href="#Class_object">Class object </a></li>
+<li><a href="#Class_lazy">Class lazy </a></li>
+<li><a href="#Class_fail">Class fail </a></li>
+<li><a href="#Utilities">Utilities </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><strong>nvim.cmake_file_api</strong></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="topics/README.md.html">README</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="examples/1_start.lua.html">1_start.lua</a></li>
+  <li><a href="examples/2_basic.lua.html">2_basic.lua</a></li>
+  <li><a href="examples/3_stateful.lua.html">3_stateful.lua</a></li>
+  <li><a href="examples/4_schedule_wrap_callback.lua.html">4_schedule_wrap_callback.lua</a></li>
+  <li><a href="examples/5_error_handling.lua.html">5_error_handling.lua</a></li>
+  <li><a href="examples/6_coroutine_callback.lua.html">6_coroutine_callback.lua</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>nvim.cmake_file_api</code></h1>
+<p>CMake File API client implementation for Neovim.</p>
+<p> CMake provides a file-based API that clients may use to get semantic
+ information about the buildsystems CMake generates. Clients may use the API
+ by writing query files to a specific location in a build tree to request zero
+ or more Object Kinds. When CMake generates the buildsystem in that build tree
+ it will read the query files and write reply files for the client to read.</p>
+    <h3>Info:</h3>
+    <ul>
+        <li><strong>Copyright</strong>: © 2021 Hrle97 <a href="&#x6d;&#97;&#x69;&#108;&#x74;&#111;&#x3a;3&#50;&#x64;&#57;&#x63;&#56;&#x63;&#54;&#x2d;8&#49;&#x31;&#56;&#x2d;&#52;&#x35;&#101;&#x37;&#45;&#x38;5&#55;&#x65;&#45;&#x38;&#98;&#x34;&#53;&#x35;2&#50;&#x66;&#51;&#x39;&#53;&#x64;&#64;&#x61;&#110;&#x6f;n&#97;&#x64;&#100;&#x79;&#46;&#x6d;&#101;">&#x33;&#50;&#x64;&#57;&#x63;&#56;&#x63;6&#45;&#x38;&#49;&#x31;&#56;&#x2d;&#52;&#x35;e&#55;&#x2d;&#56;&#x35;&#55;&#x65;&#45;&#x38;&#98;&#x34;5&#53;&#x32;&#50;&#x66;&#51;&#x39;&#53;&#x64;&#64;&#x61;n&#111;&#x6e;&#97;&#x64;&#100;&#x79;&#46;&#x6d;e</a></li>
+        <li><strong>Release</strong>: 0.0.1</li>
+        <li><strong>License</strong>: MIT License</li>
+        <li><strong>Author</strong>: Hrle97 <a href="https://github.com/Hrle97">https://github.com/Hrle97</a></li>
+    </ul>
+
+
+<h2><a href="#All_in_one">All in one </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#write_configure_read_all">write_configure_read_all (build, configure[, callback])</a></td>
+	<td class="summary">Write a query for everything, configure CMake, and read the reply index of
+  the CMake File API.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_configure_read">write_configure_read (build, kind, version, configure[, callback])</a></td>
+	<td class="summary">Write a query, configure CMake, and read the reply of specified kind and
+  version.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_configure_read_codemodel">write_configure_read_codemodel (build, version, configure[, callback])</a></td>
+	<td class="summary">Write a query, configure CMake, and read the reply of the "codemodel" kind.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_configure_read_cache">write_configure_read_cache (build, version, configure[, callback])</a></td>
+	<td class="summary">Write a query, configure CMake, and read the reply of the "cache" kind.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_configure_read_cmake_files">write_configure_read_cmake_files (build, version, configure[, callback])</a></td>
+	<td class="summary">Write a query, configure CMake, and read the reply of the "cmakeFiles" kind.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_configure_read_toolchains">write_configure_read_toolchains (build, version, configure[, callback])</a></td>
+	<td class="summary">Write a query, configure CMake, and read the reply of the "toolchains" kind.</td>
+	</tr>
+</table>
+<h2><a href="#Queries">Queries </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#write_all_queries">write_all_queries (build[, callback])</a></td>
+	<td class="summary">Write queries for everything to the CMake File API.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_query">write_query (build, kind, version[, callback])</a></td>
+	<td class="summary">Write a query for the CMake File API.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_codemodel_query">write_codemodel_query (build, version[, callback])</a></td>
+	<td class="summary">Write a "codemodel" query for the CMake File API.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_cache_query">write_cache_query (build, version[, callback])</a></td>
+	<td class="summary">Write a "cache" query for the CMake File API.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_cmake_files_query">write_cmake_files_query (build, version[, callback])</a></td>
+	<td class="summary">Write a "cmakeFiles" query for the CMake File API.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_toolchains_query">write_toolchains_query (build, version[, callback])</a></td>
+	<td class="summary">Write a "toolchains" query for the CMake File API.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_shared_stateless_query">write_shared_stateless_query (build, kind, version[, callback])</a></td>
+	<td class="summary">Write a shared stateless query for the CMake File API.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_client_stateless_query">write_client_stateless_query (build, kind, version[, callback])</a></td>
+	<td class="summary">Write a client stateless query for the CMake File API.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#write_client_stateful_query">write_client_stateful_query (build, query[, callback])</a></td>
+	<td class="summary">Write a client stateful query for the CMake File API.</td>
+	</tr>
+</table>
+<h2><a href="#Reply">Reply </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#read_reply_index">read_reply_index (build[, callback])</a></td>
+	<td class="summary">Read the reply index from the CMake File API.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#read_reply">read_reply (build, kind, version[, callback])</a></td>
+	<td class="summary">Read a reply from the CMake File API.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#read_codemodel_reply">read_codemodel_reply (build, version[, callback])</a></td>
+	<td class="summary">Read a "codemodel" reply from the CMake File API.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#read_cache_reply">read_cache_reply (build, version[, callback])</a></td>
+	<td class="summary">Read a "cache" reply from the CMake File API.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#read_cmake_files_reply">read_cmake_files_reply (build, version[, callback])</a></td>
+	<td class="summary">Read a "cmakeFile" reply from the CMake File API.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#read_toolchains_reply">read_toolchains_reply (build, version[, callback])</a></td>
+	<td class="summary">Read a "toolchains" reply from the CMake File API.</td>
+	</tr>
+</table>
+<h2><a href="#Class_object">Class object </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#object.is_object">object.is_object (value)</a></td>
+	<td class="summary">Check if a value is a <a href="index.html#object">object</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#object.new">object.new (path, kind, data)</a></td>
+	<td class="summary">Create a new <a href="index.html#object">object</a>.</td>
+	</tr>
+</table>
+<h2><a href="#Class_lazy">Class lazy </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#lazy.is_lazy">lazy.is_lazy (value)</a></td>
+	<td class="summary">Check if a value is a <a href="index.html#lazy">lazy</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#lazy.new">lazy.new (path)</a></td>
+	<td class="summary">Create a new <a href="index.html#lazy">lazy</a></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#lazy:load">lazy:load ([callback])</a></td>
+	<td class="summary">Load a <a href="index.html#lazy">lazy</a>.</td>
+	</tr>
+</table>
+<h2><a href="#Class_fail">Class fail </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#fail.did_succeed">fail.did_succeed ()</a></td>
+	<td class="summary">Check whether or not a methods execution ended in success.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#fail.did_fail">fail.did_fail ()</a></td>
+	<td class="summary">Check whether or not a methods execution ended in failure.</td>
+	</tr>
+</table>
+<h2><a href="#Utilities">Utilities </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#latest">latest</a></td>
+	<td class="summary">Latest version of object kinds</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header has-description"><a name="All_in_one"></a>All in one </h2>
+
+          <div class="section-description">
+           Methods that write a CMake File API query, run a method that generates
+ a buildsystem and read the reply of the CMake File API - easiest to use for
+ beginners.
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "write_configure_read_all"></a>
+    <strong>write_configure_read_all (build, configure[, callback])</strong>
+    </dt>
+    <dd>
+    Write a query for everything, configure CMake, and read the reply index of
+  the CMake File API. </p>
+
+<p> This is the best way to start using the CMake File API if you want to get
+ started quickly because it enables you to extract all information the CMake
+ File API can give you.</p>
+
+<p> If you already know how the CMake File API works then this writes
+ "codemodel" , "cache", "cmakeFiles", and "tooolchains" stateless client
+ queries and reads the reply index after the configure step is done. The
+ versions of these queries are 2, 2, 1, and 1 respectively.</p>
+
+<p> See the CMake File API documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html
+">CMake File API documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">configure</span>
+            <span class="types"><span class="type">function</span></span>
+         The method to call after writing the query to generate the buildsystem.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+         On success, returns the reply index and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#object">object</a></li>
+         <li><a href="index.html#lazy">lazy</a></li>
+         <li><a href="index.html#write_all_queries">write_all_queries</a></li>
+         <li><a href="index.html#read_reply_index">read_reply_index</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> reply_index = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_configure_read_all(
+    build, <span class="comment">-- your build location here
+</span>    <span class="keyword">function</span>()
+      vim.fn.system {
+        <span class="string">"cmake"</span>,
+        <span class="string">"-S"</span>,
+        source, <span class="comment">-- your source location here
+</span>        <span class="string">"-B"</span>,
+        build <span class="comment">-- your build location here
+</span>      }
+    <span class="keyword">end</span>)
+
+<span class="keyword">if</span> <span class="keyword">not</span> reply_index <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "write_configure_read"></a>
+    <strong>write_configure_read (build, kind, version, configure[, callback])</strong>
+    </dt>
+    <dd>
+    Write a query, configure CMake, and read the reply of specified kind and
+  version. </p>
+
+<p> More technically, this writes a client stateless query and reads the reply of
+ the specified kind and version.</p>
+
+<p> See the object kind documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <li><a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
+">Object kind documentation
+</a></li>
+         <li><a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html
+">CMake File API documentation
+</a></li>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">kind</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The object kind of query and reply. Valid values are: "codemodel", "cache",
+ "cmakeFiles", and "tkolchains". See the object kind documentation for more
+ info.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major object version of the query and reply. Valid values depend on the
+ query kind. If nil, the latest version for the object kind will be used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
+ See the CMake File API documentation for more info.
+        </li>
+        <li><span class="parameter">configure</span>
+            <span class="types"><span class="type">function</span></span>
+         The method to call after writing the query to generate the buildsystem.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+         On success, returns the reply as a <a href="index.html#object">object</a> and on failure, returns a
+ <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#object">object</a></li>
+         <li><a href="index.html#lazy">lazy</a></li>
+         <li><a href="index.html#write_query">write_query</a></li>
+         <li><a href="index.html#read_reply">read_reply</a></li>
+         <li><a href="index.html#latest">latest</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> codemodel = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_configure_read(
+    build, <span class="comment">-- your build location here
+</span>    <span class="string">"codemodel"</span>, <span class="comment">-- kind of query here
+</span>    <span class="number">2</span>, <span class="comment">-- query version here
+</span>    <span class="keyword">function</span>()
+      vim.fn.system {
+        <span class="string">"cmake"</span>,
+        <span class="string">"-S"</span>,
+        source, <span class="comment">-- your source location here
+</span>        <span class="string">"-B"</span>,
+        build <span class="comment">-- your build location here
+</span>      }
+    <span class="keyword">end</span>)
+
+<span class="keyword">if</span> <span class="keyword">not</span> codemodel <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "write_configure_read_codemodel"></a>
+    <strong>write_configure_read_codemodel (build, version, configure[, callback])</strong>
+    </dt>
+    <dd>
+    Write a query, configure CMake, and read the reply of the "codemodel" kind. </p>
+
+<p> More technically, this writes a client stateless query and reads the reply of
+ the "codemodel" kind.</p>
+
+<p> See the "codemodel" object kind documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-codemodel
+">"codemodel" object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major object version of the query and reply. Valid values are 1 and 2.
+ If nil, 2 is used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
+        </li>
+        <li><span class="parameter">configure</span>
+            <span class="types"><span class="type">function</span></span>
+         The method to call after writing the query to generate the buildsystem.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+         On success, returns the reply as a <a href="index.html#object">object</a> and on failure, returns a
+ <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#object">object</a></li>
+         <li><a href="index.html#lazy">lazy</a></li>
+         <li><a href="index.html#write_codemodel_query">write_codemodel_query</a></li>
+         <li><a href="index.html#read_codemodel_reply">read_codemodel_reply</a></li>
+         <li><a href="index.html#latest">latest</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> codemodel = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_configure_read_codemodel(
+    build, <span class="comment">-- your build location here
+</span>    <span class="number">2</span>, <span class="comment">-- query version here
+</span>    <span class="keyword">function</span>()
+      vim.fn.system {
+        <span class="string">"cmake"</span>,
+        <span class="string">"-S"</span>,
+        source, <span class="comment">-- your source location here
+</span>        <span class="string">"-B"</span>,
+        build <span class="comment">-- your build location here
+</span>      }
+    <span class="keyword">end</span>)
+
+<span class="keyword">if</span> <span class="keyword">not</span> codemodel <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "write_configure_read_cache"></a>
+    <strong>write_configure_read_cache (build, version, configure[, callback])</strong>
+    </dt>
+    <dd>
+    Write a query, configure CMake, and read the reply of the "cache" kind. </p>
+
+<p> More technically, this writes a client stateless query and reads the reply of
+ the "cache" kind.</p>
+
+<p> See the "cache" object kind documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cache
+">"cache" object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major object version of the query and reply. Valid values are 1 and 2.
+ If nil, 2 is used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
+        </li>
+        <li><span class="parameter">configure</span>
+            <span class="types"><span class="type">function</span></span>
+         The method to call after writing the query to generate the buildsystem.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+         On success, returns the reply as a <a href="index.html#object">object</a> and on failure, returns a
+ <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#object">object</a></li>
+         <li><a href="index.html#lazy">lazy</a></li>
+         <li><a href="index.html#write_cache_query">write_cache_query</a></li>
+         <li><a href="index.html#read_cache_reply">read_cache_reply</a></li>
+         <li><a href="index.html#latest">latest</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> cache = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_configure_read_cache(
+    build, <span class="comment">-- your build location here
+</span>    <span class="number">2</span>, <span class="comment">-- query version here
+</span>    <span class="keyword">function</span>()
+      vim.fn.system {
+        <span class="string">"cmake"</span>,
+        <span class="string">"-S"</span>,
+        source, <span class="comment">-- your source location here
+</span>        <span class="string">"-B"</span>,
+        build <span class="comment">-- your build location here
+</span>      }
+    <span class="keyword">end</span>)
+
+<span class="keyword">if</span> <span class="keyword">not</span> cache <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "write_configure_read_cmake_files"></a>
+    <strong>write_configure_read_cmake_files (build, version, configure[, callback])</strong>
+    </dt>
+    <dd>
+    Write a query, configure CMake, and read the reply of the "cmakeFiles" kind. </p>
+
+<p> More technically, this writes a client stateless query and reads the reply of
+ the "cmakeFiles" kind.</p>
+
+<p> See the "cmakeFiles" object kind documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cmakeFiles
+">"cmakeFiles" object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major object version of the query and reply. Valid values are 1 and 2.
+ If nil, 2 is used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
+        </li>
+        <li><span class="parameter">configure</span>
+            <span class="types"><span class="type">function</span></span>
+         The method to call after writing the query to generate the buildsystem.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+         On success, returns the reply as a <a href="index.html#object">object</a> and on failure, returns a
+ <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#object">object</a></li>
+         <li><a href="index.html#lazy">lazy</a></li>
+         <li><a href="index.html#write_cmake_files_query">write_cmake_files_query</a></li>
+         <li><a href="index.html#read_cmake_files_reply">read_cmake_files_reply</a></li>
+         <li><a href="index.html#latest">latest</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> cmake_files = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_configure_read_cmake_files(
+    build, <span class="comment">-- your build location here
+</span>    <span class="number">1</span>, <span class="comment">-- query version here
+</span>    <span class="keyword">function</span>()
+      vim.fn.system {
+        <span class="string">"cmake"</span>,
+        <span class="string">"-S"</span>,
+        source, <span class="comment">-- your source location here
+</span>        <span class="string">"-B"</span>,
+        build <span class="comment">-- your build location here
+</span>      }
+    <span class="keyword">end</span>)
+
+<span class="keyword">if</span> <span class="keyword">not</span> cmake_files <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "write_configure_read_toolchains"></a>
+    <strong>write_configure_read_toolchains (build, version, configure[, callback])</strong>
+    </dt>
+    <dd>
+    Write a query, configure CMake, and read the reply of the "toolchains" kind. </p>
+
+<p> More technically, this writes a client stateless query and reads the reply of
+ the "toolchains" kind.</p>
+
+<p> See the "toolchains" object kind documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-toolchains
+">"toolchains" object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major object version of the query and reply. Valid values are 1 and 2.
+ If nil, 2 is used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
+        </li>
+        <li><span class="parameter">configure</span>
+            <span class="types"><span class="type">function</span></span>
+         The method to call after writing the query to generate the buildsystem.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+         On success, returns the reply as a <a href="index.html#object">object</a> and on failure, returns a
+ <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#object">object</a></li>
+         <li><a href="index.html#lazy">lazy</a></li>
+         <li><a href="index.html#write_toolchains_query">write_toolchains_query</a></li>
+         <li><a href="index.html#read_toolchains_reply">read_toolchains_reply</a></li>
+         <li><a href="index.html#latest">latest</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> toolchains = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_configure_read_toolchains(
+    build, <span class="comment">-- your build location here
+</span>    <span class="number">1</span>, <span class="comment">-- query version here
+</span>    <span class="keyword">function</span>()
+      vim.fn.system {
+        <span class="string">"cmake"</span>,
+        <span class="string">"-S"</span>,
+        source, <span class="comment">-- your source location here
+</span>        <span class="string">"-B"</span>,
+        build <span class="comment">-- your build location here
+</span>      }
+    <span class="keyword">end</span>)
+
+<span class="keyword">if</span> <span class="keyword">not</span> toolchains <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Queries"></a>Queries </h2>
+
+          <div class="section-description">
+           Methods to call before configuring CMake in order to instruct it what data
+ to generate using the API.
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "write_all_queries"></a>
+    <strong>write_all_queries (build[, callback])</strong>
+    </dt>
+    <dd>
+    Write queries for everything to the CMake File API. </p>
+
+<p> This is the best way to start using the CMake File API if you want to get
+ started quickly and you don't want to use the "all-in-one" methods. Use
+ alongside the <a href="index.html#read_reply_index">read_reply_index</a> method.</p>
+
+<p> If you already know how the CMake File API works then this writes
+ "codemodel" , "cache", "cmakeFiles", and "tooolchains" stateless client
+ queries. The versions of these queries are 2, 2, 1, and 1 respectively.</p>
+
+<p> See the CMake File API documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html
+">CMake File API documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span> or <a class="type" href="index.html#fail">@{fail}</a></span>
+         On success, returns true and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="index.html#fail">fail</a>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> did_write = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_all_queries(
+    build <span class="comment">-- your build location here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> did_write <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "write_query"></a>
+    <strong>write_query (build, kind, version[, callback])</strong>
+    </dt>
+    <dd>
+    Write a query for the CMake File API. </p>
+
+<p> Write a query of the specified kind and version to the CMake File API. Use
+ this alongside the <a href="index.html#read_reply">read_reply</a> and read<em><object_kind></em>reply methods.
+ More technically, this writes a client stateless query of the specified kind
+ and version.</p>
+
+<p> See the object kind documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <li><a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
+">Object kind documentation
+</a></li>
+         <li><a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html
+">CMake File API documentation
+</a></li>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">kind</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The kind of query to send. Valid values are: "codemodel", "cache",
+ "cmakeFiles", and "tkolchains". See the object kind documentation for more
+ info.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major version of the query kind to send. Valid values depend on the query
+ kind. If nil, the latest version for the query kind will be used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
+ See the CMake File API documentation for more info.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span> or <a class="type" href="index.html#fail">@{fail}</a></span>
+         On success, returns true and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#read_reply">read_reply</a></li>
+         <li><a href="index.html#read_codemodel_reply">read_codemodel_reply</a></li>
+         <li><a href="index.html#read_cache_reply">read_cache_reply</a></li>
+         <li><a href="index.html#read_cmake_files_reply">read_cmake_files_reply</a></li>
+         <li><a href="index.html#read_toolchains_reply">read_toolchains_reply</a></li>
+         <li><a href="index.html#latest">latest</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> did_write = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_query(
+    build <span class="comment">-- your build location here
+</span>    <span class="string">"codemodel"</span>, <span class="comment">-- your query kind here
+</span>    <span class="number">2</span>, <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> did_write <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "write_codemodel_query"></a>
+    <strong>write_codemodel_query (build, version[, callback])</strong>
+    </dt>
+    <dd>
+    Write a "codemodel" query for the CMake File API. </p>
+
+<p> The "codemodel" query can be used to extract information about directories,
+ configurations and targets of the generated build system. Use this alongside
+ the <a href="index.html#read_codemodel_reply">read_codemodel_reply</a> method.
+ More technically, it writes a stateless client "codemodel" query of version
+ 2.</p>
+
+<p> See the "codemodel" object kind documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-codemodel
+">"codemodel" object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major version of the "codemodel" query to send. Valid values are: 1 and
+ 2. If nil, 2 is used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span> or <a class="type" href="index.html#fail">@{fail}</a></span>
+         On success, returns true and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#read_reply">read_reply</a></li>
+         <li><a href="index.html#read_codemodel_reply">read_codemodel_reply</a></li>
+         <li><a href="index.html#latest">latest</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> did_write = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_codemodel_query(
+    build <span class="comment">-- your build location here
+</span>    <span class="number">2</span>, <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> did_write <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "write_cache_query"></a>
+    <strong>write_cache_query (build, version[, callback])</strong>
+    </dt>
+    <dd>
+    Write a "cache" query for the CMake File API. </p>
+
+<p> The "cache" query can be used to extract information about the CMake
+ cache. Use this alongside the <a href="index.html#read_cache_reply">read_cache_reply</a> method.
+ More technically, it writes a stateless client "cache" query of version
+ 2.</p>
+
+<p> See the "cache" object kind documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cache
+">"cache" object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major version of the "cache" query to send. Valid values are: 1 and
+ 2. If nil, 2 is used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span> or <a class="type" href="index.html#fail">@{fail}</a></span>
+         On success, returns true and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#read_reply">read_reply</a></li>
+         <li><a href="index.html#read_codemodel_reply">read_codemodel_reply</a></li>
+         <li><a href="index.html#latest">latest</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> did_write = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_cache_query(
+    build <span class="comment">-- your build location here
+</span>    <span class="number">2</span>, <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> did_write <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "write_cmake_files_query"></a>
+    <strong>write_cmake_files_query (build, version[, callback])</strong>
+    </dt>
+    <dd>
+    Write a "cmakeFiles" query for the CMake File API. </p>
+
+<p> The "cmakeFiles" query can be used to extract information about the
+ generated CMake build system files. Use this alongside the
+ <a href="index.html#read_cmake_files_reply">read_cmake_files_reply</a> method.
+ More technically, it writes a stateless client "cmakeFiles" query of version
+ 1.</p>
+
+<p> See the "cmakeFiles" object kind documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cmakeFiles
+">"cmakeFiles" object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major version of the "cmakeFiles" query to send. 1 is the only valid
+ value. If nil, 1 is used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span> or <a class="type" href="index.html#fail">@{fail}</a></span>
+         On success, returns true and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#read_reply">read_reply</a></li>
+         <li><a href="index.html#read_cmake_files_reply">read_cmake_files_reply</a></li>
+         <li><a href="index.html#latest">latest</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> did_write = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_cmake_files_query(
+    build <span class="comment">-- your build location here
+</span>    <span class="number">1</span>, <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> did_write <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "write_toolchains_query"></a>
+    <strong>write_toolchains_query (build, version[, callback])</strong>
+    </dt>
+    <dd>
+    Write a "toolchains" query for the CMake File API. </p>
+
+<p> The "toolchains" query can be used to extract information about directories,
+ configurations and targets of the generated build system. Use this alongside
+ the <a href="index.html#read_toolchains_reply">read_toolchains_reply</a> method.
+ More technically, it writes a stateless client "toolchains" query of version
+ 2.</p>
+
+<p> See the "toolchains" object kind documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-toolchains
+">"toolchains" object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major version of the "toolchains" query to send. 1 is the only valid
+ value. If nil, 1 is used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span> or <a class="type" href="index.html#fail">@{fail}</a></span>
+         On success, returns true and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#read_reply">read_reply</a></li>
+         <li><a href="index.html#read_toolchains_reply">read_toolchains_reply</a></li>
+         <li><a href="index.html#latest">latest</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> did_write = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_toolchains_query(
+    build <span class="comment">-- your build location here
+</span>    <span class="number">1</span>, <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> did_write <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "write_shared_stateless_query"></a>
+    <strong>write_shared_stateless_query (build, kind, version[, callback])</strong>
+    </dt>
+    <dd>
+    Write a shared stateless query for the CMake File API. </p>
+
+<p> The query will be shared with other clients such as IDE's and editors and is
+ therefore not recommended for use, but is implemented for the sake of
+ completion of the API.</p>
+
+<p> See the shared stateless query documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <li><a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-shared-stateless-query-files">Shared stateless query documentation
+</a></li>
+         <li><a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
+">Object kind documentation
+</a></li>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">kind</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The kind of query to send. Valid values are: "codemodel", "cache",
+ "cmakeFiles", and "tkolchains". See the object kind documentation for more
+ info.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major version of the query kind to send. Valid values depend on the query
+ kind. If nil, the latest version for the query kind will be used.
+ See the CMake File API documentation for more info.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span> or <a class="type" href="index.html#fail">@{fail}</a></span>
+         On success, returns true and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#latest">latest</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> did_write = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_shared_stateless_query(
+    build, <span class="comment">-- your build location here
+</span>    <span class="string">"codemodel"</span>, <span class="comment">-- your query kind here
+</span>    <span class="number">2</span> <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> did_write <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "write_client_stateless_query"></a>
+    <strong>write_client_stateless_query (build, kind, version[, callback])</strong>
+    </dt>
+    <dd>
+    Write a client stateless query for the CMake File API. </p>
+
+<p> The query won't be shared with other clients such as IDE's and
+ editors. Methods with the name write<em><object_kind></em>query use this method to
+ write their queries.</p>
+
+<p> See the client stateless query documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <li><a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateless-query-files">Client stateless query documentation
+</a></li>
+         <li><a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
+">Object kind documentation
+</a></li>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">kind</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The kind of query to send. Valid values are: "codemodel", "cache",
+ "cmakeFiles", and "toolchains". See the object kind documentation for more
+ info.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major version of the query kind to send. Valid values depend on the query
+ kind. If nil, the latest version for the query kind will be used.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
+ See the CMake File API documentation for more info.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span> or <a class="type" href="index.html#fail">@{fail}</a></span>
+         On success, returns true and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#write_query">write_query</a></li>
+         <li><a href="index.html#write_codemodel_query">write_codemodel_query</a></li>
+         <li><a href="index.html#write_cache_query">write_cache_query</a></li>
+         <li><a href="index.html#write_cmake_files_query">write_cmake_files_query</a></li>
+         <li><a href="index.html#write_toolchains_query">write_toolchains_query</a></li>
+         <li><a href="index.html#latest">latest</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> did_write = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_client_stateless_query(
+    build, <span class="comment">-- your build location here
+</span>    <span class="string">"codemodel"</span>, <span class="comment">-- your query kind here
+</span>    <span class="number">2</span> <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> did_write <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "write_client_stateful_query"></a>
+    <strong>write_client_stateful_query (build, query[, callback])</strong>
+    </dt>
+    <dd>
+    Write a client stateful query for the CMake File API. </p>
+
+<p> The query won't be shared with other clients such as IDE's and editors. Use
+ only if you know exactly what you are doing.</p>
+
+<p> See the shared stateless query documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <li><a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-client-stateful-query-files">Client stateful query documentation
+</a></li>
+         <li><a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
+">Object kind documentation
+</a></li>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the to be generated buildsystem.
+        </li>
+        <li><span class="parameter">query</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         The query to send to the CMake File API. Reqd the client statefull query
+ documentation for more info.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span> or <a class="type" href="index.html#fail">@{fail}</a></span>
+         On success, returns true and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="index.html#fail">fail</a>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> did_write = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .write_client_stateful_query(
+    build, <span class="comment">-- your build location here
+</span>    {
+      requests = { <span class="comment">-- your requests here
+</span>        { kind = <span class="string">"codemodel"</span>, version = <span class="number">2</span> },
+      },
+      client = { } <span class="comment">-- other info available in the reply here
+</span>    }
+  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> did_write <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Reply"></a>Reply </h2>
+
+          <div class="section-description">
+           Functions and classes to use after configuring CMake in order to read the
+ reply of the API.
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "read_reply_index"></a>
+    <strong>read_reply_index (build[, callback])</strong>
+    </dt>
+    <dd>
+    Read the reply index from the CMake File API. </p>
+
+<p> After configuration, CMake will generate the reply index with links to the
+ desired replies if a query was written.</p>
+
+<p> This is the best way to start using the CMake File API if you want to get
+ started quickly and you don't want to use the "all-in-one" methods. Use this
+ alongside the <a href="index.html#write_all_queries">write_all_queries</a> method.</p>
+
+<p> See the reply index file documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-reply-index-file
+">Reply index file documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the generated buildsystem. It has to be an already
+ existing directory on the filesystem.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+         On success, returns the reply index and on failure, returns a <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#object">object</a></li>
+         <li><a href="index.html#lazy">lazy</a></li>
+         <li><a href="index.html#write_all_queries">write_all_queries</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> reply_index = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .read_reply_index(
+    build <span class="comment">-- your build location here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> reply_index <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "read_reply"></a>
+    <strong>read_reply (build, kind, version[, callback])</strong>
+    </dt>
+    <dd>
+    Read a reply from the CMake File API. </p>
+
+<p> Reads the reply index and reads the desired reply kind from the file
+ specifiend in the index. Use this alongside the write<em><object_kind></em>query
+ and the <a href="index.html#write_query">write_query</a> methods.</p>
+
+<p> See the object kind documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
+">Object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the generated buildsystem. It has to be an already
+ existing directory on the filesystem.
+        </li>
+        <li><span class="parameter">kind</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The kind of reply to read. Valid values are: "codemodel", "cache",
+ "cmakeFiles", and "toolchains". See the object kind documentation for more
+ info.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major version of the reply kind to read. Valid values depend on the query
+ kind. If nil, the latest version for the query kind will be used.
+ See the CMake File API documentation for more info.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+         On success, returns the reply as a <a href="index.html#object">object</a> and on failure, returns a
+ <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#object">object</a></li>
+         <li><a href="index.html#lazy">lazy</a></li>
+         <li><a href="index.html#write_query">write_query</a></li>
+         <li><a href="index.html#write_codemodel_query">write_codemodel_query</a></li>
+         <li><a href="index.html#write_cache_query">write_cache_query</a></li>
+         <li><a href="index.html#write_cmake_files_query">write_cmake_files_query</a></li>
+         <li><a href="index.html#write_toolchains_query">write_toolchains_query</a></li>
+         <li><a href="index.html#latest">latest</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> reply = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .read_reply(
+    build, <span class="comment">-- your build location here
+</span>    <span class="string">"codemodel"</span>, <span class="comment">-- your query kind here
+</span>    <span class="number">2</span> <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> reply <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "read_codemodel_reply"></a>
+    <strong>read_codemodel_reply (build, version[, callback])</strong>
+    </dt>
+    <dd>
+    Read a "codemodel" reply from the CMake File API. </p>
+
+<p> Reads the reply index and reads the "codemodel" reply from the file
+ specifiend in the index. Use this alongside the and the
+ <a href="index.html#write_codemodel_query">write_codemodel_query</a> method.</p>
+
+<p> See the "codemodel" object kind documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-codemodel
+">"codemodel" object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the generated buildsystem. It has to be an already
+ existing directory on the filesystem.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major version of the "codemodel" reply to read. Valid values are 1 and
+ 2. If nil, the version is 2.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+         On success, returns the reply as a <a href="index.html#object">object</a> and on failure, returns a
+ <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#object">object</a></li>
+         <li><a href="index.html#lazy">lazy</a></li>
+         <li><a href="index.html#write_codemodel_query">write_codemodel_query</a></li>
+         <li><a href="index.html#latest">latest</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> codemodel = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .read_codemodel_reply(
+    build, <span class="comment">-- your build location here
+</span>    <span class="number">2</span> <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> codemodel <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "read_cache_reply"></a>
+    <strong>read_cache_reply (build, version[, callback])</strong>
+    </dt>
+    <dd>
+    Read a "cache" reply from the CMake File API. </p>
+
+<p> Reads the reply index and reads the "cache" reply from the file
+ specifiend in the index. Use this alongside the and the
+ <a href="index.html#write_cache_query">write_cache_query</a> method.</p>
+
+<p> See the "cache" object kind documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cache
+">"cache" object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the generated buildsystem. It has to be an already
+ existing directory on the filesystem.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major version of the "cache" reply to read. Valid values are 1 and
+ 2. If nil, the version is 2.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+         On success, returns the reply as a <a href="index.html#object">object</a> and on failure, returns a
+ <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#object">object</a></li>
+         <li><a href="index.html#lazy">lazy</a></li>
+         <li><a href="index.html#write_cache_query">write_cache_query</a></li>
+         <li><a href="index.html#latest">latest</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> cache = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .read_cache_reply(
+    build, <span class="comment">-- your build location here
+</span>    <span class="number">2</span> <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> cache <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "read_cmake_files_reply"></a>
+    <strong>read_cmake_files_reply (build, version[, callback])</strong>
+    </dt>
+    <dd>
+    Read a "cmakeFile" reply from the CMake File API. </p>
+
+<p> Reads the reply index and reads the "cmakeFile" reply from the file
+ specifiend in the index. Use this alongside the and the
+ <a href="index.html#write_cmake_files_query">write_cmake_files_query</a> method.</p>
+
+<p> See the "cmakeFile" object kind documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-cmakeFile
+">"cmakeFile" object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the generated buildsystem. It has to be an already
+ existing directory on the filesystem.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major version of the "cmakeFile" reply to read. 1 is the only valid
+ value. If nil, the version is 1.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+         On success, returns the reply as a <a href="index.html#object">object</a> and on failure, returns a
+ <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#object">object</a></li>
+         <li><a href="index.html#lazy">lazy</a></li>
+         <li><a href="index.html#write_cmake_files_query">write_cmake_files_query</a></li>
+         <li><a href="index.html#latest">latest</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> cmake_files = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .read_cmake_files_reply(
+    build, <span class="comment">-- your build location here
+</span>    <span class="number">1</span> <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> cmake_files <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "read_toolchains_reply"></a>
+    <strong>read_toolchains_reply (build, version[, callback])</strong>
+    </dt>
+    <dd>
+    Read a "toolchains" reply from the CMake File API. </p>
+
+<p> Reads the reply index and reads the "toolchains" reply from the file
+ specifiend in the index. Use this alongside the and the
+ <a href="index.html#write_toolchains_query">write_toolchains_query</a> method.</p>
+
+<p> See the "toolchains" object kind documentation for more info.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-toolchains
+">"toolchains" object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">build</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The build directory of the generated buildsystem. It has to be an already
+ existing directory on the filesystem.
+        </li>
+        <li><span class="parameter">version</span>
+            <span class="types"><span class="type">number</span>, <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <span class="type">nil</span></span>
+         The major version of the "toolchains" reply to read. 1 is the only valid
+ value. If nil, the version is 1.
+ Use the <a href="index.html#latest">latest</a> field for more readability.
+        </li>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+         On success, returns the reply as a <a href="index.html#object">object</a> and on failure, returns a
+ <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#object">object</a></li>
+         <li><a href="index.html#lazy">lazy</a></li>
+         <li><a href="index.html#write_toolchains_query">write_toolchains_query</a></li>
+         <li><a href="index.html#latest">latest</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> toolchains = <span class="global">require</span>(<span class="string">"nvim.cmake_file_api"</span>)
+  .read_toolchains_reply(
+    build, <span class="comment">-- your build location here
+</span>    <span class="number">1</span> <span class="comment">-- your query version here
+</span>  )
+
+<span class="keyword">if</span> <span class="keyword">not</span> toolchains <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Class_object"></a>Class object </h2>
+
+          <div class="section-description">
+          Reply object class. </p>
+
+<p> Returned by the read_reply methods. All the fields of this type are
+ the same as in the reply index file documentation except for special fields
+ that have the key "jsonFile". These fields are not immediately loaded and
+ are instead initialized as a <a href="index.html#lazy">lazy</a> with the "lazy" key. Lazy objects have
+ a path field and a load method which can run synchronously and
+ asynchronously to retrieve the desired field as a <a href="index.html#object">object</a>.
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "object.is_object"></a>
+    <strong>object.is_object (value)</strong>
+    </dt>
+    <dd>
+    Check if a value is a <a href="index.html#object">object</a>.
+
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+           Value to check against.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        Whether the value is an <a href="index.html#object">object</a>.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "object.new"></a>
+    <strong>object.new (path, kind, data)</strong>
+    </dt>
+    <dd>
+    Create a new <a href="index.html#object">object</a>. </p>
+
+<p> Values of fields with the key "jsonFile" are going to be converted to
+ <a href="index.html#lazy">lazy</a> values with the "lazy" key.
+
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Path to the JSON file from which this was read.
+        </li>
+        <li><span class="parameter">kind</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         The kind of query to send. Valid values are: "codemodel", "cache",
+ "cmakeFiles", and "toolchains". See the object kind documentation for more
+ info.
+        </li>
+        <li><span class="parameter">data</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         Data representing some values of the reply.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Constructed <a href="index.html#object">object</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="index.html#lazy">lazy</a>
+    </ul>
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Class_lazy"></a>Class lazy </h2>
+
+          <div class="section-description">
+          Lazy object field class. </p>
+
+<p> Values of fields with the key "jsonFiles" of API replies are converted to
+ <a href="index.html#lazy">lazy</a> values with the "lazy" key that can be loaded synchronously or
+ asynchronously with the <a href="index.html#lazy:load">lazy:load</a> method into a <a href="index.html#object">object</a>.
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "lazy.is_lazy"></a>
+    <strong>lazy.is_lazy (value)</strong>
+    </dt>
+    <dd>
+    Check if a value is a <a href="index.html#lazy">lazy</a>.
+
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+           Value to check against.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        Whether the value is a <a href="index.html#lazy">lazy</a>.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "lazy.new"></a>
+    <strong>lazy.new (path)</strong>
+    </dt>
+    <dd>
+    Create a new <a href="index.html#lazy">lazy</a>  The <a href="index.html#lazy">lazy</a> can be loaded later into an <a href="index.html#object">object</a> with the <a href="index.html#lazy:load">lazy:load</a>
+ method.
+
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Path to the JSON file from which this will be read.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Constructed <a href="index.html#lazy">lazy</a>.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "lazy:load"></a>
+    <strong>lazy:load ([callback])</strong>
+    </dt>
+    <dd>
+    Load a <a href="index.html#lazy">lazy</a>. </p>
+
+<p> Load a <a href="index.html#lazy">lazy</a> into an <a href="index.html#object">object</a> synchronously or asynchronously.
+
+    </ul>
+    </ul>
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">callback</span>
+            <span class="types"><span class="type">function</span>, <span class="type">thread</span> or <span class="type">nil</span></span>
+         If not nil, the method will run asynchronously and call the callback or
+ resume the thread upon completion with the result as its parameters.
+ Otherwise, it will run synchronously.
+ Note: Use vim.schedule or vim.schedule_wrap to run Vim methods from this
+ callback.
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+         On success, returns the lazy loaded as a <a href="index.html#object">object</a> and on failure, returns
+ a <a href="index.html#fail">fail</a>.
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#fail">fail</a></li>
+         <li><a href="index.html#object">object</a></li>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> object = lazy <span class="comment">-- your lazy object here
+</span>  :<span class="global">load</span>()
+
+<span class="keyword">if</span> <span class="keyword">not</span> object <span class="keyword">then</span>
+  <span class="comment">-- handle errors here
+</span><span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Class_fail"></a>Class fail </h2>
+
+          <div class="section-description">
+          Fail result type. </p>
+
+<p> This is not an actual class exported in the CMake File API, but a type that
+ describes how methods in the API handle errors.</p>
+
+<p> It is returned by all methods when an error occurs that is not due to the
+ developer using the API, such as not having privileges to write files or
+ make directories. It is very similar to the fail type defined in the luvit
+ library documentation provided in vim.loop, so check the luvit error
+ documentation for more information.</p>
+
+<p> In place of the type of result that a method would produce upon success nil
+ is returned instead and error details are returned in the rest of the reply.</p>
+
+<p> For errors that were caused by developers using the API, such as providing
+ a non existing query kind or version or trying to read a reply when CMake
+ was not configured, an assertion is thrown.
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "fail.did_succeed"></a>
+    <strong>fail.did_succeed ()</strong>
+    </dt>
+    <dd>
+    Check whether or not a methods execution ended in success.
+
+    </ul>
+    </ul>
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        Whether or not a methods execution ended in a failure.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "fail.did_fail"></a>
+    <strong>fail.did_fail ()</strong>
+    </dt>
+    <dd>
+    Check whether or not a methods execution ended in failure.
+
+    </ul>
+    </ul>
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        Whether or not a methods execution ended in a failure.
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Utilities"></a>Utilities </h2>
+
+          <div class="section-description">
+           Miscellaneous utilities and methods that make it easier to use the CMake
+ file API.
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "latest"></a>
+    <strong>latest</strong>
+    </dt>
+    <dd>
+    Latest version of object kinds  This is just equal to nil, but it makes it makes using latest versions of
+ object kinds more readable instead of just passing nil.
+
+    <h3>Links:</h3>
+    <ul>
+         <a href="https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kinds
+">Object kind documentation
+</a>
+    </ul>
+    </ul>
+
+    <ul>
+        <li><span class="parameter">latest</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2021-11-16 15:43:01 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
