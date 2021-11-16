@@ -15,8 +15,8 @@ function test()
   echo -e "\nBUILD: '$1'"
   mkdir -p "$1"
 
-  echo -e "\nLS DIR:\n"
-  dirname $1 | xargs ls -la
+  echo -e "\nLS:\n"
+  ls -la "$1"
 
   echo -e "\nID:\n"
   id
