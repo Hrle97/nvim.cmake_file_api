@@ -13,8 +13,8 @@ Read the [CMake File API documentation](https://cmake.org/cmake/help/v3.21/manua
 
 ## Dependencies
 
-- Neovim 0.6.x (with cjson)
-- CMake 3.14.x (with cmake-file-api)
+- Neovim >= 0.6.x  (with cjson)
+- CMake  >= 3.14.x (with cmake-file-api)
 
 ## Installation
 
@@ -44,6 +44,8 @@ local reply_index = cmake_file_api.write_configure_read_all(
 ## Documentation
 
 This is an overview of the documentation for the Neovim CMake File API.
+
+See the full documentation [here](https://hrle97.github.io/nvim.cmake_file_api/).
 
 ### All-in-one Methods
 
