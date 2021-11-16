@@ -25,6 +25,7 @@ jobs:
         run: |
           ls -la .
           ls -la "$RUNNER_TEMP"
+          id
       - name: Run tests
         shell: bash
         run: ./scripts/test.sh "$RUNNER_TEMP/build"
