@@ -5,14 +5,6 @@ _G.expect = require "util.expect"
 _G.cmake = require "util.cmake"
 _G.fun = require "util.fun"
 
-print "NVIM LS:\n"
-print(vim.fn.system { "ls", "-la", build })
-print " \n"
-
-print "NVIM ID:\n"
-print(vim.fn.system { "id" })
-print " \n"
-
 local co = coroutine
 local thread = nil
 local done = false

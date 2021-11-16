@@ -14,12 +14,7 @@ function test()
 {
   echo -e "\nBUILD: '$1'"
   mkdir -p "$1"
-
-  echo -e "\nLS:\n"
-  ls -la "$1"
-
-  echo -e "\nID:\n"
-  id
+  touch "$1/__test"
 
   echo -e "\nRUNNING TESTS\n"
   if nvim --headless --clean \
