@@ -14,15 +14,6 @@ function test()
 {
   echo -e "\nBUILD: '$1'"
 
-  echo -e "\nUSERS:\n"
-  cat "/etc/passwd"
-
-  echo -e "\nGROUPS:\n"
-  cat "/etc/group"
-
-  echo -e "\nID:\n"
-  id
-
   echo -e "\nRUNNING TESTS\n"
   if nvim --headless --clean \
       -c "lua vim.g.root_path = '$root_path'" \
