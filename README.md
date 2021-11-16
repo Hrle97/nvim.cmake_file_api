@@ -13,8 +13,8 @@ Read the [CMake File API documentation](https://cmake.org/cmake/help/v3.21/manua
 
 ## Dependencies
 
-- Neovim 0.6.x (with cjson)
-- CMake 3.14.x (with cmake-file-api)
+- Neovim >= 0.6.x  (with cjson)
+- CMake  >= 3.14.x (with cmake-file-api)
 
 ## Installation
 
